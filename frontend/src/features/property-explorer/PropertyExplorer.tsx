@@ -118,13 +118,14 @@ export function PropertyExplorer({
           onBoundsChange={setBounds}
           onMarkerClick={(property) => setSelectedId(property.id)}
           initialCenter={{ lat: -32.822, lng: -56.528 }}
-          initialZoom={10}
-          minZoom={10}
-          maxZoom={13}
+          initialZoom={13}
+          minZoom={13}
+          maxZoom={18}
           height="100%"
         />
       </div>
     </section>
   );
 }
+
 

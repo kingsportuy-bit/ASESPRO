@@ -115,7 +115,7 @@ export function ListingWithViewToggle({
               </button>
             </div>
             <div className={styles.mapFrame}>
-              <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={10} minZoom={10} maxZoom={13} height={420} />
+              <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={420} />
             </div>
           </section>
         </>
@@ -123,4 +123,5 @@ export function ListingWithViewToggle({
     </main>
   );
 }
+
 

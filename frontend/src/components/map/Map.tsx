@@ -12,9 +12,9 @@ const DEFAULT_CENTER: LatLng = {
   lng: -56.528,
 };
 
-const DEFAULT_ZOOM = 11;
-const DEFAULT_MIN_ZOOM = 10;
-const DEFAULT_MAX_ZOOM = 13;
+const DEFAULT_ZOOM = 13;
+const DEFAULT_MIN_ZOOM = 13;
+const DEFAULT_MAX_ZOOM = 18;
 const DEFAULT_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const DEFAULT_TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -65,4 +65,5 @@ export default function Map({
     </div>
   );
 }
+
 
