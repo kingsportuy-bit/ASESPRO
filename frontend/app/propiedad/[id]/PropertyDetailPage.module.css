@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
-  min-height: 520px;
+  min-height: 0;
 }
 
 .mainMedia,
@@ -10,6 +10,7 @@
   position: relative;
   border-radius: 26px;
   overflow: hidden;
+  aspect-ratio: 9 / 16;
 }
 
 .mainMedia img,
@@ -59,7 +60,7 @@
   background: #f0f4f3;
   padding: 20px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -145,6 +146,7 @@
   margin-top: 14px;
   border-radius: 18px;
   overflow: hidden;
+  position: relative;
 }
 
 .videoWrap {
@@ -156,9 +158,26 @@
 
 .videoWrap iframe {
   width: 100%;
-  min-height: 340px;
+  aspect-ratio: 9 / 16;
   border: 0;
   display: block;
+}
+
+.mapFullButton {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 3;
+  min-height: 38px;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(0, 81, 63, 0.92);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
 }
 
 .aside {
@@ -272,5 +291,13 @@
   .statsBar,
   .amenities {
     grid-template-columns: 1fr;
+  }
+
+  .gallery {
+    gap: 10px;
+  }
+
+  .article {
+    padding: 16px;
   }
 }

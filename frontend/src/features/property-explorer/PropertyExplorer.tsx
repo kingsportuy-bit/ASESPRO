@@ -13,6 +13,7 @@ type PropertyExplorerProps = {
   properties: PropertyListing[];
   title: string;
   hint: string;
+  highlightedPropertyId?: string;
   initialOperation?: PropertyOperation | "all";
   showOperationFilter?: boolean;
 };
@@ -21,6 +22,7 @@ export function PropertyExplorer({
   properties,
   title,
   hint,
+  highlightedPropertyId,
   initialOperation = "all",
   showOperationFilter = true,
 }: PropertyExplorerProps): JSX.Element {
@@ -115,6 +117,7 @@ export function PropertyExplorer({
       <div className={styles.mapArea} role="region" aria-label="Mapa de propiedades">
         <Map
           properties={filteredProperties}
+          highlightedPropertyId={highlightedPropertyId}
           onBoundsChange={setBounds}
           onMarkerClick={(property) => setSelectedId(property.id)}
           initialCenter={{ lat: -32.822, lng: -56.528 }}

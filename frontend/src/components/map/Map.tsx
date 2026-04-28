@@ -21,6 +21,7 @@ const DEFAULT_TILE_ATTRIBUTION =
 
 export default function Map({
   properties,
+  highlightedPropertyId,
   onBoundsChange,
   onMarkerClick,
   initialCenter = DEFAULT_CENTER,
@@ -56,6 +57,7 @@ export default function Map({
   usePropertyMarkers({
     map,
     properties,
+    highlightedPropertyId,
     onMarkerClick,
   });
 

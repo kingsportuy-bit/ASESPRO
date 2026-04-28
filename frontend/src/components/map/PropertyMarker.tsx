@@ -6,6 +6,7 @@ import type { Property } from "./types";
 
 type PropertyMarkerProps = {
   property: Property;
+  highlighted?: boolean;
 };
 
 function formatPrice(price?: number): string {
@@ -20,15 +21,15 @@ function formatPrice(price?: number): string {
   }).format(price);
 }
 
-export function PropertyMarker({ property }: PropertyMarkerProps): React.JSX.Element {
+export function PropertyMarker({ property, highlighted = false }: PropertyMarkerProps): React.JSX.Element {
   return (
-    <div className={styles.marker} aria-label={`Propiedad ${property.id}`}>
+    <div className={`${styles.marker} ${highlighted ? styles.markerHighlighted : ""}`} aria-label={`Propiedad ${property.id}`}>
       <span className={styles.badge}>{formatPrice(property.price)}</span>
       <span className={styles.pointer} />
     </div>
   );
 }
 
-export function renderPropertyMarkerHtml(property: Property): string {
-  return renderToStaticMarkup(<PropertyMarker property={property} />);
+export function renderPropertyMarkerHtml(property: Property, highlighted = false): string {
+  return renderToStaticMarkup(<PropertyMarker property={property} highlighted={highlighted} />);
 }

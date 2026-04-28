@@ -32,3 +32,15 @@
   border-right: 1px solid rgba(190, 201, 195, 0.35);
   border-bottom: 1px solid rgba(190, 201, 195, 0.35);
 }
+
+.markerHighlighted .badge {
+  background: rgba(0, 107, 84, 0.95);
+  color: #ffffff;
+  border-color: rgba(0, 107, 84, 0.95);
+}
+
+.markerHighlighted .pointer {
+  background: rgba(0, 107, 84, 0.95);
+  border-right-color: rgba(0, 107, 84, 0.95);
+  border-bottom-color: rgba(0, 107, 84, 0.95);
+}

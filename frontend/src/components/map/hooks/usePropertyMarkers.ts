@@ -7,6 +7,7 @@ import type { Property } from "../types";
 type UsePropertyMarkersParams = {
   map: LeafletMap | null;
   properties: Property[];
+  highlightedPropertyId?: string;
   onMarkerClick?: (property: Property) => void;
 };
 
@@ -18,9 +19,9 @@ type MarkerEntry = {
 const DEFAULT_ICON_SIZE: [number, number] = [68, 38];
 const DEFAULT_ICON_ANCHOR: [number, number] = [34, 38];
 
-function createPropertyIcon(leaflet: typeof import("leaflet"), property: Property): DivIcon {
+function createPropertyIcon(leaflet: typeof import("leaflet"), property: Property, highlighted = false): DivIcon {
   return leaflet.divIcon({
-    html: renderPropertyMarkerHtml(property),
+    html: renderPropertyMarkerHtml(property, highlighted),
     className: "asespro-marker-host",
     iconSize: DEFAULT_ICON_SIZE,
     iconAnchor: DEFAULT_ICON_ANCHOR,
@@ -36,6 +37,7 @@ function createPropertyIcon(leaflet: typeof import("leaflet"), property: Propert
 export function usePropertyMarkers({
   map,
   properties,
+  highlightedPropertyId,
   onMarkerClick,
 }: UsePropertyMarkersParams): void {
   const markerRegistryRef = useRef<Map<string, MarkerEntry>>(new Map());
@@ -77,13 +79,13 @@ export function usePropertyMarkers({
 
         if (existing) {
           existing.marker.setLatLng([property.lat, property.lng]);
-          existing.marker.setIcon(createPropertyIcon(leaflet, property));
+          existing.marker.setIcon(createPropertyIcon(leaflet, property, property.id === highlightedPropertyId));
           continue;
         }
 
         const marker = leaflet
           .marker([property.lat, property.lng], {
-            icon: createPropertyIcon(leaflet, property),
+            icon: createPropertyIcon(leaflet, property, property.id === highlightedPropertyId),
             keyboard: true,
           })
           .addTo(map);
@@ -119,7 +121,7 @@ export function usePropertyMarkers({
     return () => {
       cancelled = true;
     };
-  }, [map, properties]);
+  }, [map, properties, highlightedPropertyId]);
 
   useEffect(() => {
     return () => {

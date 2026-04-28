@@ -19,6 +19,7 @@ export type LatLng = {
 
 export type MapProps = {
   properties: Property[];
+  highlightedPropertyId?: string;
   onBoundsChange?: (bounds: MapBounds) => void;
   onMarkerClick?: (property: Property) => void;
   initialCenter?: LatLng;
