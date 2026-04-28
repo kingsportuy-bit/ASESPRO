@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -120,10 +120,11 @@ export function PropertyExplorer({
           initialCenter={{ lat: -32.822, lng: -56.528 }}
           initialZoom={10}
           minZoom={10}
-          maxZoom={18}
+          maxZoom={13}
           height="100%"
         />
       </div>
     </section>
   );
 }
+
