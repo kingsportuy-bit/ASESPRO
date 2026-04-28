@@ -21,7 +21,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=codexanet
-        - traefik.http.routers.asespro-web.rule=Host(`asespro.codexa.uy`)
+        - traefik.http.routers.asespro-web.rule=Host(`asespro.codexa.uy`) || Host(`panelasespro.codexa.uy`)
         - traefik.http.routers.asespro-web.entrypoints=websecure
         - traefik.http.routers.asespro-web.tls=true
         - traefik.http.routers.asespro-web.tls.certresolver=letsencryptresolver
@@ -36,3 +36,4 @@ services:
 networks:
   codexanet:
     external: true
+
