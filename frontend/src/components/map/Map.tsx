@@ -13,7 +13,8 @@ const DEFAULT_CENTER: LatLng = {
 };
 
 const DEFAULT_ZOOM = 11;
-const DEFAULT_MAX_ZOOM = 15;
+const DEFAULT_MIN_ZOOM = 10;
+const DEFAULT_MAX_ZOOM = 18;
 const DEFAULT_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const DEFAULT_TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -26,7 +27,7 @@ export default function Map({
   initialZoom = DEFAULT_ZOOM,
   tileUrl = DEFAULT_TILE_URL,
   tileAttribution = DEFAULT_TILE_ATTRIBUTION,
-  minZoom,
+  minZoom = DEFAULT_MIN_ZOOM,
   maxZoom = DEFAULT_MAX_ZOOM,
   className,
   height = 520,

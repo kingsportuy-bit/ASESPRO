@@ -143,7 +143,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         <h2>Explora por ubicacion</h2>
         <p>Recorre propiedades y oportunidades directamente en el mapa.</p>
         <div className={styles.mapShell}>
-          <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={10} maxZoom={15} height={320} />
+          <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={10} minZoom={10} maxZoom={18} height={320} />
           <div className={styles.mapOverlayCard}>
             <strong>Mapa de propiedades</strong>
             <p>Activa vista completa y descubre zonas clave.</p>

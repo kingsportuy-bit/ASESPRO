@@ -119,8 +119,8 @@ export function PropertyExplorer({
           onMarkerClick={(property) => setSelectedId(property.id)}
           initialCenter={{ lat: -32.822, lng: -56.528 }}
           initialZoom={10}
-          minZoom={6}
-          maxZoom={15}
+          minZoom={10}
+          maxZoom={18}
           height="100%"
         />
       </div>
