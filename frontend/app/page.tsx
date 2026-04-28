@@ -54,7 +54,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </section>
 
-      <section className={styles.quickGrid}>
+      <section className={`${styles.quickGrid} ${styles.sectionFrame}`}>
         <Link href="/alquiler" className={styles.quickCard}>
           <img src={getPropertyCoverImage("prop-4")} alt="" />
           <div className={styles.quickShade} />
@@ -86,7 +86,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </Link>
       </section>
 
-      <section className={styles.featured}>
+      <section className={`${styles.featured} ${styles.sectionFrame}`}>
         <div className={styles.featuredHead}>
           <div>
             <p className={styles.eyebrow}>Seleccion Curada</p>
@@ -117,7 +117,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </section>
 
-      <section className={styles.process}>
+      <section className={`${styles.process} ${styles.sectionFrame}`}>
         <h2>Un proceso disenado para tu tranquilidad</h2>
         <p>Guiamos cada decision con metodo curado, claridad y acompanamiento profesional.</p>
         <div className={styles.steps}>
@@ -139,7 +139,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </section>
 
-      <section className={styles.cleaningBanner}>
+      <section className={`${styles.cleaningBanner} ${styles.sectionFrame}`}>
         <div className={styles.cleaningCopy}>
           <p className={styles.eyebrow}>Mas que inmobiliaria</p>
           <h2>Servicio de limpieza premium</h2>
@@ -156,7 +156,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         <img src={getPropertyCoverImage("prop-3")} alt="" className={styles.cleaningImage} />
       </section>
 
-      <section className={styles.mapTeaser}>
+      <section className={`${styles.mapTeaser} ${styles.sectionFrame}`}>
         <h2>Explora por ubicacion</h2>
         <p>Recorre propiedades y oportunidades directamente en el mapa.</p>
         <div className={styles.mapShell}>
@@ -174,7 +174,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </section>
 
-      <section className={styles.trustSection}>
+      <section className={`${styles.trustSection} ${styles.sectionFrame}`}>
         <article className={styles.trustCopy}>
           <h2>Por que confiar en nosotros</h2>
           <ul>
@@ -197,7 +197,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </article>
       </section>
 
-      <section className={styles.contactStrip}>
+      <section className={`${styles.contactStrip} ${styles.sectionFrame}`}>
         <article className={styles.contactInfo}>
           <h2>Listo para el siguiente paso?</h2>
           <p>Estamos aqui para ayudarte a encontrar el lugar que estas buscando.</p>

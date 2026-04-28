@@ -78,8 +78,8 @@ h3 {
 }
 
 main {
-  width: min(var(--layout-max-width), calc(100vw - (var(--layout-gutter) * 2)));
-  margin: 0 auto 34px;
+  width: 100%;
+  margin: 0 0 34px;
   display: flex;
   flex-direction: column;
   gap: 32px;

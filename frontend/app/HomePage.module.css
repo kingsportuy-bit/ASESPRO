@@ -1,11 +1,16 @@
+.sectionFrame {
+  width: min(1280px, calc(100vw - 48px));
+  margin-inline: auto;
+}
+
 .hero {
   position: relative;
   min-height: clamp(560px, 82vh, 760px);
-  border-radius: 28px;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: clamp(24px, 3vw, 44px);
+  padding: clamp(24px, 3vw, 44px) clamp(16px, 4vw, 52px);
 }
 
 .heroBg {
@@ -50,7 +55,7 @@
 .heroContent {
   position: relative;
   z-index: 1;
-  max-width: 640px;
+  max-width: min(640px, 100%);
 }
 
 .eyebrow {
@@ -320,7 +325,7 @@
 }
 
 .process {
-  padding: 10px 0;
+  padding: 22px 0;
   text-align: center;
 }
 
@@ -616,13 +621,26 @@
 }
 
 @media (max-width: 760px) {
+  .sectionFrame {
+    width: 100%;
+    padding-inline: 0;
+  }
+
   .featured,
   .contactStrip {
-    padding: 16px;
+    padding: 16px 14px;
   }
 
   .hero {
     min-height: 460px;
+    padding: 20px 14px 24px;
+  }
+
+  .quickGrid,
+  .process,
+  .mapTeaser,
+  .trustSection {
+    padding-inline: 14px;
   }
 
   .contactFormMock {
