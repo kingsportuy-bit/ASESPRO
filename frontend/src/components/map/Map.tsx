@@ -8,11 +8,12 @@ import styles from "./Map.module.css";
 import type { LatLng, MapProps } from "./types";
 
 const DEFAULT_CENTER: LatLng = {
-  lat: -32.8167,
-  lng: -56.5167,
+  lat: -32.822,
+  lng: -56.528,
 };
 
 const DEFAULT_ZOOM = 11;
+const DEFAULT_MAX_ZOOM = 15;
 const DEFAULT_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const DEFAULT_TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -26,7 +27,7 @@ export default function Map({
   tileUrl = DEFAULT_TILE_URL,
   tileAttribution = DEFAULT_TILE_ATTRIBUTION,
   minZoom,
-  maxZoom,
+  maxZoom = DEFAULT_MAX_ZOOM,
   className,
   height = 520,
 }: MapProps): React.JSX.Element {

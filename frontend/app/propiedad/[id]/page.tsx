@@ -135,7 +135,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
               initialCenter={{ lat: property.lat, lng: property.lng }}
               initialZoom={14}
               minZoom={6}
-              maxZoom={18}
+              maxZoom={15}
               height={360}
             />
           </div>

@@ -117,10 +117,10 @@ export function PropertyExplorer({
           properties={filteredProperties}
           onBoundsChange={setBounds}
           onMarkerClick={(property) => setSelectedId(property.id)}
-          initialCenter={{ lat: -32.8167, lng: -56.5167 }}
+          initialCenter={{ lat: -32.822, lng: -56.528 }}
           initialZoom={10}
           minZoom={6}
-          maxZoom={18}
+          maxZoom={15}
           height="100%"
         />
       </div>
