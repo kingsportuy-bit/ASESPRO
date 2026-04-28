@@ -47,9 +47,7 @@ export default async function HomePage(): Promise<JSX.Element> {
             </Link>
           </div>
           <div className={styles.heroMetrics}>
-            <span>Paso de los Toros + Centenario</span>
             <span>Respuesta directa por WhatsApp</span>
-            <span>Mapa interactivo con filtros</span>
           </div>
         </div>
       </section>

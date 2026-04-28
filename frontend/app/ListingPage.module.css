@@ -215,14 +215,29 @@
   font-size: 12px;
 }
 
-.metaDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #0a7d62;
+.metaIcon {
+  width: 14px;
+  height: 14px;
   display: inline-block;
   margin-right: 6px;
-  vertical-align: middle;
+  vertical-align: -2px;
+  background: #0a7d62;
+}
+
+.metaBed {
+  clip-path: polygon(0 54%, 20% 54%, 20% 34%, 48% 34%, 48% 54%, 100% 54%, 100% 74%, 0 74%);
+}
+
+.metaBath {
+  clip-path: polygon(10% 62%, 22% 62%, 28% 46%, 72% 46%, 78% 62%, 90% 62%, 90% 74%, 10% 74%);
+}
+
+.metaArea {
+  clip-path: polygon(18% 18%, 82% 18%, 82% 82%, 18% 82%, 18% 18%, 28% 28%, 72% 28%, 72% 72%, 28% 72%);
+}
+
+.metaStatus {
+  clip-path: polygon(48% 12%, 60% 12%, 60% 46%, 86% 46%, 86% 58%, 60% 58%, 60% 88%, 48% 88%, 48% 58%, 14% 58%, 14% 46%, 48% 46%);
 }
 
 .cardLink {

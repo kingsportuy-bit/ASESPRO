@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Map } from "@/components/map";
 import { getPublicPropertyById } from "@/lib/propertyRepository";
 import { buildPropertyWhatsAppUrl, formatPrice } from "@/lib/properties";
+import { PropertyMediaGallery } from "./PropertyMediaGallery";
 
 import styles from "./PropertyDetailPage.module.css";
 
@@ -41,29 +42,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? DEFAULT_WHATSAPP_PHONE;
   const whatsappUrl = buildPropertyWhatsAppUrl(property, phone);
   const gallery = property.photoUrls.length > 0 ? property.photoUrls : [];
-  const cover = gallery[0];
   const priceLabel = property.operation === "alquiler" ? "Precio de alquiler" : "Precio de venta";
 
   return (
     <main>
-      <section className={styles.gallery}>
-        <article className={styles.mainMedia}>
-          <img src={cover} alt="" />
-          <div className={styles.mainCaption}>
-            <h1>{property.title}</h1>
-            <p>{property.location}</p>
-          </div>
-        </article>
-
-        <div className={styles.sideGrid}>
-          <article className={styles.sideMedia}>
-            <img src={gallery[0]} alt="" />
-          </article>
-          <article className={styles.sideMedia}>
-            <img src={gallery[1]} alt="" />
-          </article>
-        </div>
-      </section>
+      <PropertyMediaGallery title={property.title} location={property.location} photos={gallery} videoUrl={property.videoUrl} />
 
       <section className={styles.statsBar}>
         <article>
@@ -109,22 +92,6 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
           <h2 className={styles.sectionTitle}>Ubicacion</h2>
           <p>{property.location}</p>
-
-          {property.videoUrl ? (
-            <>
-              <h2 className={styles.sectionTitle}>Video de la propiedad</h2>
-              <div className={styles.videoWrap}>
-                <iframe
-                  src={property.videoUrl}
-                  title={`Video de ${property.title}`}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
-            </>
-          ) : null}
 
           <div className={styles.mapWrap} role="region" aria-label="Ubicacion de la propiedad en el mapa">
             <Map

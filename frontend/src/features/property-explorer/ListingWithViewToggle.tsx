@@ -94,10 +94,10 @@ export function ListingWithViewToggle({
                     </div>
                     <p className={styles.cardLocation}>{property.location}</p>
                     <p className={styles.cardMeta}>
-                      <span><i className={styles.metaDot} />{property.bedrooms ?? "--"} dorm</span>
-                      <span><i className={styles.metaDot} />{property.bathrooms ?? "--"} banos</span>
-                      <span><i className={styles.metaDot} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-                      <span><i className={styles.metaDot} />{property.status}</span>
+                      <span><i className={`${styles.metaIcon} ${styles.metaBed}`} />{property.bedrooms ?? "--"} dorm</span>
+                      <span><i className={`${styles.metaIcon} ${styles.metaBath}`} />{property.bathrooms ?? "--"} banos</span>
+                      <span><i className={`${styles.metaIcon} ${styles.metaArea}`} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
+                      <span><i className={`${styles.metaIcon} ${styles.metaStatus}`} />{property.status}</span>
                     </p>
                   </div>
                 </a>
