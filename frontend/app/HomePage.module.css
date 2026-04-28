@@ -371,6 +371,20 @@
   overflow: hidden;
 }
 
+.mapLockLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(24, 28, 28, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
 .mapOverlayCard {
   position: absolute;
   left: 50%;

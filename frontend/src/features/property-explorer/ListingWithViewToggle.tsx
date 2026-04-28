@@ -1,8 +1,6 @@
 ﻿"use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-
 import { Map } from "@/components/map";
 import { PropertyExplorer } from "@/features/property-explorer/PropertyExplorer";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
@@ -76,30 +74,34 @@ export function ListingWithViewToggle({
           <section className={styles.grid}>
             {cards.map((property, index) => (
               <article className={styles.card} key={`${property.id}-${index}`}>
-                <div className={styles.cardMedia}>
-                  <img src={getPropertyCoverImage(property.id)} alt="" />
-                  <div className={styles.badgeRow}>
-                    <span className={styles.badge}>{property.operation}</span>
-                    <span className={styles.badge}>{property.type}</span>
+                <a href={`/propiedad/${property.id}`} target="_blank" rel="noreferrer" className={styles.cardHitArea}>
+                  <div className={styles.cardMedia}>
+                    <div className={styles.mediaSlider} aria-hidden="true">
+                      {(property.photoUrls.length > 0 ? property.photoUrls : [getPropertyCoverImage(property.id)]).slice(0, 3).map((photo, photoIndex) => (
+                        <img key={`${property.id}-photo-${photoIndex}`} src={photo} alt="" className={styles.slideImage} />
+                      ))}
+                    </div>
+                    <div className={styles.badgeRow}>
+                      <span className={styles.badge}>{property.operation}</span>
+                      <span className={styles.badge}>{property.type}</span>
+                    </div>
                   </div>
-                  <span className={styles.heart}>Fav</span>
-                </div>
 
-                <div className={styles.cardBody}>
-                  <div className={styles.titleRow}>
-                    <h2 className={styles.cardTitle}>{property.title}</h2>
-                    <p className={styles.cardPrice}>{formatPrice(property.price)}</p>
+                  <div className={styles.cardBody}>
+                    <div className={styles.titleRow}>
+                      <h2 className={styles.cardTitle}>{property.title}</h2>
+                      <p className={styles.cardPrice}>{formatPrice(property.price)}</p>
+                    </div>
+                    <p className={styles.cardLocation}>{property.location}</p>
+                    <p className={styles.cardMeta}>
+                      <span>🛏️ {property.bedrooms ?? "--"}</span>
+                      <span>🛁 {property.bathrooms ?? "--"}</span>
+                      <span>📐 {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
+                      <span>📌 {property.status}</span>
+                    </p>
+                    <span className={styles.cardLink}>Ver detalle</span>
                   </div>
-                  <p className={styles.cardLocation}>{property.location}</p>
-                  <p className={styles.cardMeta}>
-                    <span>{property.bedrooms ?? "--"} dorm</span>
-                    <span>{property.bathrooms ?? "--"} banos</span>
-                    <span>{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-                  </p>
-                  <Link href={`/propiedad/${property.id}`} className={styles.cardLink}>
-                    Ver detalle
-                  </Link>
-                </div>
+                </a>
               </article>
             ))}
           </section>
@@ -116,6 +118,9 @@ export function ListingWithViewToggle({
             </div>
             <div className={styles.mapFrame}>
               <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={420} />
+              <button type="button" className={styles.mapLockLayer} onClick={() => setViewMode("map")}>
+                Click para activar mapa interactivo
+              </button>
             </div>
           </section>
         </>

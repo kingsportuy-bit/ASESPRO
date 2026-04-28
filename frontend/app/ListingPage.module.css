@@ -115,15 +115,41 @@
   box-shadow: 0 20px 40px rgba(25, 28, 25, 0.05);
 }
 
+.cardHitArea {
+  display: block;
+  text-decoration: none;
+}
+
 .cardMedia {
   position: relative;
   height: 320px;
 }
 
-.cardMedia img {
+.mediaSlider {
+  position: absolute;
+  inset: 0;
+}
+
+.slideImage {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  animation: listingSlide 12s infinite;
+}
+
+.slideImage:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.slideImage:nth-child(2) {
+  animation-delay: 4s;
+}
+
+.slideImage:nth-child(3) {
+  animation-delay: 8s;
 }
 
 .badgeRow {
@@ -143,25 +169,6 @@
   font-weight: 800;
   background: rgba(0, 81, 63, 0.9);
   color: #ffffff;
-}
-
-.heart {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  min-width: 44px;
-  height: 36px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 8px;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: #00513f;
 }
 
 .cardBody {
@@ -282,6 +289,28 @@
   border-radius: 18px;
   overflow: hidden;
   position: relative;
+}
+
+.mapLockLayer {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  cursor: pointer;
+  background: rgba(24, 28, 28, 0.16);
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes listingSlide {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  28% { opacity: 1; }
+  36% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 .mapCta {

@@ -144,6 +144,9 @@ export default async function HomePage(): Promise<JSX.Element> {
         <p>Recorre propiedades y oportunidades directamente en el mapa.</p>
         <div className={styles.mapShell}>
           <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={320} />
+          <Link href="/venta" className={styles.mapLockLayer}>
+            Click para activar mapa interactivo
+          </Link>
           <div className={styles.mapOverlayCard}>
             <strong>Mapa de propiedades</strong>
             <p>Activa vista completa y descubre zonas clave.</p>
