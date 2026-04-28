@@ -4,6 +4,7 @@ import { buildWhatsAppUrl } from "./whatsapp";
 
 export type PropertyType = "casa" | "apartamento" | "terreno";
 export type PropertyOperation = "alquiler" | "venta";
+export type PropertyStatus = "activo" | "desactivado" | "alquilado" | "vendido";
 
 export type PropertyListing = {
   id: string;
@@ -18,6 +19,9 @@ export type PropertyListing = {
   bedrooms?: number;
   bathrooms?: number;
   areaM2?: number;
+  status: PropertyStatus;
+  photoUrls: string[];
+  videoUrl?: string;
 };
 
 export function getProperties(): PropertyListing[] {

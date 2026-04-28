@@ -147,6 +147,20 @@
   overflow: hidden;
 }
 
+.videoWrap {
+  margin-top: 10px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.videoWrap iframe {
+  width: 100%;
+  min-height: 340px;
+  border: 0;
+  display: block;
+}
+
 .aside {
   position: sticky;
   top: 96px;

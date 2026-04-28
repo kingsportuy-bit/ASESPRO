@@ -48,6 +48,12 @@ function normalizeProperty(input: unknown): PropertyListing | null {
     bedrooms: typeof source.bedrooms === "number" ? source.bedrooms : undefined,
     bathrooms: typeof source.bathrooms === "number" ? source.bathrooms : undefined,
     areaM2: typeof source.areaM2 === "number" ? source.areaM2 : typeof source.area_m2 === "number" ? source.area_m2 : undefined,
+    status:
+      source.status === "activo" || source.status === "desactivado" || source.status === "alquilado" || source.status === "vendido"
+        ? source.status
+        : "activo",
+    photoUrls: Array.isArray(source.photoUrls) ? source.photoUrls.filter((item): item is string => typeof item === "string") : [],
+    videoUrl: typeof source.videoUrl === "string" ? source.videoUrl : undefined,
   };
 }
 

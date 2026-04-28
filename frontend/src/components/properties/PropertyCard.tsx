@@ -36,6 +36,7 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
             <p className={styles.cardMeta}>{property.location}</p>
             <div className={styles.pillRow}>
               <span className={styles.pill}>{property.type}</span>
+              <span className={styles.pill}>{property.status}</span>
             </div>
             <p className={styles.price}>{formatPrice(property.price)}</p>
           </div>
