@@ -29,6 +29,8 @@ export default async function HomePage(): Promise<JSX.Element> {
       <section className={styles.hero}>
         <img src={HERO_IMAGE} alt="" className={styles.heroBg} />
         <div className={styles.heroOverlay} />
+        <div className={styles.heroGlowA} />
+        <div className={styles.heroGlowB} />
         <div className={styles.heroContent}>
           <p className={styles.eyebrow}>Curaduria Inmobiliaria</p>
           <h1 className={styles.heroTitle}>Encontra tu proximo hogar con confianza y criterio real.</h1>
@@ -43,6 +45,11 @@ export default async function HomePage(): Promise<JSX.Element> {
             <Link href="/contacto" className={styles.secondaryAction}>
               Contactar por WhatsApp
             </Link>
+          </div>
+          <div className={styles.heroMetrics}>
+            <span>📍 Paso de los Toros + Centenario</span>
+            <span>⚡ Respuesta directa por WhatsApp</span>
+            <span>🧭 Mapa interactivo con filtros</span>
           </div>
         </div>
       </section>
@@ -65,6 +72,16 @@ export default async function HomePage(): Promise<JSX.Element> {
             <h2 className={styles.quickTitle}>Ventas</h2>
             <p className={styles.quickText}>Inversiones curadas con alto potencial y respaldo profesional.</p>
             <span className={styles.quickLink}>Explorar ventas</span>
+          </div>
+        </Link>
+
+        <Link href="/servicio-limpieza" className={`${styles.quickCard} ${styles.quickCardWide}`}>
+          <img src={getPropertyCoverImage("asespro-alq-001")} alt="" />
+          <div className={styles.quickShade} />
+          <div className={styles.quickBody}>
+            <h2 className={styles.quickTitle}>Servicio de limpieza</h2>
+            <p className={styles.quickText}>Preparamos cada inmueble para publicacion y visitas con estandar premium.</p>
+            <span className={styles.quickLink}>Explorar servicio</span>
           </div>
         </Link>
       </section>

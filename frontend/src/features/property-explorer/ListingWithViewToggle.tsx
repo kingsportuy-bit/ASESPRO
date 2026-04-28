@@ -99,7 +99,6 @@ export function ListingWithViewToggle({
                       <span>📐 {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
                       <span>📌 {property.status}</span>
                     </p>
-                    <span className={styles.cardLink}>Ver detalle</span>
                   </div>
                 </a>
               </article>

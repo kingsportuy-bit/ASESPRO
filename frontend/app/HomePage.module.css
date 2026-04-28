@@ -23,6 +23,30 @@
   background: linear-gradient(96deg, rgba(246, 250, 249, 0.78) 0%, rgba(246, 250, 249, 0.68) 30%, rgba(24, 28, 28, 0.45) 100%);
 }
 
+.heroGlowA,
+.heroGlowB {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(36px);
+  pointer-events: none;
+}
+
+.heroGlowA {
+  width: 260px;
+  height: 260px;
+  right: 12%;
+  top: 12%;
+  background: rgba(158, 243, 214, 0.35);
+}
+
+.heroGlowB {
+  width: 180px;
+  height: 180px;
+  right: 4%;
+  bottom: 10%;
+  background: rgba(0, 81, 63, 0.32);
+}
+
 .heroContent {
   position: relative;
   z-index: 1;
@@ -59,6 +83,25 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.heroMetrics {
+  margin-top: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.heroMetrics span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #003f31;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .primaryAction,
@@ -105,6 +148,10 @@
   overflow: hidden;
   text-decoration: none;
   color: #ffffff;
+}
+
+.quickCardWide {
+  grid-column: 1 / -1;
 }
 
 .quickCard img {
@@ -546,6 +593,10 @@
 
   .featuredTitle {
     font-size: 28px;
+  }
+
+  .quickCardWide {
+    grid-column: auto;
   }
 }
 
