@@ -169,10 +169,10 @@
     text-align: center;
     justify-items: center;
     gap: 8px;
-    padding: 14px;
-    border-radius: 14px;
-    background: #ffffff;
-    border: 1px solid rgba(190, 201, 195, 0.24);
+    padding: 8px 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
   }
 
   .mobileInner .mobileColumns {

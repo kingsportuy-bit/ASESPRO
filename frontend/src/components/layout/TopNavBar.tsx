@@ -30,9 +30,46 @@ function isActivePath(pathname: string, href: string): boolean {
 export function TopNavBar(): JSX.Element {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+
+  function onTouchStart(x: number): void {
+    setTouchStartX(x);
+    setTouchCurrentX(x);
+  }
+
+  function onTouchMove(x: number): void {
+    setTouchCurrentX(x);
+  }
+
+  function onTouchEnd(): void {
+    if (touchStartX === null || touchCurrentX === null) {
+      return;
+    }
+
+    const deltaX = touchCurrentX - touchStartX;
+    const openedFromEdge = touchStartX > window.innerWidth - 48;
+
+    if (!menuOpen && openedFromEdge && deltaX < -36) {
+      setMenuOpen(true);
+    }
+
+    if (menuOpen && deltaX > 36) {
+      setMenuOpen(false);
+    }
+
+    setTouchStartX(null);
+    setTouchCurrentX(null);
+  }
 
   return (
-    <nav className={styles.wrap} aria-label="Navegacion principal">
+    <nav
+      className={styles.wrap}
+      aria-label="Navegacion principal"
+      onTouchStart={(event) => onTouchStart(event.touches[0]?.clientX ?? 0)}
+      onTouchMove={(event) => onTouchMove(event.touches[0]?.clientX ?? 0)}
+      onTouchEnd={onTouchEnd}
+    >
       <div className={styles.inner}>
         <Link href="/" className={styles.logo}>
           <img src="/LOGO_ASESPRO_transparente_horizontal.png" alt="ASESPRO" className={styles.logoDesktop} />
@@ -51,18 +88,6 @@ export function TopNavBar(): JSX.Element {
           ))}
         </div>
 
-        <button
-          type="button"
-          className={styles.mobileToggle}
-          aria-label="Abrir menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(true)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-
         <Link href="/contacto" className={styles.cta}>
           Consultar
         </Link>
@@ -73,7 +98,7 @@ export function TopNavBar(): JSX.Element {
         <div className={styles.mobileHead}>
           <strong>ASESPRO</strong>
           <button type="button" className={styles.mobileClose} aria-label="Cerrar menu" onClick={() => setMenuOpen(false)}>
-            ✕
+            ×
           </button>
         </div>
         <div className={styles.mobileNav}>

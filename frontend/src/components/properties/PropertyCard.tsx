@@ -12,17 +12,15 @@ type PropertyCardProps = {
 };
 
 export function PropertyCard({ property, selected = false, onSelect }: PropertyCardProps): JSX.Element {
-  const interactionLabel = `Seleccionar ${property.title} en ${property.location}`;
-  const detailLabel = `Ver detalle de ${property.title}`;
+  const interactionLabel = `Abrir ${property.title} en ${property.location}`;
   const coverImage = getPropertyCoverImage(property.id);
 
   return (
     <article className={`${styles.card} ${selected ? styles.cardSelected : ""}`} role="listitem">
-      <button
-        type="button"
+      <Link
+        href={`/propiedad/${property.id}`}
         className={styles.cardButton}
         onClick={() => onSelect?.(property.id)}
-        aria-pressed={selected}
         aria-label={interactionLabel}
       >
         <div className={styles.content}>
@@ -41,9 +39,6 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
             <p className={styles.price}>{formatPrice(property.price)}</p>
           </div>
         </div>
-      </button>
-      <Link href={`/propiedad/${property.id}`} className={styles.detailLink} aria-label={detailLabel}>
-        Ver detalle
       </Link>
     </article>
   );
