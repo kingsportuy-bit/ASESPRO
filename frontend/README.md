@@ -1,79 +1,70 @@
-# FRONT ASESPRO
+﻿# FRONT ASESPRO
 
-Esta carpeta ahora tiene dos capas:
+Base web publica en Next.js para ASESPRO.
 
-1. HTML estatico basado en Stitch (referencia visual inicial).
-2. Base React/Next.js para construir la web productiva y reutilizable.
+## Estado actual
 
-## 1) Referencia estatica
+- Proyecto productivo desplegable con Docker.
+- Dominio web: `https://asespro.codexa.uy`
+- Dominio panel (routing listo): `https://panelasespro.codexa.uy`
+- El panel admin funcional aun esta en implementacion.
 
-Archivos:
+---
 
-- `index.html`
-- `alquiler.html`
-- `venta.html`
-- `detalle-propiedad.html`
-- `detalle-penthouse.html`
-- `servicio-limpieza.html`
-- `contacto.html`
-
-Levantar rapido:
-
-```powershell
-cd C:\Users\Fito\Documents\CODEX\ASESPRO\frontend
-.\run-local.ps1
-```
-
-URL: `http://localhost:4173`
-
-## 2) Base React/Next.js
-
-Estructura principal:
+## Estructura principal
 
 - `app/` (App Router)
-- `src/components/map/` (componente de mapa reusable)
-- `src/features/property-explorer/` (pantalla base lista + mapa + filtros)
+- `src/components/map/` (mapa reusable)
+- `src/features/property-explorer/` (lista + mapa + filtros)
+- `src/lib/propertyRepository.ts` (capa de acceso a datos)
 
-### Preparar entorno
+---
+
+## Desarrollo local
 
 ```powershell
 cd C:\Users\Fito\Documents\CODEX\ASESPRO\frontend
-```
-
-No requiere token para arrancar usando OpenStreetMap (Leaflet).
-
-### Instalar y correr
-
-```powershell
 npm install
 npm run dev
 ```
 
-URL: `http://localhost:3000`
+URL local: `http://localhost:3000`
 
-### Variables de entorno
+---
 
-Usar `.env.local` (copiando `.env.example`) para configurar:
+## Variables de entorno
 
-- `NEXT_PUBLIC_WHATSAPP_PHONE` (telefono destino para CTAs)
-- `NEXT_PUBLIC_SITE_URL` (base URL para metadata/sitemap/robots)
+Configurar en `.env.local`:
+
+- `NEXT_PUBLIC_WHATSAPP_PHONE`
+- `NEXT_PUBLIC_SITE_URL`
 - `PROPERTY_DATA_SOURCE=mock|api`
-- `PROPERTIES_API_BASE_URL` (solo si `PROPERTY_DATA_SOURCE=api`)
+- `PROPERTIES_API_BASE_URL` (si `PROPERTY_DATA_SOURCE=api`)
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-### Build de produccion
+---
+
+## Build de produccion
 
 ```powershell
+cd C:\Users\Fito\Documents\CODEX\ASESPRO\frontend
 npm run build
 npm run start
 ```
 
-## Estado actual
+---
 
-- Ya existe una base Next lista para iterar.
-- El mapa reusable esta desacoplado (sin fetch interno) y usa Leaflet + OpenStreetMap.
-- El padre controla filtros y bounds para busqueda de propiedades.
-- Rutas activas: `/`, `/alquiler`, `/venta`, `/propiedad/[id]`, `/contacto`, `/servicio-limpieza`.
-- Capa de datos preparada para swap `mock/api` via `PROPERTY_DATA_SOURCE`.
-- Formularios de conversion listos para WhatsApp en contacto y limpieza.
-- SEO base listo: metadata por ruta, `robots.txt`, `sitemap.xml`, `not-found` y `loading`.
-- Mejora de accesibilidad/responsive: skip-link, foco visible, labels ARIA y validacion accesible de formularios.
+## Despliegue en VPS (resumen)
+
+Pipeline operativo:
+
+1. Push a GitHub (`main`).
+2. En VPS (`/opt/asespro`): `git pull`.
+3. Build Docker de `frontend`.
+4. `docker stack deploy -c deploy.stack.yml asespro`.
+
+Guia completa:
+
+- `Docs/GUIA_GENERAL_DESPLIEGUE_GITHUB_VPS.md`

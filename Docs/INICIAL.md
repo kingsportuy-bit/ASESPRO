@@ -25,6 +25,8 @@ Archivos base:
 - `ENCODING.md`
 - `DESIGN.MD`
 - `PROXIMOS_PASOS_FRONT.md`
+- `ESTADO_PRODUCCION.md`
+- `GUIA_GENERAL_DESPLIEGUE_GITHUB_VPS.md`
 
 ---
 
@@ -39,6 +41,7 @@ Leer completamente:
 - `ENCODING.md`
 - `DESIGN.MD`
 - `PROXIMOS_PASOS_FRONT.md`
+- `ESTADO_PRODUCCION.md`
 
 ---
 
