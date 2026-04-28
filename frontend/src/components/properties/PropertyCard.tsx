@@ -1,0 +1,49 @@
+import Link from "next/link";
+
+import { formatPrice, type PropertyListing } from "@/lib/properties";
+import { getPropertyCoverImage } from "@/lib/propertyVisuals";
+
+import styles from "./PropertyCard.module.css";
+
+type PropertyCardProps = {
+  property: PropertyListing;
+  selected?: boolean;
+  onSelect?: (propertyId: string) => void;
+};
+
+export function PropertyCard({ property, selected = false, onSelect }: PropertyCardProps): JSX.Element {
+  const interactionLabel = `Seleccionar ${property.title} en ${property.location}`;
+  const detailLabel = `Ver detalle de ${property.title}`;
+  const coverImage = getPropertyCoverImage(property.id);
+
+  return (
+    <article className={`${styles.card} ${selected ? styles.cardSelected : ""}`} role="listitem">
+      <button
+        type="button"
+        className={styles.cardButton}
+        onClick={() => onSelect?.(property.id)}
+        aria-pressed={selected}
+        aria-label={interactionLabel}
+      >
+        <div className={styles.content}>
+          <div className={styles.thumbWrap}>
+            <img src={coverImage} alt="" className={styles.thumb} loading="lazy" />
+            <span className={styles.operationBadge}>{property.operation}</span>
+          </div>
+
+          <div className={styles.info}>
+            <p className={styles.cardTitle}>{property.title}</p>
+            <p className={styles.cardMeta}>{property.location}</p>
+            <div className={styles.pillRow}>
+              <span className={styles.pill}>{property.type}</span>
+            </div>
+            <p className={styles.price}>{formatPrice(property.price)}</p>
+          </div>
+        </div>
+      </button>
+      <Link href={`/propiedad/${property.id}`} className={styles.detailLink} aria-label={detailLabel}>
+        Ver detalle
+      </Link>
+    </article>
+  );
+}

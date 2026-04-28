@@ -1,0 +1,156 @@
+.section {
+  border: 1px solid rgba(190, 201, 195, 0.15);
+  border-radius: 28px;
+  background: linear-gradient(180deg, #f0f4f3 0%, #f6faf9 100%);
+  padding: 20px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.head h2 {
+  margin: 0;
+  color: #181c1c;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.7rem, 1.35rem + 1.1vw, 2.5rem);
+}
+
+.head p {
+  margin: 6px 0 0;
+  color: #3d4a3e;
+  max-width: 540px;
+}
+
+.chip {
+  border-radius: 999px;
+  padding: 7px 12px;
+  border: 1px solid rgba(190, 201, 195, 0.15);
+  background: #ffffff;
+  color: #444746;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(190, 201, 195, 0.15);
+  background: #ffffff;
+  box-shadow: 0 30px 44px rgba(24, 28, 28, 0.06);
+}
+
+.media {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.card:hover .media img {
+  transform: scale(1.06);
+}
+
+.badgeRow {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: rgba(158, 243, 214, 0.95);
+  color: #00513f;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.body {
+  padding: 14px;
+}
+
+.price {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: #00513f;
+}
+
+.title {
+  margin: 5px 0 0;
+  color: #181c1c;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.meta {
+  margin: 8px 0 0;
+  color: #3d4a3e;
+  font-size: 13px;
+}
+
+.kpiRow {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(190, 201, 195, 0.15);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kpi {
+  color: #444746;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detailLink {
+  margin-top: 12px;
+  display: inline-flex;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 9px 12px;
+  border: 1px solid rgba(190, 201, 195, 0.15);
+  color: #181c1c;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #ffffff;
+}
+
+.detailLink:hover {
+  color: #00513f;
+  background: #f0f4f3;
+}
+
+@media (max-width: 1080px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

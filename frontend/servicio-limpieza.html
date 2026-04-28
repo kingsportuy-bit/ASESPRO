@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASESPRO | Servicio de Limpieza</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#dee5d8",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#c1c9bd",
+                    "inverse-surface": "#2e312e",
+                    "surface-variant": "#e1e3de",
+                    "on-tertiary-fixed-variant": "#3f4946",
+                    "secondary": "#596057",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#006b31",
+                    "inverse-on-surface": "#f0f1ec",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d9dbd5",
+                    "on-secondary-fixed-variant": "#424940",
+                    "on-background": "#191c19",
+                    "background": "#f8faf5",
+                    "surface-bright": "#f8faf5",
+                    "error": "#ba1a1a",
+                    "outline": "#6d7b6d",
+                    "surface-container-high": "#e7e9e3",
+                    "primary-fixed-dim": "#5adf81",
+                    "outline-variant": "#bccaba",
+                    "on-tertiary-fixed": "#141d1b",
+                    "on-tertiary-container": "#f4fffa",
+                    "surface-tint": "#006d32",
+                    "on-surface-variant": "#3d4a3e",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005224",
+                    "on-primary-fixed": "#00210b",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#dee5d8",
+                    "surface-container-low": "#f2f4ef",
+                    "primary-fixed": "#78fc9b",
+                    "tertiary-fixed-dim": "#bec9c5",
+                    "surface-container": "#edefe9",
+                    "on-surface": "#191c19",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#008740",
+                    "tertiary-fixed": "#dae5e0",
+                    "surface-container-highest": "#e1e3de",
+                    "tertiary": "#545e5b",
+                    "on-secondary-fixed": "#171d16",
+                    "on-primary-container": "#f7fff3",
+                    "on-secondary-container": "#5f665d",
+                    "tertiary-container": "#6c7773",
+                    "inverse-primary": "#5adf81",
+                    "surface": "#f8faf5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/60 dark:bg-emerald-950/60 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-4">
+<div class="text-2xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50">ASESPRO</div>
+<!-- Desktop Links -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-emerald-900/70 dark:text-emerald-100/70 font-manrope tracking-tight font-medium hover:text-emerald-600 transition-colors duration-300" href="#">Inicio</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 font-manrope tracking-tight font-medium hover:text-emerald-600 transition-colors duration-300" href="#">Alquiler</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 font-manrope tracking-tight font-medium hover:text-emerald-600 transition-colors duration-300" href="#">Venta</a>
+<a class="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-700 pb-1 font-manrope tracking-tight font-medium transition-colors duration-300" href="#">Servicio de Limpieza</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 font-manrope tracking-tight font-medium hover:text-emerald-600 transition-colors duration-300" href="#">Contacto</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-emerald-700 dark:text-emerald-400 cursor-pointer">language</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2 rounded-full font-medium transition-all duration-300">
+                    Consultar
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative px-8 py-20 max-w-7xl mx-auto overflow-hidden">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-7 z-10">
+<span class="text-primary font-semibold tracking-widest uppercase text-xs mb-4 block">Excelencia en Cada Rincón</span>
+<h1 class="text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight leading-[1.1] mb-8">
+                        Limpieza Profesional <br/><span class="text-primary">para Espacios de Autor.</span>
+</h1>
+<p class="text-xl text-on-surface-variant leading-relaxed max-w-xl mb-10">
+                        Elevamos el estándar de higiene a una forma de cuidado arquitectónico. Servicios especializados para residencias de lujo y entornos corporativos exigentes.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+                            Agendar Servicio
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="bg-surface-container-highest text-on-surface px-8 py-4 rounded-lg font-bold hover:bg-surface-variant transition-colors">
+                            Ver Portafolio
+                        </button>
+</div>
+</div>
+<div class="md:col-span-5 relative">
+<div class="aspect-[4/5] rounded-lg overflow-hidden relative">
+<img alt="Professional cleaner in luxury home" class="object-cover w-full h-full grayscale-[20%] contrast-[1.1]" data-alt="Close-up of a professional cleaner using eco-friendly products on a minimalist marble kitchen island with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2gF3jgRjSEwCeIDFLZRLS87YHHuhxdgDZ7js21wdMwFAlbZUtl6H6KhXdIvsd2tAnTDBUbCSc9bCEen5V0EMwrahJp-i9ZqcHi0-AaOIxeb_8MLQEMuyXFAzy3ESp0V9MisGIcWOS3a3rtdVPu1bIIjScYDd5wtj42mzuEJx2JE28_zmcuyTKwjZ1daHPzypPDPr1p3oQsUqbbMzfZ_MEW1BL3u-Va36ebKLIIGQZzSlnxGkb4ihoo5xTfMsB2pPVlEMBbd8p9u0"/>
+<div class="absolute inset-0 bg-primary/5"></div>
+</div>
+<!-- Floating Asymmetric Element -->
+<div class="absolute -bottom-6 -left-12 bg-surface-container-lowest p-8 rounded-lg shadow-xl max-w-[240px] hidden md:block border border-outline-variant/10">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<div class="text-3xl font-bold text-on-surface tracking-tighter">100%</div>
+</div>
+<p class="text-sm font-medium text-on-surface-variant leading-tight">Garantía de satisfacción y discreción absoluta.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Service Overview - Bento Grid -->
+<section class="bg-surface-container-low py-24 px-8">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-bold tracking-tight text-on-surface mb-6">Curaduría de Higiene Profesional</h2>
+<p class="text-on-surface-variant text-lg">No solo limpiamos; preservamos la integridad de sus materiales y el bienestar de su entorno.</p>
+</div>
+<div class="text-primary font-bold text-lg flex items-center gap-2 group cursor-pointer">
+                        Ver todos los servicios 
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">east</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Bento Item 1 -->
+<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-lg flex flex-col justify-between group cursor-pointer hover:bg-white transition-colors">
+<div>
+<span class="material-symbols-outlined text-primary text-3xl mb-6">domain</span>
+<h3 class="text-2xl font-bold mb-4">Limpieza Residencial Premium</h3>
+<p class="text-on-surface-variant leading-relaxed max-w-md">Tratamientos especializados para mármol, madera natural y cristales de alta gama. Un servicio discreto adaptado a su agenda.</p>
+</div>
+<div class="mt-12 flex items-center gap-4 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                            EXPLORAR SERVICIO <span class="w-12 h-px bg-primary"></span>
+</div>
+</div>
+<!-- Bento Item 2 -->
+<div class="bg-primary p-10 rounded-lg text-on-primary flex flex-col justify-between">
+<span class="material-symbols-outlined text-on-primary text-4xl mb-6">eco</span>
+<div>
+<h3 class="text-2xl font-bold mb-4">Compromiso Eco-Luxe</h3>
+<p class="text-on-primary/80 leading-relaxed">Utilizamos exclusivamente productos biodegradables de grado industrial que no comprometen la salud ni el medio ambiente.</p>
+</div>
+</div>
+<!-- Bento Item 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-lg flex flex-col justify-between group cursor-pointer hover:bg-white transition-colors">
+<div>
+<span class="material-symbols-outlined text-primary text-3xl mb-6">corporate_fare</span>
+<h3 class="text-2xl font-bold mb-4">Entornos Corporativos</h3>
+<p class="text-on-surface-variant leading-relaxed">Mantenimiento de oficinas y espacios comerciales que reflejan la excelencia de su marca.</p>
+</div>
+<div class="mt-8 flex items-center gap-4 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                            SABER MÁS <span class="w-8 h-px bg-primary"></span>
+</div>
+</div>
+<!-- Bento Item 4 -->
+<div class="md:col-span-2 relative rounded-lg overflow-hidden min-h-[300px]">
+<img alt="Luxury interior" class="absolute inset-0 w-full h-full object-cover" data-alt="Symmetric shot of a minimalist modern living room with tall glass windows and pristine white sofas reflecting luxury and cleanliness" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAKyCf8QHzVLkcNekEpO_42m1pWQpYTmbEucesQNel_Qduloud1H-8x_JbA3gDi8MFGFP2LLHd0BnHhWfBntP_6DomPgUVufhydOTWnpEgc8tCVZ-wwNIlyCHB6WfWA-2j2bkFoZk4PzGL3F8Q21U-Smz2Lbv1xj7O_A4D-lXjLhYtBXCbE7kM2eTYvHubiL6eb7SVigL9naicOrXvW1P3XLsQXeoARgaa1jXGPsidP0_JCH0jjmJ6JbAmu_vbAiuv9AZh_ioZf-Y"/>
+<div class="absolute inset-0 bg-emerald-950/40 backdrop-blur-[2px] p-10 flex flex-col justify-end">
+<h3 class="text-white text-3xl font-bold mb-2">Limpieza de Fin de Obra</h3>
+<p class="text-white/80 max-w-md">Transformamos construcciones en hogares listos para ser habitados.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Choose Us - Tonal Depth Layout -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-4">
+<div class="rounded-lg overflow-hidden aspect-square">
+<img alt="Cleaning tools" class="w-full h-full object-cover" data-alt="Aesthetic arrangement of eco-friendly cleaning supplies in a wooden caddy on a white surface with soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1KBj81MfrYB_Y7F3VEuJvoymGnFpvn3HVHDpNQffhw0UEypeOa5AF11WZyJ4fvtx4JbVKP3PF1rZ55o2GI3dCS61spch_YjcKQlK4Ri_GkQ6fhWTvxon0jD2YRgCo5UfaFYtXc7jxymJ4TPFptwqXOmou2hvqESNGikWT6mB77u-__vx17dwpbJDuttUSr3jrP9a6oqspdU2vzsrZIX5uRQCXnKFlvzlLA2V_IWzE0FtDZ5YAOkGepOQOZkGmzaoYwu5Vx9nTdww"/>
+</div>
+<div class="bg-secondary-container rounded-lg p-8 flex flex-col justify-center items-center text-center">
+<div class="text-4xl font-extrabold text-on-secondary-container mb-2">15+</div>
+<div class="text-xs uppercase tracking-widest font-bold text-on-secondary-container/60">Años de Confianza</div>
+</div>
+</div>
+<div class="pt-12 space-y-4">
+<div class="bg-surface-container-high rounded-lg p-8">
+<span class="material-symbols-outlined text-primary text-4xl mb-4">military_tech</span>
+<div class="font-bold text-lg leading-tight">Certificación de Calidad ISO</div>
+</div>
+<div class="rounded-lg overflow-hidden aspect-[3/4]">
+<img alt="Clean surface" class="w-full h-full object-cover" data-alt="Professional hands wearing white gloves cleaning a high-end metal surface to a mirror finish" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtJKodIcXzKEkeQ42o1ICXIQQIOTURIN6XmTQ8LOqOa8D_yfE0kXDuHwbus30CRa3j3-2qcbOInt6YpTjiESojfZu9_0M-U87rOFjg3NnA7csyWCkpzOLEtRl6atuYDpqa_v7h4lSAoh02A6cGy-XQjwTVpBUs62HeftC4ncs0qvR2G2ay0SEGst6MiqwjwVO_iPIZMAqvdYpzUHD0wQuGRLaGTI1w251s2UuJMeMyST-l8tF9HVJCZgpRmErOu4dlaTSwCfB-_H8"/>
+</div>
+</div>
+</div>
+<div class="space-y-12">
+<div>
+<h2 class="text-4xl font-bold tracking-tight mb-6">¿Por qué confiar en ASESPRO?</h2>
+<div class="w-20 h-1.5 bg-primary rounded-full"></div>
+</div>
+<div class="space-y-8">
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2 text-on-surface">Profesionalismo Absoluto</h4>
+<p class="text-on-surface-variant leading-relaxed">Nuestro personal está rigurosamente seleccionado y capacitado bajo protocolos internacionales de hospitalidad.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">key</span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2 text-on-surface">Confianza y Discreción</h4>
+<p class="text-on-surface-variant leading-relaxed">Entendemos el valor de su privacidad. Operamos con total reserva y sistemas de control de acceso seguros.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">eco</span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2 text-on-surface">Filosofía Eco-Responsable</h4>
+<p class="text-on-surface-variant leading-relaxed">Protegemos su salud eliminando el uso de químicos agresivos, reemplazándolos por tecnología de limpieza verde.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- WhatsApp CTA - Glassmorphic Impact -->
+<section class="px-8 py-20">
+<div class="max-w-7xl mx-auto relative rounded-xl overflow-hidden bg-emerald-900 px-8 py-20 md:p-24 text-center">
+<!-- Background Image Layer -->
+<div class="absolute inset-0 opacity-20">
+<img alt="Background texture" class="w-full h-full object-cover grayscale" data-alt="Subtle close-up of a perfectly clean glass window with soft reflections of a garden, creating a peaceful and fresh atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4s9pyrwzBbA9eUBa6RdRazRAbDERqhNczegoUzXvUaUGSUzlUGSZi00mfT_6bQkVXhAgt0WifXm3Lgn4i6ASoKhLkXpnKHKfSilgHTXh6a_2S9IGGAXBHW-p3SDsyNrlnJ-RVnBzH-G-g9OSg6bOLEBQKjfPEYwmKCaU0FRcGzb2Ektvo9XvV1Ycu8hvvmAVKD7h-4a0TXX1fdoRCyx3_9-S6LlyfpiP0e3qs3Ej4Z5I3oyV0Es8zl9B3VvGsRk2NXtZOwbzE8qE"/>
+</div>
+<div class="relative z-10 flex flex-col items-center">
+<span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white backdrop-blur-md text-sm font-medium mb-8">
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                        Disponibilidad Inmediata
+                    </span>
+<h2 class="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight max-w-4xl">
+                        Solicite su presupuesto personalizado vía <span class="text-primary-fixed">WhatsApp</span>
+</h2>
+<p class="text-emerald-100/70 text-lg mb-12 max-w-2xl">
+                        Atención directa y agendamiento rápido. Nuestro equipo de atención al cliente está listo para coordinar su próxima sesión de limpieza.
+                    </p>
+<a class="inline-flex items-center gap-4 bg-primary-fixed text-on-primary-fixed px-10 py-5 rounded-lg text-xl font-bold hover:scale-105 transition-transform shadow-2xl shadow-black/20" href="https://wa.me/59899123456">
+<span class="material-symbols-outlined text-3xl">chat</span>
+                        Contactar ahora por WhatsApp
+                    </a>
+<div class="mt-12 flex gap-8 text-emerald-100/50 text-sm font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">bolt</span> Respuesta en &lt; 15 min
+                        </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">event_available</span> Lunes a Sábado
+                        </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-emerald-50 dark:bg-emerald-950 w-full mt-20">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-start gap-12">
+<div class="space-y-6 max-w-sm">
+<div class="text-xl font-bold text-emerald-900 dark:text-emerald-50">ASESPRO</div>
+<p class="text-emerald-900/60 dark:text-emerald-100/60 font-manrope text-sm leading-relaxed">
+                    Especialistas en la gestión y curaduría de propiedades de alto perfil. Excelencia, discreción y resultados impecables.
+                </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-2 gap-16">
+<div>
+<h5 class="text-emerald-800 dark:text-emerald-300 font-bold mb-6">Compañía</h5>
+<ul class="space-y-4">
+<li><a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Privacidad</a></li>
+<li><a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Términos</a></li>
+</ul>
+</div>
+<div>
+<h5 class="text-emerald-800 dark:text-emerald-300 font-bold mb-6">Social</h5>
+<ul class="space-y-4">
+<li><a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">WhatsApp</a></li>
+<li><a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Instagram</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 py-8 border-t border-emerald-900/10 flex justify-between items-center">
+<p class="text-emerald-900/40 dark:text-emerald-100/40 text-xs">© 2024 ASESPRO Real Estate. Architectural Curation.</p>
+<button class="text-emerald-700 font-semibold text-sm hover:text-emerald-500 flex items-center gap-2" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                Volver arriba <span class="material-symbols-outlined text-sm">north</span>
+</button>
+</div>
+</footer>
+<script defer src="./assets/app.js"></script>
+</body></html>

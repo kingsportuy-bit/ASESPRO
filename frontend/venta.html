@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASESPRO | Propiedades en Venta</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#424940",
+                    "on-surface-variant": "#3d4a3e",
+                    "on-tertiary-fixed": "#141d1b",
+                    "surface-container": "#edefe9",
+                    "primary": "#006b31",
+                    "surface-dim": "#d9dbd5",
+                    "secondary": "#596057",
+                    "on-primary-fixed": "#00210b",
+                    "surface": "#f8faf5",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#f4fffa",
+                    "tertiary-fixed": "#dae5e0",
+                    "outline": "#6d7b6d",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#005224",
+                    "surface-variant": "#e1e3de",
+                    "primary-container": "#008740",
+                    "inverse-on-surface": "#f0f1ec",
+                    "inverse-surface": "#2e312e",
+                    "inverse-primary": "#5adf81",
+                    "on-secondary-fixed": "#171d16",
+                    "tertiary": "#545e5b",
+                    "surface-container-low": "#f2f4ef",
+                    "surface-container-high": "#e7e9e3",
+                    "surface-bright": "#f8faf5",
+                    "on-tertiary-fixed-variant": "#3f4946",
+                    "background": "#f8faf5",
+                    "surface-tint": "#006d32",
+                    "error": "#ba1a1a",
+                    "on-background": "#191c19",
+                    "on-primary-container": "#f7fff3",
+                    "tertiary-container": "#6c7773",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#bec9c5",
+                    "outline-variant": "#bccaba",
+                    "surface-container-highest": "#e1e3de",
+                    "secondary-fixed-dim": "#c1c9bd",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#dee5d8",
+                    "secondary-fixed": "#dee5d8",
+                    "primary-fixed": "#78fc9b",
+                    "on-secondary-container": "#5f665d",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#5adf81",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#191c19"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+        /* Custom scrollbar for a cleaner editorial look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bccaba; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary/20">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+<div class="text-2xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50 font-manrope">
+                ASESPRO
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors font-manrope tracking-tight leading-relaxed" href="#">Inicio</a>
+<a class="text-emerald-700 dark:text-emerald-400 font-semibold border-b-2 border-emerald-600 font-manrope tracking-tight leading-relaxed" href="#">Alquiler</a>
+<a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors font-manrope tracking-tight leading-relaxed" href="#">Venta</a>
+<a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors font-manrope tracking-tight leading-relaxed" href="#">Servicio de Limpieza</a>
+<a class="text-zinc-600 dark:text-zinc-400 font-medium hover:text-emerald-600 transition-colors font-manrope tracking-tight leading-relaxed" href="#">Contactos</a>
+</div>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-DEFAULT font-semibold transition-all active:scale-95 duration-200 ease-in-out shadow-sm">
+                Agendar Cita
+            </button>
+</div>
+</nav>
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+<!-- Hero Section / Header -->
+<header class="mb-12">
+<h1 class="text-5xl font-extrabold tracking-tighter text-on-surface mb-4 font-headline">Propiedades en Venta</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed font-body">Descubra una curaduría exclusiva de residencias diseñadas bajo los más altos estándares de arquitectura y confort.</p>
+</header>
+<!-- Filters & View Toggle -->
+<section class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex flex-wrap gap-4 items-end">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-widest text-outline ml-1">Tipo de Propiedad</label>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border-none rounded-DEFAULT px-6 py-3 pr-12 text-on-surface font-medium focus:ring-2 focus:ring-primary min-w-[200px]">
+<option>Todos los tipos</option>
+<option>Penthouse</option>
+<option>Villas Modernas</option>
+<option>Apartamentos</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-widest text-outline ml-1">Rango de Precio</label>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border-none rounded-DEFAULT px-6 py-3 pr-12 text-on-surface font-medium focus:ring-2 focus:ring-primary min-w-[200px]">
+<option>Cualquier precio</option>
+<option>$500k - $1M</option>
+<option>$1M - $3M</option>
+<option>$3M+</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">payments</span>
+</div>
+</div>
+<button class="bg-surface-container-highest text-on-surface px-6 py-3 rounded-DEFAULT font-semibold flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">tune</span>
+                    Más Filtros
+                </button>
+</div>
+<div class="flex bg-surface-container-low p-1 rounded-DEFAULT">
+<button class="bg-surface-container-lowest text-primary shadow-sm px-4 py-2 rounded-DEFAULT flex items-center gap-2 font-semibold">
+<span class="material-symbols-outlined">grid_view</span>
+                    Cuadrícula
+                </button>
+<button class="text-on-surface-variant px-4 py-2 rounded-DEFAULT flex items-center gap-2 font-medium hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">map</span>
+                    Mapa
+                </button>
+</div>
+</section>
+<!-- Listings Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Property Card 1 -->
+<article class="group bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col transition-all hover:shadow-[0px_20px_40px_rgba(25,28,25,0.05)]">
+<div class="relative aspect-[4/3] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="luxury modern villa with floor to ceiling windows at dusk soft interior lighting reflecting on private pool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPBK2YxpjN6L3B9JhnmuuZeyazDJaIrx4RwT9kU0IzMtG-eAOMll5-0lxzBwvUtNvQ5_5AfajiX5rteWCW_f7oNB1RXnWHTl3029Tzm1pStn_5Dv-DgNH2_FGy4mPRsqFOE2nlEIESu9T9J89d0v1cwYQw7dTLq15t-A0xLVwxNTWZAoH5kYvcO53BVXLz6hl1uV7X5vNJ6w5frnkuwxsmlGoWyUYJ_v8sxAWzkSLqQ9_neavxjhWh6cI9Jdw0LdQcXc4zELJBu8s"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-primary/90 text-on-primary px-3 py-1 rounded-DEFAULT text-xs font-bold tracking-wider uppercase backdrop-blur-md">Oportunidad</span>
+<span class="bg-white/80 dark:bg-black/40 text-on-surface px-3 py-1 rounded-DEFAULT text-xs font-bold tracking-wider uppercase backdrop-blur-md">Nuevo</span>
+</div>
+<button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-8 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-4">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface font-headline leading-tight">Residencia Lumina</h3>
+<span class="text-primary font-extrabold text-xl">$2.450.000</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-6">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-medium">Costa del Este, Ciudad de Panamá</span>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/15 mt-auto">
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bed</span>
+<span class="text-sm font-bold">4</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bathtub</span>
+<span class="text-sm font-bold">5</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">square_foot</span>
+<span class="text-sm font-bold">450m²</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Property Card 2 -->
+<article class="group bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col transition-all hover:shadow-[0px_20px_40px_rgba(25,28,25,0.05)]">
+<div class="relative aspect-[4/3] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="contemporary penthouse living room with minimalist furniture dark wood accents and panoramic city skyline view through glass walls" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6GzwzrA43GhSTTxW9L1R9OT_qMV2zSe9IYJ2zaGiqrVnI5TgVUTEI4Oh8KblK8UdygbvHKiD1YtEDIOrmTXB0iCUyPYKVefVSniuxELgx0SfliSK6h8hAIoZthYdwjpwdX5tzhuhod_elaVPcyDqw9Nfmmm8OESB72FLGjXdjxsVbAmk-l4qsdXWX_6Dbqu8sTroR6-vRl71U0EGReE351IvFTfreu6pG_tyDMZk3-h5QkqEp_kTLGvt-Ng08pnXYMFXeF4a2vfQ"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-primary/90 text-on-primary px-3 py-1 rounded-DEFAULT text-xs font-bold tracking-wider uppercase backdrop-blur-md">Exclusivo</span>
+</div>
+<button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-8 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-4">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface font-headline leading-tight">Sky Loft Penthouse</h3>
+<span class="text-primary font-extrabold text-xl">$1.890.000</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-6">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-medium">Obarrio, Distrito Central</span>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/15 mt-auto">
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bed</span>
+<span class="text-sm font-bold">3</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bathtub</span>
+<span class="text-sm font-bold">3.5</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">square_foot</span>
+<span class="text-sm font-bold">320m²</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Property Card 3 -->
+<article class="group bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col transition-all hover:shadow-[0px_20px_40px_rgba(25,28,25,0.05)]">
+<div class="relative aspect-[4/3] overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="ultra modern architectural kitchen with white marble island emerald green cabinetry and sleek integrated appliances morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArksMbKIWs9pmmDQO2Qr9Z7G5-cgECHiU-7KvxzkAtT0QQUUKCUvejoHhuBYlq-gm2NZT1_V1fMUfIJuKMxLYAcZum__I_DcpnOgePsr8XD8XDCYZUGCSUJOeTQLkypWWc2r6j66U2vF3TJszhGS562IuAPPHCidOEj3ahGrLEjtNA1QPUcxWgWqXPPsjZ3HHXULGF7JwuHd5HZ8Lc4x89ovzF7d9Ipdl_yNr86meZTUieNcoEpBoj9IlcbxToiAUrlSVNeWLbdH8"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-primary/90 text-on-primary px-3 py-1 rounded-DEFAULT text-xs font-bold tracking-wider uppercase backdrop-blur-md">Oportunidad</span>
+</div>
+<button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-8 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-4">
+<h3 class="text-2xl font-bold tracking-tight text-on-surface font-headline leading-tight">Emerald Garden Villa</h3>
+<span class="text-primary font-extrabold text-xl">$3.100.000</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-6">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-medium">Santa María Golf &amp; CC</span>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/15 mt-auto">
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bed</span>
+<span class="text-sm font-bold">5</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">bathtub</span>
+<span class="text-sm font-bold">6</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-emerald-800 text-lg">square_foot</span>
+<span class="text-sm font-bold">680m²</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Interactive Map Section -->
+<section class="mt-24">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-bold tracking-tight text-on-surface font-headline">Explora en el Mapa</h2>
+<p class="text-on-surface-variant mt-2 font-body">Encuentre su próxima inversión en las ubicaciones más estratégicas.</p>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold hover:underline">
+                    Ver pantalla completa
+                    <span class="material-symbols-outlined">open_in_full</span>
+</button>
+</div>
+<div class="relative w-full h-[500px] rounded-lg overflow-hidden shadow-sm bg-surface-container-high border-none">
+<!-- Mock Map UI -->
+<div class="absolute inset-0 bg-zinc-200" data-location="Panama City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCkx9AHbPRR54GQl_1ek1ZV97-hNXKD4SaSuvon5ql0dpe3h6yekgfAfwDN0DulDPkYHv1jZhOimR_lEHk6M_19jLnnITBgiqinoipQ12-lmdlOk_7BDBVHLwzejQ8imHy_NNzKUZ_-JXPzrKrP_Ry_VtYQ9r0UVj33YPcLZamt6GoOLzlzuaFKjUeIAyGEro1gQVdDGY76f6DXXZU3nb-4qBPk41k2MeEWeMS0ZhTKoGWWewrCcfmTXPnIr2oUi6VBs7Ks8OVRsOM')">
+<!-- Custom Map Markers via HTML -->
+<div class="absolute top-[30%] left-[45%] group">
+<div class="bg-primary text-on-primary px-3 py-1 rounded-full text-sm font-bold shadow-lg transform transition-transform group-hover:scale-110 cursor-pointer">$2.4M</div>
+<div class="w-0.5 h-4 bg-primary mx-auto"></div>
+</div>
+<div class="absolute top-[50%] left-[55%] group">
+<div class="bg-primary text-on-primary px-3 py-1 rounded-full text-sm font-bold shadow-lg transform transition-transform group-hover:scale-110 cursor-pointer">$1.8M</div>
+<div class="w-0.5 h-4 bg-primary mx-auto"></div>
+</div>
+<div class="absolute top-[40%] left-[65%] group">
+<div class="bg-emerald-800 text-on-primary px-3 py-1 rounded-full text-sm font-bold shadow-lg transform transition-transform group-hover:scale-110 cursor-pointer">$3.1M</div>
+<div class="w-0.5 h-4 bg-emerald-800 mx-auto"></div>
+</div>
+</div>
+<!-- Floating Map Controls -->
+<div class="absolute bottom-6 right-6 flex flex-col gap-2">
+<button class="w-12 h-12 bg-white/90 backdrop-blur shadow-md rounded-DEFAULT flex items-center justify-center text-on-surface hover:bg-white transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-12 h-12 bg-white/90 backdrop-blur shadow-md rounded-DEFAULT flex items-center justify-center text-on-surface hover:bg-white transition-all">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<div class="absolute top-6 left-6 flex gap-3">
+<div class="bg-white/90 backdrop-blur px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wide">Propiedad Seleccionada</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-zinc-50 dark:bg-zinc-900 w-full py-12 px-8">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-bold text-emerald-900 dark:text-white font-headline tracking-tighter">ASESPRO</div>
+<p class="text-zinc-500 dark:text-zinc-400 font-manrope text-sm leading-relaxed text-center md:text-left">© 2024 ASESPRO Real Estate. Excellence in Curated Living.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-zinc-500 dark:text-zinc-400 text-sm font-medium hover:text-emerald-700 dark:hover:text-emerald-300 transition-opacity duration-200" href="#">Privacidad</a>
+<a class="text-zinc-500 dark:text-zinc-400 text-sm font-medium hover:text-emerald-700 dark:hover:text-emerald-300 transition-opacity duration-200" href="#">Términos</a>
+<a class="text-zinc-500 dark:text-zinc-400 text-sm font-medium hover:text-emerald-700 dark:hover:text-emerald-300 transition-opacity duration-200" href="#">Blog</a>
+<a class="text-zinc-500 dark:text-zinc-400 text-sm font-medium hover:text-emerald-700 dark:hover:text-emerald-300 transition-opacity duration-200" href="#">Soporte</a>
+</div>
+<div class="flex gap-4">
+<button class="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">share</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+</footer>
+<script defer src="./assets/app.js"></script>
+</body></html>

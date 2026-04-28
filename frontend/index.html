@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASESPRO | Inicio</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e1e3de",
+                    "primary-container": "#008740",
+                    "on-secondary-container": "#5f665d",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f2f4ef",
+                    "tertiary": "#545e5b",
+                    "surface-container-highest": "#e1e3de",
+                    "secondary-fixed": "#dee5d8",
+                    "primary-fixed-dim": "#5adf81",
+                    "inverse-primary": "#5adf81",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#78fc9b",
+                    "tertiary-fixed": "#dae5e0",
+                    "surface": "#f8faf5",
+                    "on-surface-variant": "#3d4a3e",
+                    "on-tertiary-fixed": "#141d1b",
+                    "on-secondary-fixed-variant": "#424940",
+                    "tertiary-fixed-dim": "#bec9c5",
+                    "secondary-fixed-dim": "#c1c9bd",
+                    "on-tertiary-container": "#f4fffa",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c19",
+                    "on-secondary-fixed": "#171d16",
+                    "surface-tint": "#006d32",
+                    "secondary": "#596057",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#005224",
+                    "on-primary-fixed": "#00210b",
+                    "tertiary-container": "#6c7773",
+                    "on-background": "#191c19",
+                    "inverse-on-surface": "#f0f1ec",
+                    "secondary-container": "#dee5d8",
+                    "surface-container": "#edefe9",
+                    "primary": "#006b31",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#bccaba",
+                    "on-tertiary-fixed-variant": "#3f4946",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f8faf5",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e7e9e3",
+                    "background": "#f8faf5",
+                    "outline": "#6d7b6d",
+                    "on-primary-container": "#f7fff3",
+                    "surface-dim": "#d9dbd5",
+                    "inverse-surface": "#2e312e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Manrope', sans-serif; }
+      .glass-nav { background: rgba(248, 250, 245, 0.6); backdrop-filter: blur(20px); }
+      .premium-gradient { background: linear-gradient(135deg, #006b31 0%, #008740 100%); }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 glass-nav">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-6">
+<span class="text-2xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50">ASESPRO</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-emerald-700 dark:text-emerald-400 font-bold border-b-2 border-emerald-700 transition-colors duration-300" href="#">Inicio</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition-colors duration-300" href="#">Alquiler</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition-colors duration-300" href="#">Venta</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition-colors duration-300" href="#">Servicio de Limpieza</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition-colors duration-300" href="#">Contacto</a>
+</div>
+<button class="premium-gradient text-on-primary px-8 py-3 rounded-full font-bold scale-95 transition-transform hover:scale-100">
+                Agendar Cita
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center pt-24 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-90 scale-105" data-alt="luxury modern architectural villa with expansive glass walls and lush green surroundings during dusk with warm interior lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmHk5otzJvwsplQBeI4xSVRGzyrjFZF3zoP7xm4ftZzPP9fJSMj0ZF_DazgWYIZHy3pdY42YtyIHodBbEe0q3TzLkD1YiZtWyakuxUDgf_DR0KEeYd_SNPOdyGvRM1X19ncTOSEmwxA87dRL91tFXOTRCP55MjBmFyN0sCm2OW3hVcB39cAqKviSOd745CgMwwj4Zt51XGZ53SZDp-o6Gx0e24M9mo12AE7sAmAsx8dQdgsB3ctT3NyF8Fq3J0Gh275VtvHUEsotU"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-2xl space-y-8">
+<h1 class="text-6xl md:text-7xl font-extrabold tracking-tight text-emerald-900 leading-[1.1]">
+                    Encontrá tu próximo hogar con confianza
+                </h1>
+<p class="text-xl text-on-surface-variant font-medium leading-relaxed">
+                    Ayuda para encontrar Propiedades. Curamos espacios que no solo habitas, sino que definen tu legado.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="premium-gradient text-on-primary px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all">
+                        Ver propiedades
+                    </button>
+<button class="bg-surface-container-highest text-on-surface px-10 py-4 rounded-full font-bold text-lg flex items-center gap-3 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+                        Contactar por WhatsApp
+                    </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Acceso Rápido (Bento Style) -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="group relative overflow-hidden rounded-lg aspect-[16/9] bg-surface-container-low flex items-end p-12">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" data-alt="high-end minimalist apartment interior with floor to ceiling windows and emerald green velvet sofa" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYHAzxdJKFDU8eUQ-Squ5dfCP4xMkPF9hvCKDElGexI9hf-E1y2-qmafGjUlmlzplHf49JtH4r_1y8WJBHOp3OPw2Lk-Gxy77jpWlBn3lilhYA0IamjfG56BZ8BGwiWfUiVv9K7oV3YKeaLNoNJ6vMyuXPHFWCBw772vR0FPuUdv7tNd8R9Z1ldzHOQLSQxWSb8tsK1zE0iE7hl-mhdlPqEk57SwGOGzDaY6VrafCx5lxdNyVs9twAg58wyw2essa9ytlMScMSHh4"/>
+<div class="absolute inset-0 bg-emerald-900/40 group-hover:bg-emerald-900/30 transition-colors"></div>
+<div class="relative z-10">
+<h3 class="text-4xl font-bold text-white mb-4">Alquileres</h3>
+<p class="text-white/80 mb-6 max-w-sm">Descubre residencias exclusivas para estancias temporales o permanentes.</p>
+<button class="bg-white/20 backdrop-blur-md text-white border border-white/30 px-6 py-2 rounded-full font-bold hover:bg-white hover:text-emerald-900 transition-all">
+                        Explorar Alquiler
+                    </button>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg aspect-[16/9] bg-surface-container-low flex items-end p-12">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" data-alt="aerial drone shot of a luxury residential estate with a private swimming pool and architectural landscaping" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKJs7hSFf9a4k1bYWk_oh0aytRRGCDNc981zh24UtAQ7uAg-zgIhx_0d3nlXkw9WY7PPeuvnlRTPnt3Hc7FbTnsXMM6sOwrdsYMZwLGIuyZFjcwXq9aLKdE0YjjiikzKPcOItEG-4GbkEQWgasB2UPhBTlSF8LJjhI3ZAPyZv6FJk6ddpgiw8pw8jRNLeyz5PmBwCvP07n_gQ_pyrK1q5cxIMC3NIOIs8P8Tuv-_3qsGZkoHS9I59dmZ5zt7lOtQo9tkRJIzhd1m8"/>
+<div class="absolute inset-0 bg-emerald-900/40 group-hover:bg-emerald-900/30 transition-colors"></div>
+<div class="relative z-10">
+<h3 class="text-4xl font-bold text-white mb-4">Ventas</h3>
+<p class="text-white/80 mb-6 max-w-sm">Invierte en arquitectura atemporal y propiedades de alto valor.</p>
+<button class="bg-white/20 backdrop-blur-md text-white border border-white/30 px-6 py-2 rounded-full font-bold hover:bg-white hover:text-emerald-900 transition-all">
+                        Explorar Ventas
+                    </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Propiedades Destacadas -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div class="space-y-4">
+<span class="text-primary font-bold tracking-widest uppercase text-sm">Selección de Autor</span>
+<h2 class="text-5xl font-extrabold text-emerald-900 tracking-tight">Propiedades Destacadas</h2>
+</div>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 hover:text-emerald-800 transition-colors" href="#">Ver catálogo completo</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden group">
+<div class="relative h-80 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="contemporary minimalist residence with clean lines white facade and architectural shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-PMRs8ZD1ZSBV6RVrMzjb5duLxC2JG1fGt74_1Ntwv0N1F2QoaMHw5jZsS8ZrA8ROaIjPfQ-gbmSCHMUmDTn8FEQb68QuFYGHOAjy2GltcaWlb1m136e9EfM9Ld9QvIQAfJNkr4dVgt6oS8Lo2VeLkPmmQS-mflrR4Hv0AZmW1PuUCLluVstuwPG-ej0JEY9Ogx3-5xUrZu9QL1jmASANUCKxdhp3Mad6E_iDdQ5ANUFZJPjcvVtVcjUfe5DIsXECYTtfYpwHpuQ"/>
+<div class="absolute top-4 left-4 bg-emerald-900/80 backdrop-blur-md text-white px-4 py-1 rounded-full text-xs font-bold">VENTA</div>
+</div>
+<div class="p-8">
+<p class="text-emerald-700 font-bold text-xl mb-1">USD 450,000</p>
+<h4 class="text-2xl font-bold text-emerald-900 mb-4">Penthouse El Mirador</h4>
+<div class="flex items-center gap-4 text-on-surface-variant mb-6">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="bed">bed</span>
+<span class="text-sm font-medium">3 Dorm</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="straighten">straighten</span>
+<span class="text-sm font-medium">180m²</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span class="text-sm font-medium">Punta del Este</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-full border border-outline-variant text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all">Ver Detalles</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden group">
+<div class="relative h-80 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="modern brutalist concrete home with warm wood accents and outdoor lounge area" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhLJd8XmoTSEMQpsd0MNh1JurIrx6LrjyShQA49GrRdjaZAs4eL0xcaQEN4VvxYSiTALJUSKApd-JS2CaZWZPhIRfCRradHAl0V8fcW4PfI3YmaiIYqawIdKGgCTfD07AKt5n2qmaDLjN5NxUKLxdIyr13942SheJxltCQVp0tfopj7Lq3s2N1WvG35mpDVKTUGn8MVsF-QJTQepEBdSOO_F8loaNiq6--nlh-kZDWuBMfMaS2zLtk6ZWBgW2vhSSam-T3wZ-fG9Q"/>
+<div class="absolute top-4 left-4 bg-emerald-900/80 backdrop-blur-md text-white px-4 py-1 rounded-full text-xs font-bold">ALQUILER</div>
+</div>
+<div class="p-8">
+<p class="text-emerald-700 font-bold text-xl mb-1">USD 2,500 /mes</p>
+<h4 class="text-2xl font-bold text-emerald-900 mb-4">Residencia Forestal</h4>
+<div class="flex items-center gap-4 text-on-surface-variant mb-6">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="bed">bed</span>
+<span class="text-sm font-medium">4 Dorm</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="straighten">straighten</span>
+<span class="text-sm font-medium">240m²</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span class="text-sm font-medium">Montevideo</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-full border border-outline-variant text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all">Ver Detalles</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden group">
+<div class="relative h-80 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="luxury home interior with double height ceiling and circular staircase and designer lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCYy3SEmchZQWWdwsysMR340EZfZUOLpJARdK215BBunzVSnNAYCb-slv0_b7NgobtfrmJ5gB41aP6cqn6J1sinc57edjJILcyYZrBN8d_UG4CkcV-reeo_DelAwAW0eZaHx9fmOSIgSsk4DuLCJmcl3d6Krz74f_irEdKYQIjnCj1naYVkt1o7gI3BgybZgoxarDS7-SLO4uEIhtHp37YTJmDsZLLpX_7UaazORJggTp8P-hbpToz0kNuul7xOoNa_4YaTMwV_RM"/>
+<div class="absolute top-4 left-4 bg-emerald-900/80 backdrop-blur-md text-white px-4 py-1 rounded-full text-xs font-bold">VENTA</div>
+</div>
+<div class="p-8">
+<p class="text-emerald-700 font-bold text-xl mb-1">USD 890,000</p>
+<h4 class="text-2xl font-bold text-emerald-900 mb-4">Casona del Lago</h4>
+<div class="flex items-center gap-4 text-on-surface-variant mb-6">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="bed">bed</span>
+<span class="text-sm font-medium">5 Dorm</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="straighten">straighten</span>
+<span class="text-sm font-medium">450m²</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span class="text-sm font-medium">Canelones</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-full border border-outline-variant text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-all">Ver Detalles</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Cómo trabajamos -->
+<section class="py-24 max-w-7xl mx-auto px-8">
+<div class="text-center mb-20 max-w-2xl mx-auto">
+<h2 class="text-5xl font-extrabold text-emerald-900 mb-6">Un proceso diseñado para tu tranquilidad</h2>
+<p class="text-on-surface-variant text-lg">Hacemos que encontrar tu próximo hogar sea una experiencia fluida y gratificante.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
+<!-- Step 1 -->
+<div class="relative space-y-6">
+<div class="w-20 h-20 bg-primary-container text-white rounded-full flex items-center justify-center text-3xl font-bold">1</div>
+<h4 class="text-2xl font-bold text-emerald-900">Elige una propiedad</h4>
+<p class="text-on-surface-variant leading-relaxed">Explora nuestro catálogo curado de propiedades que cumplen con los más altos estándares de calidad y diseño.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative space-y-6">
+<div class="w-20 h-20 bg-primary-container text-white rounded-full flex items-center justify-center text-3xl font-bold">2</div>
+<h4 class="text-2xl font-bold text-emerald-900">Contáctanos por WhatsApp</h4>
+<p class="text-on-surface-variant leading-relaxed">Recibe asesoramiento personalizado inmediato. Estamos a un mensaje de distancia para resolver tus dudas.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative space-y-6">
+<div class="w-20 h-20 bg-primary-container text-white rounded-full flex items-center justify-center text-3xl font-bold">3</div>
+<h4 class="text-2xl font-bold text-emerald-900">Coordinamos la visita</h4>
+<p class="text-on-surface-variant leading-relaxed">Agenda una cita exclusiva para conocer tu futuro hogar. Nos adaptamos a tus tiempos y preferencias.</p>
+</div>
+</div>
+</section>
+<!-- Servicio de Limpieza (Flash) -->
+<section class="py-24 bg-emerald-950 overflow-hidden relative">
+<div class="absolute right-0 top-0 w-1/2 h-full opacity-30">
+<img class="w-full h-full object-cover" data-alt="clean organized minimalist modern living room with bright light and dust-free surfaces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQWZaZ8g2qjUe_Cxov87u1FxQsAlO2YfCUYW2OntaR3sxwZbFt4pMPOqarvvXHbMurrwxwrEQxJQPzdqz8BCV3rNui4hXgVk1cFpK2Gudq_-VnbchsRHS6eJH3govoW7rNAbFXm98PotwK5G_TeABpO7CLmmRkzYXU3bI3XDOAzsZZaved2F3ccH2MQSLjeUgEDCloxFsBulebNZDHqoU69csVRz35OhQyiCnimcuUHxC1oDt8n3Uw0DLu_pH_Tv1fw47Sc6GtqqE"/>
+</div>
+<div class="max-w-7xl mx-auto px-8 relative z-10">
+<div class="max-w-xl">
+<span class="text-primary-fixed-dim font-bold tracking-widest uppercase text-sm mb-4 block">Más que inmobiliaria</span>
+<h2 class="text-5xl font-extrabold text-white mb-8 leading-tight">Servicio de Limpieza <span class="text-emerald-400">Flash</span></h2>
+<p class="text-emerald-100/70 text-xl mb-12 leading-relaxed">
+                    Preparamos tu propiedad para que brille. Servicio profesional de limpieza profunda para mudanzas, eventos o mantenimiento premium.
+                </p>
+<div class="flex items-center gap-8">
+<button class="bg-emerald-400 text-emerald-950 px-8 py-4 rounded-full font-bold hover:bg-emerald-300 transition-all">
+                        Solicitar Servicio
+                    </button>
+<a class="text-white font-bold border-b border-emerald-400 pb-1 flex items-center gap-2" href="#">
+                        Saber más <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Mapa Interactivo -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="mb-12">
+<h2 class="text-4xl font-extrabold text-emerald-900 mb-2">Explora por Ubicación</h2>
+<p class="text-on-surface-variant">Encuentra la propiedad perfecta en tu zona preferida.</p>
+</div>
+<div class="h-[500px] rounded-lg overflow-hidden bg-surface-container shadow-inner relative">
+<img class="w-full h-full object-cover grayscale opacity-40" data-alt="minimalist architectural map representation with soft green and grey tones" data-location="Montevideo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-m8-AHrwtXqJ6DyJz3rI3I-mKLYE9PqSlgD0AlrQJVEc83tBQdHSVLQre0ZFFhNwRLeHX-GUUy1JmqxokGXZBezvIOO_3C0kK-P-P5Q69Z_APmSwIzPWNIHSKFsYffL_Pcm655SLJn2-nOOwf4nFOc2aJAyY-N4TfNnlfic3TVZgde-GbkXxHGHNLwiFtNc3zKL_Rj29-zSDKhTDsF8pxr9qzNIviT4TBrNUhZ-H9ZW1qk4SHkV_Q9juJsdNDnV1rGCd7xaFGzHM"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-white/80 backdrop-blur-xl p-8 rounded-lg shadow-xl text-center max-w-sm">
+<span class="material-symbols-outlined text-primary text-5xl mb-4" data-icon="map">map</span>
+<h4 class="text-xl font-bold text-emerald-900 mb-4">Mapa de Propiedades</h4>
+<p class="text-on-surface-variant mb-6">Interactúa con nuestro mapa para ver la disponibilidad en tiempo real.</p>
+<button class="premium-gradient text-white px-8 py-3 rounded-full font-bold">Activar Mapa</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Sección de Confianza -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+<div class="space-y-12">
+<h2 class="text-5xl font-extrabold text-emerald-900">Por qué confiar en nosotros</h2>
+<div class="space-y-8">
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-emerald-900 mb-2">Profesionalismo Inmobiliario</h4>
+<p class="text-on-surface-variant">Contamos con años de experiencia en el mercado de lujo uruguayo.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-emerald-900 mb-2">Servicio Personalizado</h4>
+<p class="text-on-surface-variant">No somos una plataforma masiva; somos curadores para clientes exigentes.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-emerald-900 mb-2">Ayuda en Financiación</h4>
+<p class="text-on-surface-variant">Te acompañamos en toda la gestión bancaria y legal para tu compra.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary-fixed/20 rounded-full blur-3xl"></div>
+<img class="relative z-10 rounded-lg shadow-2xl grayscale hover:grayscale-0 transition-all duration-700" data-alt="professional smiling real estate agent in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaSGmF2Cxwb5LLJjbqp51UXbkTVPHv-fGb8kEv-rMl4O8AIwplpfGQrZ_b3PDT7OohKmgpjZu3OPl0d2vxs1kIYcTPyIFP-Z82eFzlHwbKsQArKhzxEcwwRXY0959NulLQoHWdElnMb3h52Fs4h67TjQVUm5T27UFQ1VS40bXut4sgFnGVrSDKTa83MgOBOjFnjXzKPAtr-gnBRC9WVOsoqt4RiQD3yKnlNJDt6r-WYlyOFgNlLbYxNxGyTSTbGz5udgOT5Ls07rQ"/>
+</div>
+</div>
+</section>
+<!-- Contacto -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="bg-surface-container-highest rounded-lg p-16 grid grid-cols-1 md:grid-cols-2 gap-16">
+<div>
+<h2 class="text-5xl font-extrabold text-emerald-900 mb-6">¿Listo para el siguiente paso?</h2>
+<p class="text-on-surface-variant text-xl mb-12">Estamos aquí para ayudarte a encontrar el lugar que siempre soñaste.</p>
+<div class="space-y-6">
+<div class="flex items-center gap-4 text-emerald-900 font-bold">
+<span class="material-symbols-outlined">call</span>
+<span>+598 099 123 456</span>
+</div>
+<div class="flex items-center gap-4 text-emerald-900 font-bold">
+<span class="material-symbols-outlined">mail</span>
+<span>info@asespro.com</span>
+</div>
+<div class="flex items-center gap-4 text-emerald-900 font-bold">
+<span class="material-symbols-outlined">location_on</span>
+<span>Av. Italia 1234, Montevideo</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-10 rounded-lg shadow-sm">
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-emerald-900 uppercase tracking-widest">Nombre Completo</label>
+<input class="w-full bg-surface border-none border-b border-outline-variant focus:ring-0 focus:border-primary px-0 py-4" placeholder="Juan Pérez" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-emerald-900 uppercase tracking-widest">Correo Electrónico</label>
+<input class="w-full bg-surface border-none border-b border-outline-variant focus:ring-0 focus:border-primary px-0 py-4" placeholder="juan@ejemplo.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-emerald-900 uppercase tracking-widest">Mensaje</label>
+<textarea class="w-full bg-surface border-none border-b border-outline-variant focus:ring-0 focus:border-primary px-0 py-4 resize-none" placeholder="Cuéntanos qué estás buscando..." rows="4"></textarea>
+</div>
+<button class="w-full premium-gradient text-white py-5 rounded-full font-bold text-lg hover:shadow-lg transition-all">Enviar Mensaje</button>
+<button class="w-full bg-[#25D366] text-white py-5 rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:shadow-lg transition-all">
+<svg class="w-6 h-6 fill-current" viewbox="0 0 24 24"><path d="M12.031 6.172c-2.32 0-4.519.903-6.16 2.544-1.64 1.64-2.544 3.839-2.544 6.16 0 2.321.903 4.52 2.544 6.161s3.839 2.544 6.16 2.544c2.321 0 4.52-.903 6.161-2.544s2.544-3.84 2.544-6.161c0-2.32-.903-4.52-2.544-6.161s-3.839-2.544-6.161-2.544zm0 13.911c-1.899 0-3.684-.739-5.027-2.082-1.342-1.342-2.081-3.127-2.081-5.027 0-1.899.739-3.684 2.081-5.027s3.128-2.081 5.027-2.081c1.899 0 3.684.739 5.027 2.081 1.343 1.342 2.082 3.128 2.082 5.027 0 1.9-.739 3.685-2.082 5.027-1.342 1.343-3.128 2.082-5.027 2.082zm6.216-12.377c-1.66-1.66-3.868-2.574-6.216-2.574s-4.556.914-6.216 2.574c-1.661 1.66-2.575 3.868-2.575 6.216 0 2.349.914 4.557 2.575 6.216s3.868 2.575 6.216 2.575c2.348 0 4.556-.914 6.216-2.575s2.574-3.868 2.574-6.216c0-2.348-.914-4.556-2.574-6.216z"></path></svg>
+                        Contactar por WhatsApp
+                    </button>
+</form>
+</div>
+</div>
+</section>
+<!-- Footer (Shared Component) -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full rounded-none">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 max-w-7xl mx-auto">
+<div class="mb-8 md:mb-0">
+<span class="text-xl font-bold text-emerald-900 dark:text-white block mb-4">ASESPRO</span>
+<p class="text-slate-500 dark:text-slate-400 font-manrope text-body-lg">Redefiniendo el mercado inmobiliario.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-10">
+<a class="text-slate-500 dark:text-slate-400 hover:text-emerald-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Privacidad</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-emerald-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Términos</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-emerald-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Prensa</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-emerald-600 underline-offset-4 hover:underline transition-opacity opacity-80 hover:opacity-100" href="#">Inversionistas</a>
+</div>
+<p class="mt-8 md:mt-0 text-slate-500 dark:text-slate-400 font-manrope text-body-lg">© 2024 ASESPRO. Todos los derechos reservados.</p>
+</div>
+</footer>
+<script defer src="./assets/app.js"></script>
+</body></html>

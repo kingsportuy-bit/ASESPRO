@@ -1,0 +1,173 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.heroText h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 1.95rem + 2.8vw, 5.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: #181c1c;
+}
+
+.accent {
+  color: #00513f;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.heroText p {
+  margin: 18px 0 0;
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.2rem);
+  color: #3d4a3e;
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+.heroMedia {
+  border-radius: 28px;
+  overflow: hidden;
+  min-height: 350px;
+}
+
+.heroMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 460px;
+  gap: 20px;
+}
+
+.infoGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.contactCard {
+  border-radius: 20px;
+  background: #f0f4f3;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.icon {
+  width: 52px;
+  height: 42px;
+  border-radius: 12px;
+  background: #dfe3e2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #00513f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.cardLabel {
+  margin: 0;
+  color: #444746;
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.contactCard strong {
+  margin-top: 2px;
+  display: block;
+  color: #181c1c;
+  font-size: clamp(1.28rem, 1.14rem + 0.45vw, 1.7rem);
+  letter-spacing: -0.02em;
+  word-break: break-word;
+}
+
+.contactCard p {
+  margin: 4px 0 0;
+  color: #3d4a3e;
+}
+
+.waBox {
+  border-radius: 22px;
+  background: linear-gradient(135deg, #004a39 0%, #00513f 100%);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.waBox strong {
+  display: block;
+  margin-top: 2px;
+  font-size: clamp(1.28rem, 1.14rem + 0.45vw, 1.65rem);
+  letter-spacing: -0.02em;
+}
+
+.waBox .cardLabel {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.waBox p {
+  margin: 0;
+}
+
+.arrow {
+  margin-left: auto;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.mapCard {
+  border-radius: 20px;
+  background: #f0f4f3;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.mapCard h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 1.35rem + 0.7vw, 2.2rem);
+  letter-spacing: -0.02em;
+}
+
+.mapCard img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.mapCardBody strong {
+  color: #181c1c;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+
+.mapCardBody p {
+  margin: 8px 0 0;
+  color: #3d4a3e;
+  line-height: 1.5;
+}
+
+@media (max-width: 1060px) {
+  .hero,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMedia {
+    min-height: 280px;
+  }
+}

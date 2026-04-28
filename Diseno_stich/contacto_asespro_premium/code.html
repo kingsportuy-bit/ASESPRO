@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#dee5d8",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed-dim": "#c1c9bd",
+                      "inverse-surface": "#2e312e",
+                      "surface-variant": "#e1e3de",
+                      "on-tertiary-fixed-variant": "#3f4946",
+                      "secondary": "#596057",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#006b31",
+                      "inverse-on-surface": "#f0f1ec",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#d9dbd5",
+                      "on-secondary-fixed-variant": "#424940",
+                      "on-background": "#191c19",
+                      "background": "#f8faf5",
+                      "surface-bright": "#f8faf5",
+                      "error": "#ba1a1a",
+                      "outline": "#6d7b6d",
+                      "surface-container-high": "#e7e9e3",
+                      "primary-fixed-dim": "#5adf81",
+                      "outline-variant": "#bccaba",
+                      "on-tertiary-fixed": "#141d1b",
+                      "on-tertiary-container": "#f4fffa",
+                      "surface-tint": "#006d32",
+                      "on-surface-variant": "#3d4a3e",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#005224",
+                      "on-primary-fixed": "#00210b",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed": "#dee5d8",
+                      "surface-container-low": "#f2f4ef",
+                      "primary-fixed": "#78fc9b",
+                      "tertiary-fixed-dim": "#bec9c5",
+                      "surface-container": "#edefe9",
+                      "on-surface": "#191c19",
+                      "error-container": "#ffdad6",
+                      "primary-container": "#008740",
+                      "tertiary-fixed": "#dae5e0",
+                      "surface-container-highest": "#e1e3de",
+                      "tertiary": "#545e5b",
+                      "on-secondary-fixed": "#171d16",
+                      "on-primary-container": "#f7fff3",
+                      "on-secondary-container": "#5f665d",
+                      "tertiary-container": "#6c7773",
+                      "inverse-primary": "#5adf81",
+                      "surface": "#f8faf5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Manrope"],
+                      "label": ["Manrope"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .editorial-shadow {
+            box-shadow: 0px 20px 40px rgba(25, 28, 25, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/60 dark:bg-emerald-950/60 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-4">
+<div class="text-2xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50">
+                ASESPRO
+            </div>
+<div class="hidden md:flex items-center space-x-8 font-manrope tracking-tight font-medium">
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Inicio</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Alquiler</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Venta</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Servicio de Limpieza</a>
+<a class="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-700 pb-1 transition-colors duration-300" href="#">Contacto</a>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-emerald-700 dark:text-emerald-400 cursor-pointer">language</span>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded font-semibold text-sm hover:opacity-90 transition-opacity">
+                    Consultar
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+<!-- Hero Section / Header -->
+<section class="mb-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+<div class="lg:col-span-7">
+<h1 class="text-6xl md:text-7xl font-extrabold tracking-tighter text-on-background leading-tight mb-6">
+                        Conversemos sobre su próximo <span class="text-primary italic font-light">legado.</span>
+</h1>
+<p class="text-xl text-on-surface-variant max-w-xl leading-relaxed">
+                        Nuestra curaduría arquitectónica merece una atención personalizada. Estamos aquí para guiarle en cada paso de su inversión inmobiliaria.
+                    </p>
+</div>
+<div class="lg:col-span-5 hidden lg:block">
+<div class="aspect-[4/3] rounded-lg overflow-hidden editorial-shadow">
+<img class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" data-alt="Modern minimalist office interior with clean lines, floor-to-ceiling windows, deep emerald velvet chairs and soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwIXvkpjzcE_S5P7Psu1HXBb3LkiF9mXOiQEwJa6BqvwAnm4ZPyLef2pCGrlJwzziXyS2ItEG5FCEUkW-kie58C_jS4FRpDFXdFk3dKQ0wvgXBu0Xu28RNYVtBufo6yXa5IoQyk2mlVhb4X5ihjzQJZfSrDZYvBcJ9v0N26goj9cIaEEpBlZ-6UzTDTeJsNowq32F6ViCum1ybzIQl6TXlVsghQLKiZen8kRqb7rjUjg6WWJuPKCn95xDeD3xqkVMLLWihGNzbcOM"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column: Contact Form -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-lg p-8 md:p-12 editorial-shadow">
+<h2 class="text-3xl font-bold tracking-tight mb-10 text-emerald-900">Formulario de Consulta</h2>
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="relative">
+<label class="text-xs uppercase tracking-widest font-bold text-outline mb-2 block">Nombre Completo</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary py-3 transition-colors placeholder:text-outline-variant/50" placeholder="Ej. Alejandro Valdés" type="text"/>
+</div>
+<div class="relative">
+<label class="text-xs uppercase tracking-widest font-bold text-outline mb-2 block">Correo Electrónico</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary py-3 transition-colors placeholder:text-outline-variant/50" placeholder="alejandro@ejemplo.com" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="relative">
+<label class="text-xs uppercase tracking-widest font-bold text-outline mb-2 block">Teléfono</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary py-3 transition-colors placeholder:text-outline-variant/50" placeholder="+506 0000 0000" type="tel"/>
+</div>
+<div class="relative">
+<label class="text-xs uppercase tracking-widest font-bold text-outline mb-2 block">Interés</label>
+<select class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary py-3 transition-colors text-on-surface-variant">
+<option>Inversión en Venta</option>
+<option>Alquiler de Lujo</option>
+<option>Servicio de Limpieza Premium</option>
+<option>Otros</option>
+</select>
+</div>
+</div>
+<div class="relative">
+<label class="text-xs uppercase tracking-widest font-bold text-outline mb-2 block">Su Mensaje</label>
+<textarea class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary py-3 transition-colors placeholder:text-outline-variant/50 resize-none" placeholder="Describa brevemente sus requerimientos..." rows="4"></textarea>
+</div>
+<div class="pt-4">
+<button class="w-full md:w-auto px-12 py-4 bg-primary text-on-primary rounded font-bold tracking-tight hover:bg-primary-container transition-all flex items-center justify-center gap-3" type="submit">
+                            Enviar Solicitud
+                            <span class="material-symbols-outlined">north_east</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Right Column: Info & Map -->
+<div class="lg:col-span-5 space-y-12">
+<!-- Contact Info Cards -->
+<div class="grid grid-cols-1 gap-6">
+<div class="bg-surface-container-low p-8 rounded-lg flex items-start gap-6 group hover:bg-white transition-all duration-300">
+<div class="w-14 h-14 bg-primary/10 rounded flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">call</span>
+</div>
+<div>
+<p class="text-xs uppercase tracking-widest font-bold text-outline mb-1">Llámenos</p>
+<p class="text-xl font-bold text-emerald-900">+506 2200 4400</p>
+<p class="text-sm text-on-surface-variant mt-1">Lun - Vie, 9:00 - 18:00</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-lg flex items-start gap-6 group hover:bg-white transition-all duration-300">
+<div class="w-14 h-14 bg-primary/10 rounded flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<p class="text-xs uppercase tracking-widest font-bold text-outline mb-1">Escríbanos</p>
+<p class="text-xl font-bold text-emerald-900">contacto@asespro.com</p>
+<p class="text-sm text-on-surface-variant mt-1">Respuesta en menos de 24h</p>
+</div>
+</div>
+<a class="bg-emerald-900 p-8 rounded-lg flex items-center justify-between group hover:bg-emerald-800 transition-all duration-300" href="#">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 bg-white/10 rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat</span>
+</div>
+<div>
+<p class="text-xs uppercase tracking-widest font-bold text-emerald-200 mb-1">Chat Directo</p>
+<p class="text-xl font-bold text-white">WhatsApp Business</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-white group-hover:translate-x-2 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Office Location -->
+<div class="rounded-lg overflow-hidden editorial-shadow bg-surface-container-low p-8">
+<h3 class="text-xl font-bold text-emerald-900 mb-6">Nuestra Sede</h3>
+<div class="aspect-video w-full rounded-lg overflow-hidden relative mb-6">
+<img class="w-full h-full object-cover" data-alt="Architectural map view of a high-end urban business district with soft green and grey tones" data-location="San Jose, Costa Rica" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwscbd8Ic2NrsrwKZDEe-B4YOx0uqAcrURdD4OZHv46b_wY8H8EAq1lOBW3TM5e-FaI2KKt-q4LopnTT2lKoTChMgkwPJi5yLqtrjJXPYDKmlWmKtrr2kjghcw50tVRPQfq6zL1sn8lH21bgueZYJfvr7o3O9F5qfoZrlWqw4KWQsKrJilyXHNGntQb1zYjWzj3Zsy0r0rhPa2zWhQd2xCp501D7mf8d88FB2pO12Nnve8olbrdcMKdwsWfzlJAiivs3VwQFVEy4g"/>
+<div class="absolute inset-0 bg-primary/5"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="w-8 h-8 bg-primary rounded-full animate-ping absolute"></div>
+<div class="w-8 h-8 bg-primary rounded-full relative border-4 border-white shadow-lg"></div>
+</div>
+</div>
+<div class="space-y-2">
+<p class="font-bold text-emerald-900">Centro Corporativo Plaza Roble</p>
+<p class="text-on-surface-variant leading-relaxed">Edificio El Pórtico, Piso 4.<br/>Escazú, San José, Costa Rica.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-20 bg-emerald-50 dark:bg-emerald-950">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-start">
+<div class="mb-8 md:mb-0">
+<div class="text-xl font-bold text-emerald-900 dark:text-emerald-50 mb-4">ASESPRO</div>
+<p class="text-emerald-900/60 dark:text-emerald-100/60 font-manrope text-sm leading-relaxed max-w-xs">
+                    Curaduría arquitectónica y gestión inmobiliaria de alto nivel para inversores exigentes.
+                </p>
+</div>
+<div class="grid grid-cols-2 gap-12">
+<div class="space-y-4">
+<p class="font-bold text-emerald-800 dark:text-emerald-300 text-sm">Empresa</p>
+<div class="flex flex-col space-y-2">
+<a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Privacidad</a>
+<a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Términos</a>
+</div>
+</div>
+<div class="space-y-4">
+<p class="font-bold text-emerald-800 dark:text-emerald-300 text-sm">Social</p>
+<div class="flex flex-col space-y-2">
+<a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">WhatsApp</a>
+<a class="text-emerald-900/60 dark:text-emerald-100/60 text-sm hover:text-emerald-500 transition-all" href="#">Instagram</a>
+</div>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 pb-12">
+<div class="pt-8 border-t border-emerald-900/5 text-emerald-900/40 dark:text-emerald-100/20 text-xs">
+                © 2024 ASESPRO Real Estate. Architectural Curation.
+            </div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,262 @@
+.gallery {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  min-height: 520px;
+}
+
+.mainMedia,
+.sideMedia {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+.mainMedia img,
+.sideMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mainMedia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(24, 28, 28, 0.04) 42%, rgba(0, 81, 63, 0.82) 100%);
+}
+
+.mainCaption {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1;
+  color: #ffffff;
+}
+
+.mainCaption h1 {
+  margin: 0;
+  font-size: clamp(2rem, 1.55rem + 1.5vw, 3.15rem);
+  letter-spacing: -0.03em;
+  line-height: 0.97;
+}
+
+.mainCaption p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+}
+
+.sideGrid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+}
+
+.statsBar {
+  border-radius: 22px;
+  background: #f0f4f3;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.statsBar article {
+  display: grid;
+  gap: 4px;
+}
+
+.statsBar strong {
+  font-size: 28px;
+  color: #181c1c;
+  letter-spacing: -0.02em;
+}
+
+.statsBar span {
+  color: #3d4a3e;
+  font-size: 13px;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1.35fr 340px;
+  gap: 20px;
+}
+
+.article {
+  background: #f6faf9;
+  border-radius: 22px;
+  padding: 24px;
+  border: 1px solid rgba(190, 201, 195, 0.18);
+}
+
+.pillRow {
+  margin: 0 0 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  color: #00513f;
+  background: rgba(158, 243, 214, 0.9);
+}
+
+.sectionTitle {
+  margin: 22px 0 8px;
+  font-size: clamp(1.55rem, 1.32rem + 0.8vw, 2.15rem);
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+
+.article p {
+  margin: 0 0 14px;
+  color: #3d4a3e;
+  line-height: 1.7;
+}
+
+.amenities {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.amenities span {
+  min-height: 42px;
+  border-radius: 999px;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  color: #181c1c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mapWrap {
+  margin-top: 14px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.aside {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 22px;
+  border: 1px solid rgba(190, 201, 195, 0.22);
+  box-shadow: 0 18px 30px rgba(24, 28, 28, 0.06);
+}
+
+.priceLabel {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: #444746;
+  font-weight: 700;
+}
+
+.price {
+  margin: 8px 0 0;
+  color: #00513f;
+  font-size: clamp(1.85rem, 1.5rem + 0.95vw, 2.55rem);
+  letter-spacing: -0.03em;
+}
+
+.agent {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(190, 201, 195, 0.4);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.agent img {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.agent strong {
+  display: block;
+  color: #181c1c;
+}
+
+.agent p {
+  margin: 3px 0 0;
+  color: #3d4a3e;
+  font-size: 13px;
+}
+
+.asideActions {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 46px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.primaryAction {
+  color: #ffffff;
+  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+}
+
+.secondaryAction {
+  color: #181c1c;
+  background: #f0f4f3;
+}
+
+.refCode {
+  margin: 14px 0 0;
+  color: #444746;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 1080px) {
+  .gallery,
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .sideGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    min-height: 220px;
+  }
+
+  .aside {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .statsBar,
+  .amenities {
+    grid-template-columns: 1fr;
+  }
+}

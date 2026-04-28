@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASESPRO | Detalle de Propiedad</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#dee5d8",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed-dim": "#c1c9bd",
+                      "inverse-surface": "#2e312e",
+                      "surface-variant": "#e1e3de",
+                      "on-tertiary-fixed-variant": "#3f4946",
+                      "secondary": "#596057",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#006b31",
+                      "inverse-on-surface": "#f0f1ec",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#d9dbd5",
+                      "on-secondary-fixed-variant": "#424940",
+                      "on-background": "#191c19",
+                      "background": "#f8faf5",
+                      "surface-bright": "#f8faf5",
+                      "error": "#ba1a1a",
+                      "outline": "#6d7b6d",
+                      "surface-container-high": "#e7e9e3",
+                      "primary-fixed-dim": "#5adf81",
+                      "outline-variant": "#bccaba",
+                      "on-tertiary-fixed": "#141d1b",
+                      "on-tertiary-container": "#f4fffa",
+                      "surface-tint": "#006d32",
+                      "on-surface-variant": "#3d4a3e",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#005224",
+                      "on-primary-fixed": "#00210b",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed": "#dee5d8",
+                      "surface-container-low": "#f2f4ef",
+                      "primary-fixed": "#78fc9b",
+                      "tertiary-fixed-dim": "#bec9c5",
+                      "surface-container": "#edefe9",
+                      "on-surface": "#191c19",
+                      "error-container": "#ffdad6",
+                      "primary-container": "#008740",
+                      "tertiary-fixed": "#dae5e0",
+                      "surface-container-highest": "#e1e3de",
+                      "tertiary": "#545e5b",
+                      "on-secondary-fixed": "#171d16",
+                      "on-primary-container": "#f7fff3",
+                      "on-secondary-container": "#5f665d",
+                      "tertiary-container": "#6c7773",
+                      "inverse-primary": "#5adf81",
+                      "surface": "#f8faf5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Manrope"],
+                      "label": ["Manrope"]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+        .text-editorial {
+            letter-spacing: -0.02em;
+        }
+        .image-overlay-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+        }
+        .emerald-gradient {
+            background: linear-gradient(135deg, #006b31 0%, #008740 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary selection:text-on-primary">
+<nav class="fixed top-0 w-full z-50 bg-white/60 dark:bg-emerald-950/60 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-4">
+<span class="text-2xl font-bold tracking-tighter text-emerald-900 dark:text-emerald-50">ASESPRO</span>
+<div class="hidden md:flex items-center space-x-8 font-manrope tracking-tight font-medium">
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Inicio</a>
+<a class="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-700 pb-1 hover:text-emerald-600 transition-colors duration-300" href="#">Alquiler</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Venta</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Servicio de Limpieza</a>
+<a class="text-emerald-900/70 dark:text-emerald-100/70 hover:text-emerald-600 transition-colors duration-300" href="#">Contacto</a>
+</div>
+<div class="flex items-center space-x-6">
+<span class="material-symbols-outlined text-emerald-800 cursor-pointer" data-icon="language">language</span>
+<button class="emerald-gradient text-on-primary px-6 py-2 rounded-full font-semibold transition-all active:opacity-80">Consultar</button>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-20">
+<section class="max-w-7xl mx-auto px-8 mb-12">
+<div class="grid grid-cols-12 gap-4 h-[716px]">
+<div class="col-span-12 md:col-span-8 relative rounded-lg overflow-hidden group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="modern luxury villa exterior with floor to ceiling glass walls and pristine pool at dusk with warm interior lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjcHl1qvP9lEuDVmjIKSQ_Lck_sxDBQ7gUUohrP4kEesl2N69HHzDgiSW9dvX1s2U8HVdjUBj-cZG6gYD8w_rXKmtdgKRs8hH5yjwkXl9xfWUFFMejk0Ej23PONlUJHyl2-TDEazfrYmuJRMD0X6_GiSFaIb9T2fzWnXViqs7-yz0AGNro1WP37O8KBk-UMn2HJJ24F_NosH4nFPzS_cezYh67jWbA4pbnCcTpC0xA-gUGSkY5LGOTwk2Q4fdh3-pKMeO8TVB5JA8"/>
+<div class="absolute inset-0 image-overlay-gradient pointer-events-none"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h1 class="text-4xl md:text-6xl font-extrabold text-editorial leading-none">Villa Emerald Coast</h1>
+<p class="text-lg opacity-90 mt-2 font-medium">Exclusiva Residencial, Costa Brava</p>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 grid grid-rows-2 gap-4">
+<div class="rounded-lg overflow-hidden relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="ultra-modern minimalist kitchen with marble countertops and high-end built-in appliances and neutral tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAO_mzpFZWJYax9hMOajimKaptn8Cy3HT8sj3hBYvWoMNzsx-j8IzJxeB80NMIxEyCwrWhiglgtCQki8nH1jdJMorqkpLREPHw6udklsw6jlRfrd4JxHwYptdIxnmSLhbT124SRCXnGgEYb4SSDIjRys6JOEj7Q5kPHgm8lifqeLxmoOQN2WueXXI3jNxnBzVmbbqO6WZFjRhV0-KW5gsfc6GEOsXZSD9zOADhF0Z--MBn_pHYvJqh0GBMCQ5GjkOQ2yhYueEgshXo"/>
+</div>
+<div class="rounded-lg overflow-hidden relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="spacious master bedroom with private terrace access and panoramic sea views in architectural luxury style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaJtBZxMuBNJZ6qrL0bI6XFJkCRCPZeqno0ea1cOf1RmBaNFv2E-GV9zlsv5MN-Hn8AP8UGG_6K2u_ugbyMKsYI8ljh9XnFFDdga0soWA-TUgcwWv2MQ4Jqk5Z-wJIjSr5aMU_msubHkfN1s18-qxJZc6wOGTNDNrg_p-2a1pbIvMKPeo-PPAYXFg8iJpsaNhWf6ZWLkOIyrBdPGhJ3-DmROeFRqda0vu2ApsLRqeE0pA7exQeC5XeIre_YnGuO6Ysl0cSAerIaQQ"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer">
+<span class="text-white font-bold text-lg">+12 Fotos</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-12 gap-16">
+<div class="md:col-span-8">
+<div class="flex flex-wrap gap-4 mb-8">
+<span class="px-4 py-2 bg-surface-container-highest rounded-full text-sm font-medium text-on-surface-variant">Penthouse</span>
+<span class="px-4 py-2 bg-surface-container-highest rounded-full text-sm font-medium text-on-surface-variant">Sostenible</span>
+<span class="px-4 py-2 bg-surface-container-highest rounded-full text-sm font-medium text-on-surface-variant">Vistas al Mar</span>
+</div>
+<div class="grid grid-cols-3 gap-8 p-8 bg-surface-container-low rounded-lg mb-12">
+<div class="flex flex-col items-center md:items-start">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="bed">bed</span>
+<span class="text-2xl font-bold">4</span>
+<span class="text-sm text-on-surface-variant">Habitaciones</span>
+</div>
+<div class="flex flex-col items-center md:items-start">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="bathtub">bathtub</span>
+<span class="text-2xl font-bold">5</span>
+<span class="text-sm text-on-surface-variant">Baños</span>
+</div>
+<div class="flex flex-col items-center md:items-start">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="square_foot">square_foot</span>
+<span class="text-2xl font-bold">450 m²</span>
+<span class="text-sm text-on-surface-variant">Superficie</span>
+</div>
+</div>
+<div class="mb-16">
+<h2 class="text-3xl font-bold mb-6 text-editorial">The Vision</h2>
+<div class="space-y-6 text-lg leading-relaxed text-on-surface/80">
+<p>Ubicada en el acantilado más prestigioso de la Costa Brava, esta propiedad representa la culminación del diseño arquitectónico moderno y la integración orgánica con el paisaje mediterráneo.</p>
+<p>Cada ángulo de la Villa Emerald Coast ha sido curado para maximizar la entrada de luz natural, utilizando cristales de alta eficiencia que eliminan las barreras entre el interior y la inmensidad del mar.</p>
+</div>
+</div>
+<div>
+<h2 class="text-3xl font-bold mb-6 text-editorial">Ubicación Estratégica</h2>
+<div class="h-96 rounded-lg overflow-hidden bg-surface-container-high border-none relative">
+<div class="absolute inset-0 bg-cover bg-center grayscale" data-alt="minimalist architectural map representation of a coastal luxury neighborhood with soft green accents" data-location="Costa Brava, Spain" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBf0JGkjBg3xiAhVJXRfrfLbaC5pTQN-e9QrlHvZLZ14a2fj4iZ-WdN8c8YCynRsrZiArbWpLk1kXlUa3z2OoUQOsBLvr4TDAgnuwIIctoBkZh5hTU1RmhjsPIgLN_tbpRCz_dgTJAqIYEkC_6AGkX6_i-F7VTszo3qRnEwzkLPKJtcLBDR7StQrg8f1KdWunJLlpg3HlgfqNXmjm4PQepNKO-08KJfetmMlq7xsS5uW_G1AYayiaXlsoIxMqgPvf3_gOQjFP_cyO4')"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="w-12 h-12 bg-primary rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-bounce">
+<span class="material-symbols-outlined text-white" data-icon="location_on">location_on</span>
+</div>
+</div>
+</div>
+<p class="mt-4 text-on-surface-variant text-sm font-medium">Passeig de la Marina, S/N, Costa Brava, España</p>
+</div>
+</div>
+<aside class="md:col-span-4">
+<div class="sticky top-32 p-8 bg-surface-container-lowest rounded-lg shadow-[0px_20px_40px_rgba(25,28,25,0.05)]">
+<div class="mb-8">
+<p class="text-sm font-medium text-on-surface-variant uppercase tracking-widest mb-1">Precio de Venta</p>
+<h3 class="text-4xl font-extrabold text-primary">€ 4.250.000</h3>
+</div>
+<div class="flex items-center gap-4 p-4 border-b border-outline-variant/30 mb-8">
+<img class="w-16 h-16 rounded-full object-cover" data-alt="professional portrait of a senior real estate agent in a tailored suit with a confident expression and blurred office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI6N2FSHNybRaGfY_pYkDaziKdVUaBXLTw_0kCjYjCzQd2xkHRc3TgxD0I1I-QZHAqZE3h7-J50cQ01dkaSizlGGO2clmUXPyOQOinEoL8RveG0ijPR_mb7WgP1W5fMnUojWNIbcjCpmJ4czUM616xzzt_YBxG7DIDdriyUYhl7Ozrq_90nC48VXy41l-AQGwqDAMWPjcvpeC5336vtUoJKC6iEk5lUVP8cqiYzrQJo4uEE4nlWo3Lk3kG2EJGzTiahRsBTscMGbs"/>
+<div>
+<p class="font-bold text-lg">Adrián Castro</p>
+<p class="text-sm text-on-surface-variant">Curador de Propiedades Senior</p>
+</div>
+</div>
+<div class="space-y-4">
+<button class="w-full emerald-gradient text-on-primary py-4 rounded-lg font-bold flex items-center justify-center gap-3 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+                            WhatsApp Inquiry
+                        </button>
+<button class="w-full bg-surface-container-highest text-on-surface py-4 rounded-lg font-bold flex items-center justify-center gap-3 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                            Agendar Visita
+                        </button>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/30 text-center">
+<p class="text-sm text-on-surface-variant">Referencia: AS-4402-EB</p>
+</div>
+</div>
+</aside>
+</section>
+</main>
+<footer class="w-full mt-20 bg-emerald-50 dark:bg-emerald-950">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-start font-manrope text-sm leading-relaxed">
+<div class="mb-8 md:mb-0">
+<span class="text-xl font-bold text-emerald-900 dark:text-emerald-50 block mb-4">ASESPRO</span>
+<p class="text-emerald-900/60 dark:text-emerald-100/60 max-w-xs">
+                    © 2024 ASESPRO Real Estate. Architectural Curation. Specialists in high-end coastal properties.
+                </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-emerald-900/60 dark:text-emerald-100/60">
+<a class="hover:text-emerald-500 transition-all" href="#">Privacidad</a>
+<a class="hover:text-emerald-500 transition-all" href="#">Términos</a>
+<a class="hover:text-emerald-500 transition-all" href="#">WhatsApp</a>
+<a class="hover:text-emerald-500 transition-all" href="#">Instagram</a>
+</div>
+</div>
+</footer>
+<div class="fixed bottom-8 right-8 z-[60] md:hidden">
+<button class="w-16 h-16 rounded-full emerald-gradient text-on-primary shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="chat" data-weight="fill" style="font-variation-settings: 'FILL' 1;">chat</span>
+</button>
+</div>
+<script defer src="./assets/app.js"></script>
+</body></html>

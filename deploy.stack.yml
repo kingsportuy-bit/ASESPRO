@@ -1,0 +1,38 @@
+﻿version: "3.9"
+
+services:
+  asespro-web:
+    image: asespro-web:latest
+    env_file:
+      - /opt/asespro/.env
+    networks:
+      - codexanet
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: 1024M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=codexanet
+        - traefik.http.routers.asespro-web.rule=Host(`asespro.codexa.uy`)
+        - traefik.http.routers.asespro-web.entrypoints=websecure
+        - traefik.http.routers.asespro-web.tls=true
+        - traefik.http.routers.asespro-web.tls.certresolver=letsencryptresolver
+        - traefik.http.services.asespro-web.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+networks:
+  codexanet:
+    external: true
