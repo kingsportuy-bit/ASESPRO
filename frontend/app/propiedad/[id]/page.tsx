@@ -67,19 +67,19 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
       <section className={styles.statsBar}>
         <article>
-          <strong>🛏️ {property.bedrooms ?? "N/D"}</strong>
+          <strong><i className={styles.statIcon} /> {property.bedrooms ?? "N/D"}</strong>
           <span>Dormitorios</span>
         </article>
         <article>
-          <strong>🛁 {property.bathrooms ?? "N/D"}</strong>
+          <strong><i className={styles.statIcon} /> {property.bathrooms ?? "N/D"}</strong>
           <span>Banos</span>
         </article>
         <article>
-          <strong>📐 {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</strong>
+          <strong><i className={styles.statIcon} /> {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</strong>
           <span>Superficie</span>
         </article>
         <article>
-          <strong>📌 {property.status}</strong>
+          <strong><i className={styles.statIcon} /> {property.status}</strong>
           <span>Estado</span>
         </article>
       </section>
@@ -92,14 +92,14 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
             <span className={styles.pill}>{property.status}</span>
           </div>
 
-          <h2 className={styles.sectionTitle}>🏡 Vision de la propiedad</h2>
+          <h2 className={styles.sectionTitle}>Vision de la propiedad</h2>
           <p>{property.description}</p>
           <p>
             Cada ambiente fue seleccionado para maximizar la entrada de luz natural y la integracion entre interior y
             exterior, respetando la identidad arquitectonica del proyecto.
           </p>
 
-          <h2 className={styles.sectionTitle}>✨ Amenidades</h2>
+          <h2 className={styles.sectionTitle}>Amenidades</h2>
           <div className={styles.amenities}>
             <span>Terraza privada</span>
             <span>Seguridad 24/7</span>
@@ -107,12 +107,12 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
             <span>Gimnasio equipado</span>
           </div>
 
-          <h2 className={styles.sectionTitle}>📍 Ubicacion</h2>
+          <h2 className={styles.sectionTitle}>Ubicacion</h2>
           <p>{property.location}</p>
 
           {property.videoUrl ? (
             <>
-              <h2 className={styles.sectionTitle}>🎥 Video de la propiedad</h2>
+              <h2 className={styles.sectionTitle}>Video de la propiedad</h2>
               <div className={styles.videoWrap}>
                 <iframe
                   src={property.videoUrl}

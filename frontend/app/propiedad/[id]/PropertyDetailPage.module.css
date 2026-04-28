@@ -73,6 +73,19 @@
   font-size: 28px;
   color: #181c1c;
   letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statIcon {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #18a06a 0%, #00513f 100%);
+  box-shadow: 0 0 0 3px rgba(24, 160, 106, 0.16);
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 .statsBar span {
