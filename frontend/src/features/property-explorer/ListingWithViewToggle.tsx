@@ -94,10 +94,10 @@ export function ListingWithViewToggle({
                     </div>
                     <p className={styles.cardLocation}>{property.location}</p>
                     <p className={styles.cardMeta}>
-                      <span>🛏️ {property.bedrooms ?? "--"}</span>
-                      <span>🛁 {property.bathrooms ?? "--"}</span>
-                      <span>📐 {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-                      <span>📌 {property.status}</span>
+                      <span><i className={styles.metaDot} />{property.bedrooms ?? "--"} dorm</span>
+                      <span><i className={styles.metaDot} />{property.bathrooms ?? "--"} banos</span>
+                      <span><i className={styles.metaDot} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
+                      <span><i className={styles.metaDot} />{property.status}</span>
                     </p>
                   </div>
                 </a>
@@ -117,9 +117,9 @@ export function ListingWithViewToggle({
             </div>
             <div className={styles.mapFrame}>
               <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={420} />
-              <button type="button" className={styles.mapLockLayer} onClick={() => setViewMode("map")}>
+              <a href="/mapa" target="_blank" rel="noreferrer" className={styles.mapLockLayer}>
                 Click para activar mapa interactivo
-              </button>
+              </a>
             </div>
           </section>
         </>

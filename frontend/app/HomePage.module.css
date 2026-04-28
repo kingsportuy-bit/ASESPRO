@@ -102,6 +102,20 @@
   color: #003f31;
   font-size: 12px;
   font-weight: 700;
+  position: relative;
+  padding-left: 24px;
+}
+
+.heroMetrics span::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #0a7d62;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .primaryAction,
@@ -152,6 +166,7 @@
 
 .quickCardWide {
   grid-column: 1 / -1;
+  aspect-ratio: 32 / 9;
 }
 
 .quickCard img {

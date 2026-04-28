@@ -47,9 +47,9 @@ export default async function HomePage(): Promise<JSX.Element> {
             </Link>
           </div>
           <div className={styles.heroMetrics}>
-            <span>📍 Paso de los Toros + Centenario</span>
-            <span>⚡ Respuesta directa por WhatsApp</span>
-            <span>🧭 Mapa interactivo con filtros</span>
+            <span>Paso de los Toros + Centenario</span>
+            <span>Respuesta directa por WhatsApp</span>
+            <span>Mapa interactivo con filtros</span>
           </div>
         </div>
       </section>
@@ -76,7 +76,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </Link>
 
         <Link href="/servicio-limpieza" className={`${styles.quickCard} ${styles.quickCardWide}`}>
-          <img src={getPropertyCoverImage("asespro-alq-001")} alt="" />
+          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80" alt="" />
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
             <h2 className={styles.quickTitle}>Servicio de limpieza</h2>
@@ -161,13 +161,13 @@ export default async function HomePage(): Promise<JSX.Element> {
         <p>Recorre propiedades y oportunidades directamente en el mapa.</p>
         <div className={styles.mapShell}>
           <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={320} />
-          <Link href="/venta" className={styles.mapLockLayer}>
+          <Link href="/mapa" className={styles.mapLockLayer}>
             Click para activar mapa interactivo
           </Link>
           <div className={styles.mapOverlayCard}>
             <strong>Mapa de propiedades</strong>
             <p>Activa vista completa y descubre zonas clave.</p>
-            <Link href="/venta" className={styles.primaryAction}>
+            <Link href="/mapa" className={styles.primaryAction}>
               Activar mapa
             </Link>
           </div>
