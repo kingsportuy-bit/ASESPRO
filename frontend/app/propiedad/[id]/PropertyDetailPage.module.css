@@ -149,6 +149,13 @@
   position: relative;
 }
 
+.mapLockLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  text-indent: -9999px;
+}
+
 .videoWrap {
   margin-top: 10px;
   border-radius: 18px;

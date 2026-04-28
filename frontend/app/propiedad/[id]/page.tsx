@@ -143,7 +143,10 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
               maxZoom={18}
               height={360}
             />
-            <a href={`/mapa?highlight=${property.id}`} target="_blank" rel="noreferrer" className={styles.mapFullButton}>
+            <a href={`/mapa?highlight=${property.id}`} className={styles.mapLockLayer}>
+              Click para abrir vista mapa
+            </a>
+            <a href={`/mapa?highlight=${property.id}`} className={styles.mapFullButton}>
               Ver mapa completo
             </a>
           </div>
