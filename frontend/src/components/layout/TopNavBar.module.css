@@ -91,6 +91,95 @@
   transform: translateY(-1px);
 }
 
+.mobileToggle {
+  display: none;
+}
+
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 28, 28, 0.34);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.mobileOverlayOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobilePanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(86vw, 360px);
+  height: 100dvh;
+  background: linear-gradient(170deg, #00513f 0%, #003f31 100%);
+  color: #ffffff;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 70;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.mobilePanelOpen {
+  transform: translateX(0);
+}
+
+.mobileHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 18px 10px;
+}
+
+.mobileClose {
+  border: 0;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+}
+
+.mobileNav {
+  display: grid;
+  gap: 8px;
+  padding: 8px 18px 18px;
+  align-content: start;
+}
+
+.mobileLink {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+}
+
+.mobileLinkActive {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.mobileCta {
+  margin-top: 8px;
+  min-height: 46px;
+  border-radius: 12px;
+  text-decoration: none;
+  background: #9ef3d6;
+  color: #003f31;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 960px) {
   .inner {
     min-height: 60px;
@@ -106,5 +195,29 @@
 
   .nav {
     display: none;
+  }
+
+  .cta {
+    display: none;
+  }
+
+  .mobileToggle {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 81, 63, 0.2);
+    background: #ffffff;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex-direction: column;
+  }
+
+  .mobileToggle span {
+    width: 16px;
+    height: 2px;
+    border-radius: 999px;
+    background: #00513f;
   }
 }

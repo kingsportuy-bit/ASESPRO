@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import styles from "./TopNavBar.module.css";
 
@@ -28,6 +29,7 @@ function isActivePath(pathname: string, href: string): boolean {
 
 export function TopNavBar(): JSX.Element {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className={styles.wrap} aria-label="Navegacion principal">
@@ -49,10 +51,47 @@ export function TopNavBar(): JSX.Element {
           ))}
         </div>
 
+        <button
+          type="button"
+          className={styles.mobileToggle}
+          aria-label="Abrir menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
         <Link href="/contacto" className={styles.cta}>
           Consultar
         </Link>
       </div>
+
+      <div className={`${styles.mobileOverlay} ${menuOpen ? styles.mobileOverlayOpen : ""}`} onClick={() => setMenuOpen(false)} />
+      <aside className={`${styles.mobilePanel} ${menuOpen ? styles.mobilePanelOpen : ""}`} aria-hidden={!menuOpen}>
+        <div className={styles.mobileHead}>
+          <strong>ASESPRO</strong>
+          <button type="button" className={styles.mobileClose} aria-label="Cerrar menu" onClick={() => setMenuOpen(false)}>
+            ✕
+          </button>
+        </div>
+        <div className={styles.mobileNav}>
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={`mobile-${item.href}`}
+              href={item.href}
+              className={`${styles.mobileLink} ${isActivePath(pathname, item.href) ? styles.mobileLinkActive : ""}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link href="/contacto" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
+            Consultar ahora
+          </Link>
+        </div>
+      </aside>
     </nav>
   );
 }
