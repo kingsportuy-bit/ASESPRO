@@ -20,9 +20,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl }: Prop
   );
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  if (media.length === 0) {
-    return <section className={styles.gallery} />;
-  }
+  if (media.length === 0) return <section className={styles.gallery} />;
 
   return (
     <>
@@ -46,19 +44,27 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl }: Prop
 
       {activeIndex !== null ? (
         <div className={styles.lightbox} onClick={() => setActiveIndex(null)}>
-          <button type="button" className={styles.navBtn} onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev === null ? 0 : (prev - 1 + media.length) % media.length)); }}>
-            ‹
-          </button>
           <div className={styles.lightboxMedia} onClick={(e) => e.stopPropagation()}>
             {media[activeIndex].type === "video" ? (
               <iframe src={media[activeIndex].src} title={`Video de ${title}`} allowFullScreen />
             ) : (
               <img src={media[activeIndex].src} alt={title} />
             )}
+            <button
+              type="button"
+              className={`${styles.navBtn} ${styles.navBtnPrev}`}
+              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev - 1 + media.length) % media.length))}
+            >
+              {"<"}
+            </button>
+            <button
+              type="button"
+              className={`${styles.navBtn} ${styles.navBtnNext}`}
+              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % media.length))}
+            >
+              {">"}
+            </button>
           </div>
-          <button type="button" className={styles.navBtn} onClick={(e) => { e.stopPropagation(); setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % media.length)); }}>
-            ›
-          </button>
         </div>
       ) : null}
     </>

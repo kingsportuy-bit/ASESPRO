@@ -161,6 +161,14 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+.leaflet-container,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 1 !important;
+}
+
 @media (max-width: 960px) {
   :root {
     --layout-gutter: 16px;

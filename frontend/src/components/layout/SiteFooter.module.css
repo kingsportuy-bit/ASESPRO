@@ -135,6 +135,7 @@
 .bottomBar {
   width: 100%;
   background: linear-gradient(125deg, #003f31 0%, #00513f 44%, #006b54 100%);
+  margin-top: 20px;
 }
 
 @media (max-width: 960px) {
