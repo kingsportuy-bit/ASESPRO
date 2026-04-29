@@ -87,7 +87,7 @@ export function TopNavBar(): JSX.Element {
         <div className={styles.mobileHead}>
           <strong>ASESPRO</strong>
           <button type="button" className={styles.mobileClose} aria-label="Cerrar menu" onClick={() => setMenuOpen(false)}>
-            Ã—
+            ×
           </button>
         </div>
         <div className={styles.mobileNav}>
