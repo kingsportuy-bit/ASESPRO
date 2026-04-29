@@ -37,90 +37,92 @@ export function ListingWithViewToggle({
 
   return (
     <main>
-      <section className={styles.header}>
-        <div className={styles.headerTop}>
-          <div>
-            <h1 className={styles.title}>{title}</h1>
-            <p className={styles.description}>{description}</p>
+      <div className={styles.pageFrame}>
+        <section className={styles.header}>
+          <div className={styles.headerTop}>
+            <div>
+              <h1 className={styles.title}>{title}</h1>
+              <p className={styles.description}>{description}</p>
+            </div>
+            <div className={styles.viewSwitch}>
+              <button
+                type="button"
+                className={`${styles.viewBtn} ${viewMode === "grid" ? styles.viewBtnActive : ""}`}
+                onClick={() => setViewMode("grid")}
+              >
+                Cuadricula
+              </button>
+              <button
+                type="button"
+                className={`${styles.viewBtn} ${viewMode === "map" ? styles.viewBtnActive : ""}`}
+                onClick={() => setViewMode("map")}
+              >
+                Mapa
+              </button>
+            </div>
           </div>
-          <div className={styles.viewSwitch}>
-            <button
-              type="button"
-              className={`${styles.viewBtn} ${viewMode === "grid" ? styles.viewBtnActive : ""}`}
-              onClick={() => setViewMode("grid")}
-            >
-              Cuadricula
-            </button>
-            <button
-              type="button"
-              className={`${styles.viewBtn} ${viewMode === "map" ? styles.viewBtnActive : ""}`}
-              onClick={() => setViewMode("map")}
-            >
-              Mapa
-            </button>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {viewMode === "map" ? (
-        <PropertyExplorer
-          properties={properties}
-          title="Vista de mapa con filtros"
-          hint={operationHint}
-          showOperationFilter={false}
-        />
-      ) : (
-        <>
-          <section className={styles.grid}>
-            {cards.map((property, index) => (
-              <article className={styles.card} key={`${property.id}-${index}`}>
-                <a href={`/propiedad/${property.id}`} target="_blank" rel="noreferrer" className={styles.cardHitArea}>
-                  <div className={styles.cardMedia}>
-                    <div className={styles.mediaSlider} aria-hidden="true">
-                      {(property.photoUrls.length > 0 ? property.photoUrls : [getPropertyCoverImage(property.id)]).slice(0, 3).map((photo, photoIndex) => (
-                        <img key={`${property.id}-photo-${photoIndex}`} src={photo} alt="" className={styles.slideImage} />
-                      ))}
+        {viewMode === "map" ? (
+          <PropertyExplorer
+            properties={properties}
+            title="Vista de mapa con filtros"
+            hint={operationHint}
+            showOperationFilter={false}
+          />
+        ) : (
+          <>
+            <section className={styles.grid}>
+              {cards.map((property, index) => (
+                <article className={styles.card} key={`${property.id}-${index}`}>
+                  <a href={`/propiedad/${property.id}`} target="_blank" rel="noreferrer" className={styles.cardHitArea}>
+                    <div className={styles.cardMedia}>
+                      <div className={styles.mediaSlider} aria-hidden="true">
+                        {(property.photoUrls.length > 0 ? property.photoUrls : [getPropertyCoverImage(property.id)]).slice(0, 3).map((photo, photoIndex) => (
+                          <img key={`${property.id}-photo-${photoIndex}`} src={photo} alt="" className={styles.slideImage} />
+                        ))}
+                      </div>
+                      <div className={styles.badgeRow}>
+                        <span className={styles.badge}>{property.operation}</span>
+                        <span className={styles.badge}>{property.type}</span>
+                      </div>
                     </div>
-                    <div className={styles.badgeRow}>
-                      <span className={styles.badge}>{property.operation}</span>
-                      <span className={styles.badge}>{property.type}</span>
-                    </div>
-                  </div>
 
-                  <div className={styles.cardBody}>
-                    <div className={styles.titleRow}>
-                      <h2 className={styles.cardTitle}>{property.title}</h2>
-                      <p className={styles.cardPrice}>{formatPrice(property.price)}</p>
+                    <div className={styles.cardBody}>
+                      <div className={styles.titleRow}>
+                        <h2 className={styles.cardTitle}>{property.title}</h2>
+                        <p className={styles.cardPrice}>{formatPrice(property.price)}</p>
+                      </div>
+                      <p className={styles.cardLocation}>{property.location}</p>
+                      <p className={styles.cardMeta}>
+                        <span><i className={`${styles.metaIcon} ${styles.metaBed}`} />{property.bedrooms ?? "--"} dorm</span>
+                        <span><i className={`${styles.metaIcon} ${styles.metaBath}`} />{property.bathrooms ?? "--"} banos</span>
+                        <span><i className={`${styles.metaIcon} ${styles.metaArea}`} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
+                        <span><i className={`${styles.metaIcon} ${styles.metaStatus}`} />{property.status}</span>
+                      </p>
                     </div>
-                    <p className={styles.cardLocation}>{property.location}</p>
-                    <p className={styles.cardMeta}>
-                      <span><i className={`${styles.metaIcon} ${styles.metaBed}`} />{property.bedrooms ?? "--"} dorm</span>
-                      <span><i className={`${styles.metaIcon} ${styles.metaBath}`} />{property.bathrooms ?? "--"} banos</span>
-                      <span><i className={`${styles.metaIcon} ${styles.metaArea}`} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-                      <span><i className={`${styles.metaIcon} ${styles.metaStatus}`} />{property.status}</span>
-                    </p>
-                  </div>
-                </a>
-              </article>
-            ))}
-          </section>
+                  </a>
+                </article>
+              ))}
+            </section>
 
-          <section className={styles.mapSection}>
-            <div className={styles.mapHead}>
-              <div>
-                <h2>{mapTitle}</h2>
-                <p>{mapDescription}</p>
+            <section className={styles.mapSection}>
+              <div className={styles.mapHead}>
+                <div>
+                  <h2>{mapTitle}</h2>
+                  <p>{mapDescription}</p>
+                </div>
               </div>
-            </div>
-            <div className={styles.mapFrame}>
-              <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={315} />
-              <a href="/mapa" className={styles.mapLockLayer} aria-label="Abrir mapa completo">
-                Click para activar mapa interactivo
-              </a>
-            </div>
-          </section>
-        </>
-      )}
+              <div className={styles.mapFrame}>
+                <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={315} />
+                <a href="/mapa" className={styles.mapLockLayer} aria-label="Abrir mapa completo">
+                  Click para activar mapa interactivo
+                </a>
+              </div>
+            </section>
+          </>
+        )}
+      </div>
     </main>
   );
 }
