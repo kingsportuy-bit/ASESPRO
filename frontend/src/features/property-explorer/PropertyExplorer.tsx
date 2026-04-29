@@ -124,7 +124,7 @@ export function PropertyExplorer({
           initialZoom={13}
           minZoom={13}
           maxZoom={18}
-          height="100%"
+          height={560}
         />
       </div>
     </section>
