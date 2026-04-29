@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -87,7 +87,7 @@ export function TopNavBar(): JSX.Element {
         <div className={styles.mobileHead}>
           <strong>ASESPRO</strong>
           <button type="button" className={styles.mobileClose} aria-label="Cerrar menu" onClick={() => setMenuOpen(false)}>
-            ×
+            x
           </button>
         </div>
         <div className={styles.mobileNav}>
