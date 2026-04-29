@@ -194,9 +194,9 @@ export default async function HomePage(): Promise<JSX.Element> {
           <h2>Listo para el siguiente paso?</h2>
           <p>Estamos aqui para ayudarte a encontrar el lugar que estas buscando.</p>
           <ul>
-            <li>+598 99 123 456</li>
-            <li>info@asespro.com</li>
-            <li>Av. Italia 1545, Montevideo</li>
+            <li>4664 4380</li>
+            <li>Florencio Sanchez 722</li>
+            <li>Paso de los Toros, Tacuarembo</li>
           </ul>
         </article>
 

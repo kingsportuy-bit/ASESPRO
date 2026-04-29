@@ -16,6 +16,11 @@ type MarkerEntry = {
   clickHandler: () => void;
 };
 
+const ASESPRO_OFFICE = {
+  lat: -32.8167,
+  lng: -56.5169,
+};
+
 const DEFAULT_ICON_SIZE: [number, number] = [68, 38];
 const DEFAULT_ICON_ANCHOR: [number, number] = [34, 38];
 
@@ -41,6 +46,7 @@ export function usePropertyMarkers({
   onMarkerClick,
 }: UsePropertyMarkersParams): void {
   const markerRegistryRef = useRef<Map<string, MarkerEntry>>(new Map());
+  const officeMarkerRef = useRef<LeafletMarker | null>(null);
   const propertiesByIdRef = useRef<Map<string, Property>>(new Map());
   const onMarkerClickRef = useRef(onMarkerClick);
 
@@ -114,6 +120,16 @@ export function usePropertyMarkers({
         entry.marker.remove();
         registry.delete(propertyId);
       }
+
+      if (!officeMarkerRef.current) {
+        const officeIcon = leaflet.divIcon({
+          html: '<div style="width:42px;height:42px;border-radius:999px;background:#fff;padding:4px;box-shadow:0 6px 16px rgba(0,0,0,.22);display:grid;place-items:center;"><img src="/LOGO_ASESPRO_transparente.png" alt="ASESPRO" style="width:100%;height:100%;object-fit:contain;" /></div>',
+          className: "asespro-office-marker",
+          iconSize: [42, 42],
+          iconAnchor: [21, 42],
+        });
+        officeMarkerRef.current = leaflet.marker([ASESPRO_OFFICE.lat, ASESPRO_OFFICE.lng], { icon: officeIcon }).addTo(map);
+      }
     };
 
     void syncMarkers();
@@ -131,6 +147,8 @@ export function usePropertyMarkers({
       }
 
       markerRegistryRef.current.clear();
+      officeMarkerRef.current?.remove();
+      officeMarkerRef.current = null;
     };
   }, []);
 }

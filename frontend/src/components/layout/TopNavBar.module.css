@@ -29,12 +29,14 @@
   display: block;
   height: 40px;
   width: auto;
+  filter: drop-shadow(0 0 0 #fff) drop-shadow(0 0 4px rgba(255, 255, 255, 0.95));
 }
 
 .logoMobile {
   display: none;
   height: 36px;
   width: auto;
+  filter: drop-shadow(0 0 0 #fff) drop-shadow(0 0 4px rgba(255, 255, 255, 0.95));
 }
 
 .nav {
