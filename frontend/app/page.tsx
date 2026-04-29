@@ -28,9 +28,6 @@ export default async function HomePage(): Promise<JSX.Element> {
     <main>
       <section className={styles.hero}>
         <img src={HERO_IMAGE} alt="" className={styles.heroBg} />
-        <div className={styles.heroOverlay} />
-        <div className={styles.heroGlowA} />
-        <div className={styles.heroGlowB} />
         <div className={styles.heroContent}>
           <p className={styles.eyebrow}>Curaduria Inmobiliaria</p>
           <h1 className={styles.heroTitle}>Encontra tu proximo hogar con confianza y criterio real.</h1>
@@ -45,9 +42,6 @@ export default async function HomePage(): Promise<JSX.Element> {
             <Link href="/contacto" className={styles.secondaryAction}>
               Contactar por WhatsApp
             </Link>
-          </div>
-          <div className={styles.heroMetrics}>
-            <span>Respuesta directa por WhatsApp</span>
           </div>
         </div>
       </section>

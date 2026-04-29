@@ -63,7 +63,7 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #00513f;
+  color: #ffffff;
   font-weight: 800;
 }
 
@@ -72,12 +72,12 @@
   font-size: clamp(2.4rem, 1.75rem + 2.8vw, 4.8rem);
   letter-spacing: -0.03em;
   line-height: 0.95;
-  color: #181c1c;
+  color: #ffffff;
 }
 
 .heroText {
   margin: 16px 0 0;
-  color: #3d4a3e;
+  color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1rem, 0.9rem + 0.45vw, 1.15rem);
   line-height: 1.6;
   max-width: 560px;
