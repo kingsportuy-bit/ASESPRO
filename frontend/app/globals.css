@@ -90,6 +90,7 @@ main {
 .page-shell {
   width: min(var(--layout-max-width), calc(100vw - (var(--layout-gutter) * 2)));
   margin: 0 auto;
+  padding-top: 14px;
   display: grid;
   gap: 24px;
 }
