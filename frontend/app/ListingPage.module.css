@@ -319,7 +319,7 @@
 .mapLockLayer {
   position: absolute;
   inset: 0;
-  z-index: 12;
+  z-index: 1200;
   border: 0;
   cursor: pointer;
   background: rgba(24, 28, 28, 0.16);
@@ -329,6 +329,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.mapFrame :global(.leaflet-container) {
+  pointer-events: none;
 }
 
 @keyframes listingSlide {

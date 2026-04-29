@@ -164,8 +164,12 @@
 .mapLockLayer {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1200;
   text-indent: -9999px;
+}
+
+.mapWrap :global(.leaflet-container) {
+  pointer-events: none;
 }
 
 .videoWrap {

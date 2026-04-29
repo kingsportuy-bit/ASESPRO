@@ -441,7 +441,7 @@
 .mapLockLayer {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1200;
   background: rgba(24, 28, 28, 0.14);
   display: flex;
   align-items: center;
@@ -450,6 +450,10 @@
   text-decoration: none;
   font-weight: 800;
   letter-spacing: 0.02em;
+}
+
+.mapShell :global(.leaflet-container) {
+  pointer-events: none;
 }
 
 .mapOverlayCard {
