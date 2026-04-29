@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: '/LOGO_ASESPRO_transparente_horizontal_moible.png',
-    apple: '/LOGO_ASESPRO_transparente_horizontal_moible.png',
+    icon: '/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b',
+    apple: '/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b',
   },
   openGraph: {
     title: `${SITE_NAME} Inmobiliaria`,
