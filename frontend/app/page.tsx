@@ -20,7 +20,7 @@ export default async function HomePage(): Promise<JSX.Element> {
   const properties = await listPublicProperties();
   const featured = properties.slice(0, 3);
   const whatsappUrl = buildWhatsAppUrl(
-    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "59800000000",
+    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "59898382388",
     "Hola ASESPRO, quiero recibir opciones de propiedades.",
   );
 
@@ -194,7 +194,7 @@ export default async function HomePage(): Promise<JSX.Element> {
           <h2>Listo para el siguiente paso?</h2>
           <p>Estamos aqui para ayudarte a encontrar el lugar que estas buscando.</p>
           <ul>
-            <li>4664 4380</li>
+            <li>+598 98 382 388</li>
             <li>Florencio Sanchez 722</li>
             <li>Paso de los Toros, Tacuarembo</li>
           </ul>

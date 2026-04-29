@@ -6,7 +6,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 import styles from "./ContactoPage.module.css";
 
-const DEFAULT_WHATSAPP_PHONE = "59800000000";
+const DEFAULT_WHATSAPP_PHONE = "59898382388";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -51,8 +51,8 @@ export default function ContactoPage(): JSX.Element {
             <span className={styles.icon}>TEL</span>
             <div>
               <p className={styles.cardLabel}>Llamenos</p>
-              <strong>+598 2200 4400</strong>
-              <p>Lun - Vie, 9:00 - 18:00</p>
+              <strong>+598 98 382 388</strong>
+              <p>Lun - Sab, 9:00 - 19:00</p>
             </div>
           </article>
 
@@ -60,8 +60,8 @@ export default function ContactoPage(): JSX.Element {
             <span className={styles.icon}>MAIL</span>
             <div>
               <p className={styles.cardLabel}>Escribanos</p>
-              <strong>contacto@asespro.com</strong>
-              <p>Respuesta en menos de 24h.</p>
+              <strong>asespro.servicios</strong>
+              <p>Instagram oficial de ASESPRO.</p>
             </div>
           </article>
 
@@ -78,8 +78,8 @@ export default function ContactoPage(): JSX.Element {
             <h2>Nuestra sede</h2>
             <img src={getPropertyCoverImage("prop-2")} alt="" />
             <div className={styles.mapCardBody}>
-              <strong>Centro corporativo Plaza Roble</strong>
-              <p>Edificio El Portico, Piso 4, Escazu, San Jose.</p>
+              <strong>Florencio Sanchez 722</strong>
+              <p>45100 Paso de los Toros, Departamento de Tacuarembo.</p>
             </div>
           </article>
         </aside>

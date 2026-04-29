@@ -14,7 +14,7 @@ type PropertyDetailPageProps = {
   };
 };
 
-const DEFAULT_WHATSAPP_PHONE = "59800000000";
+const DEFAULT_WHATSAPP_PHONE = "59898382388";
 
 export async function generateMetadata({ params }: PropertyDetailPageProps): Promise<Metadata> {
   const property = await getPublicPropertyById(params.id);

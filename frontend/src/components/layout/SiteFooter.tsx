@@ -34,13 +34,13 @@ export function SiteFooter(): JSX.Element {
         <div className={`${styles.col} ${styles.contactBlock}`}>
           <p className={styles.colTitle}>Contacto</p>
           <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
-          <a href="tel:+59846644380" className={styles.link}>
-            4664 4380
+          <a href="tel:+59898382388" className={styles.link}>
+            +598 98 382 388
           </a>
-          <a href="https://wa.me/59846644380" target="_blank" rel="noreferrer" className={styles.link}>
-            WhatsApp +598 4664 4380
+          <a href="https://wa.me/59898382388" target="_blank" rel="noreferrer" className={styles.link}>
+            WhatsApp +598 98 382 388
           </a>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.link}>
+          <a href="https://www.instagram.com/asespro.servicios" target="_blank" rel="noreferrer" className={styles.link}>
             Instagram
           </a>
         </div>
@@ -74,13 +74,13 @@ export function SiteFooter(): JSX.Element {
           <div className={styles.col}>
             <p className={styles.colTitle}>Contacto</p>
             <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
-            <a href="tel:+59846644380" className={styles.link}>
-              4664 4380
+            <a href="tel:+59898382388" className={styles.link}>
+              +598 98 382 388
             </a>
-            <a href="https://wa.me/59846644380" target="_blank" rel="noreferrer" className={styles.link}>
-              WhatsApp +598 4664 4380
+            <a href="https://wa.me/59898382388" target="_blank" rel="noreferrer" className={styles.link}>
+              WhatsApp +598 98 382 388
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.link}>
+            <a href="https://www.instagram.com/asespro.servicios" target="_blank" rel="noreferrer" className={styles.link}>
               Instagram
             </a>
           </div>

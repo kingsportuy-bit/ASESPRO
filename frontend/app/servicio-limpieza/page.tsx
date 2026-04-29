@@ -6,7 +6,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 import styles from "./ServicioLimpiezaPage.module.css";
 
-const DEFAULT_WHATSAPP_PHONE = "59800000000";
+const DEFAULT_WHATSAPP_PHONE = "59898382388";
 
 export const metadata: Metadata = {
   title: "Servicio de limpieza",
