@@ -46,34 +46,35 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
   return (
     <main>
-      <PropertyMediaGallery title={property.title} location={property.location} photos={gallery} videoUrl={property.videoUrl} />
+      <div className="page-shell">
+        <PropertyMediaGallery title={property.title} location={property.location} photos={gallery} videoUrl={property.videoUrl} />
 
-      <section className={styles.statsBar}>
-        <article>
-          <strong><i className={styles.statIcon} /> {property.bedrooms ?? "N/D"}</strong>
-          <span>Dormitorios</span>
-        </article>
-        <article>
-          <strong><i className={styles.statIcon} /> {property.bathrooms ?? "N/D"}</strong>
-          <span>Banos</span>
-        </article>
-        <article>
-          <strong><i className={styles.statIcon} /> {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</strong>
-          <span>Superficie</span>
-        </article>
-        <article>
-          <strong><i className={styles.statIcon} /> {property.status}</strong>
-          <span>Estado</span>
-        </article>
-      </section>
+        <section className={styles.statsBar}>
+          <article>
+            <strong><i className={styles.statIcon} /> {property.bedrooms ?? "N/D"}</strong>
+            <span>Dormitorios</span>
+          </article>
+          <article>
+            <strong><i className={styles.statIcon} /> {property.bathrooms ?? "N/D"}</strong>
+            <span>Banos</span>
+          </article>
+          <article>
+            <strong><i className={styles.statIcon} /> {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</strong>
+            <span>Superficie</span>
+          </article>
+          <article>
+            <strong><i className={styles.statIcon} /> {property.status}</strong>
+            <span>Estado</span>
+          </article>
+        </section>
 
-      <section className={styles.content}>
-        <article className={styles.article}>
-          <div className={styles.pillRow}>
-            <span className={styles.pill}>{property.operation}</span>
-            <span className={styles.pill}>{property.type}</span>
-            <span className={styles.pill}>{property.status}</span>
-          </div>
+        <section className={styles.content}>
+          <article className={styles.article}>
+            <div className={styles.pillRow}>
+              <span className={styles.pill}>{property.operation}</span>
+              <span className={styles.pill}>{property.type}</span>
+              <span className={styles.pill}>{property.status}</span>
+            </div>
 
           <h2 className={styles.sectionTitle}>Vision de la propiedad</h2>
           <p>{property.description}</p>
@@ -117,31 +118,32 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
               Ver mapa completo
             </a>
           </div>
-        </article>
+          </article>
 
-        <aside className={styles.aside}>
-          <p className={styles.priceLabel}>{priceLabel}</p>
-          <h3 className={styles.price}>{formatPrice(property.price)}</h3>
-          <div className={styles.agent}>
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=80" alt="" />
-            <div>
-              <strong>Adrian Castro</strong>
-              <p>Curador de propiedades senior</p>
+          <aside className={styles.aside}>
+            <p className={styles.priceLabel}>{priceLabel}</p>
+            <h3 className={styles.price}>{formatPrice(property.price)}</h3>
+            <div className={styles.agent}>
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=80" alt="" />
+              <div>
+                <strong>Adrian Castro</strong>
+                <p>Curador de propiedades senior</p>
+              </div>
             </div>
-          </div>
 
-          <div className={styles.asideActions}>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.primaryAction}>
-              Consulta por WhatsApp
-            </a>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
-              Agendar visita
-            </a>
-          </div>
+            <div className={styles.asideActions}>
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.primaryAction}>
+                Consulta por WhatsApp
+              </a>
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
+                Agendar visita
+              </a>
+            </div>
 
-          <p className={styles.refCode}>Referencia: {property.id.toUpperCase()}</p>
-        </aside>
-      </section>
+            <p className={styles.refCode}>Referencia: {property.id.toUpperCase()}</p>
+          </aside>
+        </section>
+      </div>
     </main>
   );
 }

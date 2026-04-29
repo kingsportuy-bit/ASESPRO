@@ -20,13 +20,15 @@ export default async function MapaPage({ searchParams }: MapaPageProps): Promise
 
   return (
     <main>
-      <PropertyExplorer
-        properties={properties}
-        title="Mapa completo de propiedades"
-        hint="Usa filtros y explora todas las zonas disponibles."
-        showOperationFilter={true}
-        highlightedPropertyId={highlightedPropertyId}
-      />
+      <div className="page-shell">
+        <PropertyExplorer
+          properties={properties}
+          title="Mapa completo de propiedades"
+          hint="Usa filtros y explora todas las zonas disponibles."
+          showOperationFilter={true}
+          highlightedPropertyId={highlightedPropertyId}
+        />
+      </div>
     </main>
   );
 }

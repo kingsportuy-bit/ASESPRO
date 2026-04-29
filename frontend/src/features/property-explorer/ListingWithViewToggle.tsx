@@ -37,7 +37,7 @@ export function ListingWithViewToggle({
 
   return (
     <main>
-      <div className={styles.pageFrame}>
+      <div className="page-shell">
         <section className={styles.header}>
           <div className={styles.headerTop}>
             <div>

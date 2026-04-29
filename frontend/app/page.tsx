@@ -28,20 +28,22 @@ export default async function HomePage(): Promise<JSX.Element> {
     <main>
       <section className={styles.hero}>
         <img src={HERO_IMAGE} alt="" className={styles.heroBg} />
-        <div className={styles.heroContent}>
-          <p className={styles.eyebrow}>Curaduria Inmobiliaria</p>
-          <h1 className={styles.heroTitle}>Encontra tu proximo hogar con confianza y criterio real.</h1>
-          <p className={styles.heroText}>
-            Descubri propiedades seleccionadas para alquiler y venta, con una experiencia visual clara y contacto
-            directo por WhatsApp.
-          </p>
-          <div className={styles.heroActions}>
-            <Link href="/alquiler" className={styles.primaryAction}>
-              Ver alquileres
-            </Link>
-            <Link href="/contacto" className={styles.secondaryAction}>
-              Contactar por WhatsApp
-            </Link>
+        <div className="hero-inner">
+          <div className={styles.heroContent}>
+            <p className={styles.eyebrow}>Curaduria Inmobiliaria</p>
+            <h1 className={styles.heroTitle}>Encontra tu proximo hogar con confianza y criterio real.</h1>
+            <p className={styles.heroText}>
+              Descubri propiedades seleccionadas para alquiler y venta, con una experiencia visual clara y contacto
+              directo por WhatsApp.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/alquiler" className={styles.primaryAction}>
+                Ver alquileres
+              </Link>
+              <Link href="/contacto" className={styles.secondaryAction}>
+                Contactar por WhatsApp
+              </Link>
+            </div>
           </div>
         </div>
       </section>

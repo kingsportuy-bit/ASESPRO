@@ -1,5 +1,5 @@
 .sectionFrame {
-  width: min(1280px, calc(100vw - 48px));
+  width: min(var(--layout-max-width), calc(100vw - (var(--layout-gutter) * 2)));
   margin-inline: auto;
 }
 
@@ -629,11 +629,6 @@
 }
 
 @media (max-width: 760px) {
-  .sectionFrame {
-    width: 100%;
-    padding-inline: 0;
-  }
-
   .featured,
   .contactStrip {
     padding: 16px 14px;
@@ -642,13 +637,6 @@
   .hero {
     min-height: 460px;
     padding: 20px 14px 24px;
-  }
-
-  .quickGrid,
-  .process,
-  .mapTeaser,
-  .trustSection {
-    padding-inline: 14px;
   }
 
   .contactFormMock {
