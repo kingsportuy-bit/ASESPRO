@@ -501,7 +501,8 @@
 
 .trustCopy li {
   padding-left: 16px;
-  border-left: 3px solid rgba(158, 243, 214, 0.9);
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(125deg, #003f31 0%, #00513f 44%, #006b54 100%) 1;
 }
 
 .trustCopy strong {

@@ -3,6 +3,7 @@
   grid-template-columns: 420px 1fr;
   gap: 18px;
   min-height: calc(100vh - 220px);
+  align-items: start;
 }
 
 .panel {
@@ -77,10 +78,15 @@
 @media (max-width: 1120px) {
   .layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(380px, 58vh);
+    grid-template-rows: auto auto;
+    min-height: auto;
   }
 
   .panel {
     max-height: 58vh;
+  }
+
+  .mapArea {
+    min-height: 420px;
   }
 }
