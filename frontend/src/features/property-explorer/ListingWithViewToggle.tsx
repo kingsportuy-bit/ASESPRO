@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Map } from "@/components/map";
 import { PropertyExplorer } from "@/features/property-explorer/PropertyExplorer";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
@@ -26,7 +25,6 @@ export function ListingWithViewToggle({
   mapDescription,
   operationHint,
 }: ListingWithViewToggleProps): JSX.Element {
-  const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
   const cards = useMemo(() => {
@@ -116,14 +114,9 @@ export function ListingWithViewToggle({
             </div>
             <div className={styles.mapFrame}>
               <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={315} />
-              <button
-                type="button"
-                className={styles.mapLockLayer}
-                onClick={() => router.push("/mapa")}
-                aria-label="Abrir mapa completo"
-              >
+              <a href="/mapa" className={styles.mapLockLayer} aria-label="Abrir mapa completo">
                 Click para activar mapa interactivo
-              </button>
+              </a>
             </div>
           </section>
         </>

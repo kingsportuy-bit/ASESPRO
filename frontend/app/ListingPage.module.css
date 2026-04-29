@@ -326,6 +326,7 @@
   background: rgba(24, 28, 28, 0.16);
   cursor: pointer;
   color: #ffffff;
+  text-decoration: none;
   font-weight: 800;
   letter-spacing: 0.02em;
   display: inline-flex;
