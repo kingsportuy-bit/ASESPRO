@@ -28,7 +28,7 @@ export function SiteFooter(): JSX.Element {
         </nav>
 
         <div className={styles.brandBlock}>
-          <img src="/LOGO_ASESPRO_transparente.png" alt="ASESPRO" className={styles.brandLogo} />
+          <img src="/LOGO_ASESPRO_transparente (2).png" alt="ASESPRO" className={styles.brandLogo} />
         </div>
 
         <div className={`${styles.col} ${styles.contactBlock}`}>
@@ -48,7 +48,7 @@ export function SiteFooter(): JSX.Element {
 
       <div className={`${styles.inner} ${styles.mobileInner}`}>
         <div className={styles.brandBlock}>
-          <img src="/LOGO_ASESPRO_transparente.png" alt="ASESPRO" className={styles.brandLogo} />
+          <img src="/LOGO_ASESPRO_transparente (2).png" alt="ASESPRO" className={styles.brandLogo} />
         </div>
 
         <div className={styles.mobileColumns}>
