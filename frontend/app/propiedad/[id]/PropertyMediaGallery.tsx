@@ -8,9 +8,10 @@ type PropertyMediaGalleryProps = {
   location: string;
   photos: string[];
   videoUrl?: string | null;
+  fallbackImage: string;
 };
 
-export function PropertyMediaGallery({ title, location, photos, videoUrl }: PropertyMediaGalleryProps): JSX.Element {
+export function PropertyMediaGallery({ title, location, photos, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
   const media = useMemo(
     () => [
       ...photos.map((src) => ({ type: "photo" as const, src })),
@@ -26,7 +27,15 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl }: Prop
     <>
       <section className={styles.gallery}>
         <article className={styles.mainMedia} onClick={() => setActiveIndex(0)}>
-          <img src={media[0].src} alt={title} />
+          <img
+            src={media[0].src}
+            alt={title}
+            onError={(event) => {
+              if (event.currentTarget.src !== fallbackImage) {
+                event.currentTarget.src = fallbackImage;
+              }
+            }}
+          />
           <div className={styles.mainCaption}>
             <h1>{title}</h1>
             <p>{location}</p>
@@ -35,7 +44,15 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl }: Prop
         <div className={styles.sideGrid}>
           {media.slice(1, 3).map((item, idx) => (
             <article key={`${item.type}-${idx}`} className={styles.sideMedia} onClick={() => setActiveIndex(idx + 1)}>
-              <img src={item.src} alt="" />
+              <img
+                src={item.src}
+                alt=""
+                onError={(event) => {
+                  if (event.currentTarget.src !== fallbackImage) {
+                    event.currentTarget.src = fallbackImage;
+                  }
+                }}
+              />
               {item.type === "video" ? <span className={styles.videoBadge}>Video</span> : null}
             </article>
           ))}
@@ -48,7 +65,15 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl }: Prop
             {media[activeIndex].type === "video" ? (
               <iframe src={media[activeIndex].src} title={`Video de ${title}`} allowFullScreen />
             ) : (
-              <img src={media[activeIndex].src} alt={title} />
+              <img
+                src={media[activeIndex].src}
+                alt={title}
+                onError={(event) => {
+                  if (event.currentTarget.src !== fallbackImage) {
+                    event.currentTarget.src = fallbackImage;
+                  }
+                }}
+              />
             )}
             <button
               type="button"

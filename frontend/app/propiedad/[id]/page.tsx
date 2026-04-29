@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Map } from "@/components/map";
 import { getPublicPropertyById } from "@/lib/propertyRepository";
 import { buildPropertyWhatsAppUrl, formatPrice } from "@/lib/properties";
+import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 import { PropertyMediaGallery } from "./PropertyMediaGallery";
 
 import styles from "./PropertyDetailPage.module.css";
@@ -41,13 +42,21 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? DEFAULT_WHATSAPP_PHONE;
   const whatsappUrl = buildPropertyWhatsAppUrl(property, phone);
-  const gallery = property.photoUrls.length > 0 ? property.photoUrls : [];
+  const fallbackImage = getPropertyCoverImage(property.id);
+  const gallery = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);
+  const galleryWithFallback = gallery.length > 0 ? gallery : [fallbackImage];
   const priceLabel = property.operation === "alquiler" ? "Precio de alquiler" : "Precio de venta";
 
   return (
     <main>
       <div className="page-shell">
-        <PropertyMediaGallery title={property.title} location={property.location} photos={gallery} videoUrl={property.videoUrl} />
+        <PropertyMediaGallery
+          title={property.title}
+          location={property.location}
+          photos={galleryWithFallback}
+          videoUrl={property.videoUrl}
+          fallbackImage={fallbackImage}
+        />
 
         <section className={styles.statsBar}>
           <article>

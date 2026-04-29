@@ -58,29 +58,32 @@
 .statsBar {
   border-radius: 22px;
   background: #f0f4f3;
-  padding: 20px;
+  padding: 14px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 8px;
+  align-items: center;
 }
 
 .statsBar article {
   display: grid;
-  gap: 4px;
+  gap: 2px;
+  min-width: 0;
 }
 
 .statsBar strong {
-  font-size: 28px;
+  font-size: 20px;
   color: #181c1c;
   letter-spacing: -0.02em;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  white-space: nowrap;
 }
 
 .statIcon {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   background: #0a7d62;
   display: inline-block;
   flex-shrink: 0;
@@ -89,7 +92,8 @@
 
 .statsBar span {
   color: #3d4a3e;
-  font-size: 13px;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .content {
@@ -376,9 +380,30 @@
 }
 
 @media (max-width: 760px) {
-  .statsBar,
   .amenities {
     grid-template-columns: 1fr;
+  }
+
+  .statsBar {
+    grid-template-columns: repeat(4, minmax(96px, 1fr));
+    gap: 6px;
+    padding: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .statsBar strong {
+    font-size: 16px;
+    gap: 4px;
+  }
+
+  .statsBar span {
+    font-size: 10px;
+  }
+
+  .statIcon {
+    width: 9px;
+    height: 9px;
   }
 
   .gallery {

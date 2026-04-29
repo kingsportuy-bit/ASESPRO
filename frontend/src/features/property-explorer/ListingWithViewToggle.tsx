@@ -27,13 +27,15 @@ export function ListingWithViewToggle({
 }: ListingWithViewToggleProps): JSX.Element {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
-  const cards = useMemo(() => {
-    if (properties.length === 0) {
-      return [];
-    }
+  const cards = useMemo(() => properties.filter((property) => property.status === "activo"), [properties]);
 
-    return Array.from({ length: 6 }, (_, index) => properties[index % properties.length]);
-  }, [properties]);
+  const getDisplayPhotos = (property: PropertyListing): string[] => {
+    const validPhotos = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);
+    if (validPhotos.length > 0) {
+      return validPhotos.slice(0, 3);
+    }
+    return [getPropertyCoverImage(property.id)];
+  };
 
   return (
     <main>
@@ -73,13 +75,31 @@ export function ListingWithViewToggle({
         ) : (
           <>
             <section className={styles.grid}>
-              {cards.map((property, index) => (
-                <article className={styles.card} key={`${property.id}-${index}`}>
+              {cards.map((property) => (
+                <article className={styles.card} key={property.id}>
                   <a href={`/propiedad/${property.id}`} target="_blank" rel="noreferrer" className={styles.cardHitArea}>
                     <div className={styles.cardMedia}>
                       <div className={styles.mediaSlider} aria-hidden="true">
-                        {(property.photoUrls.length > 0 ? property.photoUrls : [getPropertyCoverImage(property.id)]).slice(0, 3).map((photo, photoIndex) => (
-                          <img key={`${property.id}-photo-${photoIndex}`} src={photo} alt="" className={styles.slideImage} />
+                        {getDisplayPhotos(property).map((photo, photoIndex, photoList) => (
+                          <img
+                            key={`${property.id}-photo-${photoIndex}`}
+                            src={photo}
+                            alt=""
+                            className={`${styles.slideImage} ${
+                              photoIndex === 0
+                                ? styles.slideImageStatic
+                                : photoList.length > 1
+                                  ? styles.slideImageAnimated
+                                  : styles.slideImageStatic
+                            }`}
+                            onError={(event) => {
+                              const fallback = getPropertyCoverImage(property.id);
+                              if (event.currentTarget.src !== fallback) {
+                                event.currentTarget.src = fallback;
+                              }
+                            }}
+                            loading="lazy"
+                          />
                         ))}
                       </div>
                       <div className={styles.badgeRow}>

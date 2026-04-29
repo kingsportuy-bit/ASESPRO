@@ -17,8 +17,9 @@ type MarkerEntry = {
 };
 
 const ASESPRO_OFFICE = {
-  lat: -32.8167,
-  lng: -56.5169,
+  // Geocoded from: Florencio Sanchez 722, Paso de los Toros (UY)
+  lat: -32.8100311,
+  lng: -56.5120447,
 };
 
 const DEFAULT_ICON_SIZE: [number, number] = [68, 38];
@@ -123,10 +124,10 @@ export function usePropertyMarkers({
 
       if (!officeMarkerRef.current) {
         const officeIcon = leaflet.divIcon({
-          html: '<div style="width:42px;height:42px;border-radius:999px;background:#fff;padding:4px;box-shadow:0 6px 16px rgba(0,0,0,.22);display:grid;place-items:center;"><img src="/LOGO_ASESPRO_transparente.png" alt="ASESPRO" style="width:100%;height:100%;object-fit:contain;" /></div>',
+          html: '<div style="width:34px;height:34px;border-radius:999px;background:#fff;padding:6px;box-shadow:0 6px 16px rgba(0,0,0,.18);display:grid;place-items:center;"><img src="/LOGO_ASESPRO_transparente_horizontal_moible%20-%20mapa.png" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain;" /></div>',
           className: "asespro-office-marker",
-          iconSize: [42, 42],
-          iconAnchor: [21, 42],
+          iconSize: [34, 34],
+          iconAnchor: [17, 34],
         });
         officeMarkerRef.current = leaflet.marker([ASESPRO_OFFICE.lat, ASESPRO_OFFICE.lng], { icon: officeIcon }).addTo(map);
       }

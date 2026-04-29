@@ -89,10 +89,13 @@ export function SiteFooter(): JSX.Element {
 
       <div className={styles.bottomBar}>
         <p className={styles.legal}>
-          Todos los derechos reservados | &copy; {year} Asespro.uy power by{" "}
-          <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
-            Codexa.uy
-          </a>
+          Todos los derechos reservados | &copy; {year} Asespro.uy
+          <span className={styles.poweredBy}>
+            power by{" "}
+            <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
+              Codexa.uy
+            </a>
+          </span>
         </p>
       </div>
     </footer>
