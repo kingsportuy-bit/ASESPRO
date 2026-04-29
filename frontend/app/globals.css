@@ -169,6 +169,10 @@ textarea:focus-visible {
   z-index: 1 !important;
 }
 
+.leaflet-container img.leaflet-tile {
+  mix-blend-mode: normal !important;
+}
+
 @media (max-width: 960px) {
   :root {
     --layout-gutter: 16px;

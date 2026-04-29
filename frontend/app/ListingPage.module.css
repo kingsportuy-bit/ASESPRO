@@ -312,8 +312,6 @@
 
 .mapFrame {
   display: block;
-  text-decoration: none;
-  color: inherit;
   border-radius: 18px;
   overflow: hidden;
   position: relative;
@@ -323,10 +321,10 @@
   position: absolute;
   inset: 0;
   z-index: 1200;
-  pointer-events: none;
   border: 0;
-  cursor: pointer;
+  width: 100%;
   background: rgba(24, 28, 28, 0.16);
+  cursor: pointer;
   color: #ffffff;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -336,7 +334,7 @@
 }
 
 .mapFrame :global(.leaflet-container) {
-  pointer-events: none;
+  pointer-events: none !important;
 }
 
 @keyframes listingSlide {
