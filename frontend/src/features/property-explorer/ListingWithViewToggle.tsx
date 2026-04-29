@@ -111,14 +111,11 @@ export function ListingWithViewToggle({
                 <h2>{mapTitle}</h2>
                 <p>{mapDescription}</p>
               </div>
-              <button type="button" className={styles.cardLink} onClick={() => setViewMode("map")}>
-                Activar vista de mapa
-              </button>
             </div>
             <div className={styles.mapFrame}>
               <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={420} />
               <a href="/mapa" className={styles.mapLockLayer}>
-                Click para activar mapa interactivo
+                Click para ver este mapa interactivo
               </a>
             </div>
           </section>
