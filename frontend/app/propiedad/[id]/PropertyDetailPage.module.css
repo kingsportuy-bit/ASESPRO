@@ -165,6 +165,7 @@
   position: absolute;
   inset: 0;
   z-index: 1200;
+  pointer-events: auto;
   text-indent: -9999px;
 }
 

@@ -311,6 +311,9 @@
 }
 
 .mapFrame {
+  display: block;
+  text-decoration: none;
+  color: inherit;
   border-radius: 18px;
   overflow: hidden;
   position: relative;
@@ -320,6 +323,7 @@
   position: absolute;
   inset: 0;
   z-index: 1200;
+  pointer-events: none;
   border: 0;
   cursor: pointer;
   background: rgba(24, 28, 28, 0.16);

@@ -112,12 +112,12 @@ export function ListingWithViewToggle({
                 <p>{mapDescription}</p>
               </div>
             </div>
-            <div className={styles.mapFrame}>
+            <a href="/mapa" className={styles.mapFrame}>
               <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={315} />
-              <a href="/mapa" className={styles.mapLockLayer}>
+              <span className={styles.mapLockLayer}>
                 Click para activar mapa interactivo
-              </a>
-            </div>
+              </span>
+            </a>
           </section>
         </>
       )}
