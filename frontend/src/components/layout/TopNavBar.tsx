@@ -59,8 +59,8 @@ export function TopNavBar(): JSX.Element {
     >
       <div className={styles.inner}>
         <Link href="/" className={styles.logo}>
-          <img src="/LOGO_ASESPRO_transparente_horizontal.png" alt="ASESPRO" className={styles.logoDesktop} />
-          <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png" alt="ASESPRO" className={styles.logoMobile} />
+          <img src="/LOGO_ASESPRO_NAV_DESKTOP_20260429.png" alt="ASESPRO" className={styles.logoDesktop} />
+          <img src="/LOGO_ASESPRO_NAV_MOBILE_20260429.png" alt="ASESPRO" className={styles.logoMobile} />
         </Link>
 
         <div className={styles.nav}>
