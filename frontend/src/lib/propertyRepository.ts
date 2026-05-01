@@ -1,6 +1,15 @@
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 
-import type { PropertyListing, PropertyOperation } from "./properties";
+import {
+  getDefaultCurrencyForOperation,
+  propertyMatchesOperation,
+  type PropertyCurrency,
+  type PropertyListing,
+  type PropertyOperation,
+  type PropertyStatus,
+  type PropertyType,
+} from "./properties";
+import { getSupabaseAdminClient } from "./supabaseServer";
 
 type ListOptions = {
   operation?: PropertyOperation;
@@ -21,6 +30,42 @@ type MediaLike = {
   public_url?: unknown;
   publicUrl?: unknown;
   src?: unknown;
+};
+
+type SupabaseListingRow = {
+  id: string;
+  title: string | null;
+  description: string | null;
+  price_amount: number | string | null;
+  price_currency: string | null;
+  status: PropertyStatus | null;
+  asespro_properties:
+    | SupabasePropertyRow
+    | SupabasePropertyRow[]
+    | null;
+  asespro_listing_operations: Array<{ operation: PropertyOperation | null }> | null;
+  asespro_listing_media:
+    | Array<{
+        media_type: "photo" | "video" | null;
+        public_url: string | null;
+        storage_path: string | null;
+        sort_order: number | null;
+        is_cover: boolean | null;
+      }>
+    | null;
+};
+
+type SupabasePropertyRow = {
+        title: string | null;
+        description: string | null;
+        property_type: string | null;
+        location_text: string | null;
+        latitude: number | string | null;
+        longitude: number | string | null;
+        bedrooms: number | null;
+        bathrooms: number | null;
+        area_m2: number | string | null;
+        is_active: boolean | null;
 };
 
 export interface PropertyRepository {
@@ -229,12 +274,135 @@ function normalizeProperty(input: unknown): PropertyListing | null {
 class MockPropertyRepository implements PropertyRepository {
   async list(options: ListOptions = {}): Promise<PropertyListing[]> {
     const { operation } = options;
-    const scoped = operation ? MOCK_PROPERTIES.filter((property) => property.operation === operation) : MOCK_PROPERTIES;
+    const scoped = operation ? MOCK_PROPERTIES.filter((property) => propertyMatchesOperation(property, operation)) : MOCK_PROPERTIES;
     return toPublicActiveList(scoped, operation);
   }
 
   async getById(id: string): Promise<PropertyListing | null> {
     return MOCK_PROPERTIES.find((property) => property.id === id) ?? null;
+  }
+}
+
+function parseNumber(value: unknown): number | undefined {
+  const parsed = parseCoordinateValue(value);
+  return parsed ?? undefined;
+}
+
+function normalizePropertyType(value: string | null | undefined): PropertyType {
+  if (value === "casa" || value === "apartamento" || value === "terreno") {
+    return value;
+  }
+
+  return "casa";
+}
+
+function normalizeCurrency(value: string | null | undefined, operation: PropertyOperation): PropertyCurrency {
+  if (value === "UYU" || value === "USD") {
+    return value;
+  }
+
+  return getDefaultCurrencyForOperation(operation);
+}
+
+function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | null {
+  const property = Array.isArray(row.asespro_properties) ? row.asespro_properties[0] : row.asespro_properties;
+  if (!property || property.is_active === false) {
+    return null;
+  }
+
+  const lat = parseCoordinateValue(property.latitude);
+  const lng = parseCoordinateValue(property.longitude);
+  if (lat === null || lng === null) {
+    return null;
+  }
+
+  const operations = (row.asespro_listing_operations ?? [])
+    .map((item) => item.operation)
+    .filter((operation): operation is PropertyOperation => operation === "alquiler" || operation === "venta");
+  const primaryOperation = operations[0] ?? "venta";
+  const media = [...(row.asespro_listing_media ?? [])].sort((a, b) => {
+    if (a.is_cover && !b.is_cover) return -1;
+    if (!a.is_cover && b.is_cover) return 1;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+  const photoUrls = media
+    .filter((item) => item.media_type === "photo")
+    .map((item) => item.public_url ?? item.storage_path ?? "")
+    .filter((url) => url.length > 0);
+  const videoUrl =
+    media.find((item) => item.media_type === "video")?.public_url ??
+    media.find((item) => item.media_type === "video")?.storage_path ??
+    undefined;
+
+  return {
+    id: row.id,
+    title: row.title ?? property.title ?? "Propiedad ASESPRO",
+    description: row.description ?? property.description ?? "",
+    location: property.location_text ?? "",
+    type: normalizePropertyType(property.property_type),
+    operation: primaryOperation,
+    operations: operations.length > 0 ? operations : [primaryOperation],
+    lat,
+    lng,
+    price: parseNumber(row.price_amount),
+    priceCurrency: normalizeCurrency(row.price_currency, primaryOperation),
+    bedrooms: property.bedrooms ?? undefined,
+    bathrooms: property.bathrooms ?? undefined,
+    areaM2: parseNumber(property.area_m2),
+    status: row.status ?? "desactivado",
+    photoUrls,
+    videoUrl,
+  };
+}
+
+class SupabasePropertyRepository implements PropertyRepository {
+  async list(options: ListOptions = {}): Promise<PropertyListing[]> {
+    const supabase = getSupabaseAdminClient();
+    if (!supabase) {
+      return new MockPropertyRepository().list(options);
+    }
+
+    const { data, error } = await supabase
+      .from("asespro_listings")
+      .select(
+        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
+      )
+      .eq("status", "activo")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      return new MockPropertyRepository().list(options);
+    }
+
+    const normalized = (data as SupabaseListingRow[])
+      .map((row) => normalizeSupabaseListing(row))
+      .filter((property): property is PropertyListing => property !== null);
+    const scoped = options.operation
+      ? normalized.filter((property) => propertyMatchesOperation(property, options.operation as PropertyOperation))
+      : normalized;
+
+    return toPublicActiveList(scoped, options.operation);
+  }
+
+  async getById(id: string): Promise<PropertyListing | null> {
+    const supabase = getSupabaseAdminClient();
+    if (!supabase) {
+      return new MockPropertyRepository().getById(id);
+    }
+
+    const { data, error } = await supabase
+      .from("asespro_listings")
+      .select(
+        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
+      )
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) {
+      return new MockPropertyRepository().getById(id);
+    }
+
+    return normalizeSupabaseListing(data as SupabaseListingRow);
   }
 }
 
@@ -291,6 +459,10 @@ class ApiPropertyRepository implements PropertyRepository {
 
 function createPropertyRepository(): PropertyRepository {
   const source = process.env.PROPERTY_DATA_SOURCE ?? "mock";
+  if (source === "supabase") {
+    return new SupabasePropertyRepository();
+  }
+
   if (source !== "api") {
     return new MockPropertyRepository();
   }

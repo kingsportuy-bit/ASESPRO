@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Map } from "@/components/map";
 import { getPublicPropertyById } from "@/lib/propertyRepository";
-import { buildPropertyWhatsAppUrl, formatPrice } from "@/lib/properties";
+import { buildPropertyWhatsAppUrl, formatOperationLabel, formatPrice, propertyMatchesOperation } from "@/lib/properties";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 import { PropertyMediaGallery } from "./PropertyMediaGallery";
 
@@ -45,7 +45,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
   const fallbackImage = getPropertyCoverImage(property.id);
   const gallery = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);
   const galleryWithFallback = gallery.length > 0 ? gallery : [fallbackImage];
-  const priceLabel = property.operation === "alquiler" ? "Precio de alquiler" : "Precio de venta";
+  const priceLabel = propertyMatchesOperation(property, "alquiler") ? "Precio de alquiler" : "Precio de venta";
 
   return (
     <main>
@@ -80,7 +80,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         <section className={styles.content}>
           <article className={styles.article}>
             <div className={styles.pillRow}>
-              <span className={styles.pill}>{property.operation}</span>
+              <span className={styles.pill}>{formatOperationLabel(property)}</span>
               <span className={styles.pill}>{property.type}</span>
               <span className={styles.pill}>{property.status}</span>
             </div>
@@ -131,7 +131,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
           <aside className={styles.aside}>
             <p className={styles.priceLabel}>{priceLabel}</p>
-            <h3 className={styles.price}>{formatPrice(property.price)}</h3>
+            <h3 className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</h3>
             <div className={styles.agent}>
               <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=80" alt="" />
               <div>

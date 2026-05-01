@@ -1,4 +1,5 @@
 import type { MapBounds } from "@/components/map";
+import { propertyMatchesOperation } from "@/lib/properties";
 
 import type { PropertyListing, PropertyOperation, PropertyType } from "./types";
 
@@ -18,7 +19,7 @@ export function matchesFilters(
   maxPrice: number | null,
   locationQuery: string,
 ): boolean {
-  const operationOk = operation === "all" ? true : property.operation === operation;
+  const operationOk = operation === "all" ? true : propertyMatchesOperation(property, operation);
   const typeOk = propertyType === "all" ? true : property.type === propertyType;
   const priceOk = maxPrice === null ? true : typeof property.price === "number" && property.price <= maxPrice;
   const normalizedQuery = locationQuery.trim().toLowerCase();

@@ -1,0 +1,171 @@
+.shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 120px 0 56px;
+}
+
+.loginCard,
+.formPanel,
+.list,
+.header {
+  background: #f0f4f3;
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.loginCard {
+  width: min(460px, 100%);
+  margin: 0 auto;
+}
+
+.loginCard h1,
+.header h1,
+.formPanel h2 {
+  margin: 0;
+  color: #181c1c;
+}
+
+.loginCard p,
+.header p,
+.item p,
+.empty {
+  margin: 8px 0 0;
+  color: #3d4a3e;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.form,
+.formPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.formPanel label,
+.form label {
+  display: grid;
+  gap: 6px;
+  color: #444746;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.formPanel input,
+.formPanel textarea,
+.formPanel select,
+.form input {
+  min-height: 46px;
+  border: 1px solid rgba(190, 201, 195, 0.42);
+  border-radius: 12px;
+  background: #ffffff;
+  color: #181c1c;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.formPanel textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.threeCols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.operations {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.operations label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.operations input {
+  min-height: auto;
+}
+
+.header button,
+.formPanel button,
+.form button,
+.item button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  color: #ffffff;
+  padding: 10px 18px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.header button,
+.item button {
+  background: #ffffff;
+  color: #00513f;
+}
+
+.notice,
+.alert {
+  border-radius: 14px;
+  background: #ffffff;
+  color: #00513f;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+@media (max-width: 900px) {
+  .grid,
+  .twoCols,
+  .threeCols {
+    grid-template-columns: 1fr;
+  }
+
+  .header,
+  .item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

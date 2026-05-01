@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
-import { formatPrice, type PropertyListing } from "@/lib/properties";
+import { formatOperationLabel, formatPrice, type PropertyListing } from "@/lib/properties";
 
 import styles from "./PropertyShowcaseGrid.module.css";
 
@@ -31,13 +31,13 @@ export function PropertyShowcaseGrid({ title, hint, chipLabel, properties }: Pro
             <div className={styles.media}>
               <img src={getPropertyCoverImage(property.id)} alt="" loading="lazy" />
               <div className={styles.badgeRow}>
-                <span className={styles.badge}>{property.operation}</span>
+                <span className={styles.badge}>{formatOperationLabel(property)}</span>
                 <span className={styles.badge}>{property.type}</span>
               </div>
             </div>
 
             <div className={styles.body}>
-              <p className={styles.price}>{formatPrice(property.price)}</p>
+              <p className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</p>
               <h3 className={styles.title}>{property.title}</h3>
               <p className={styles.meta}>{property.location}</p>
 

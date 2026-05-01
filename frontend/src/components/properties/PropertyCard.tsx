@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { formatPrice, type PropertyListing } from "@/lib/properties";
+import { formatOperationLabel, formatPrice, type PropertyListing } from "@/lib/properties";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 
 import styles from "./PropertyCard.module.css";
@@ -26,7 +26,7 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
         <div className={styles.content}>
           <div className={styles.thumbWrap}>
             <img src={coverImage} alt="" className={styles.thumb} loading="lazy" />
-            <span className={styles.operationBadge}>{property.operation}</span>
+            <span className={styles.operationBadge}>{formatOperationLabel(property)}</span>
           </div>
 
           <div className={styles.info}>
@@ -36,7 +36,7 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
               <span className={styles.pill}>{property.type}</span>
               <span className={styles.pill}>{property.status}</span>
             </div>
-            <p className={styles.price}>{formatPrice(property.price)}</p>
+            <p className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</p>
           </div>
         </div>
       </Link>
