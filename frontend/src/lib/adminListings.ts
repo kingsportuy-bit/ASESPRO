@@ -1,7 +1,9 @@
 import { getDefaultCurrencyForOperation, type PropertyCurrency, type PropertyOperation, type PropertyStatus, type PropertyType } from "./properties";
 
 export type AdminListingInput = {
+  ownerId?: string;
   propertyId?: string;
+  syncPropertyData?: boolean;
   title: string;
   description: string;
   propertyType: PropertyType;
@@ -52,7 +54,9 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
       : getDefaultCurrencyForOperation(operations[0]);
 
   return {
+    ownerId: typeof source.ownerId === "string" && source.ownerId ? source.ownerId : undefined,
     propertyId: typeof source.propertyId === "string" && source.propertyId ? source.propertyId : undefined,
+    syncPropertyData: source.syncPropertyData !== false,
     title,
     description: typeof source.description === "string" ? source.description.trim() : "",
     propertyType,

@@ -400,6 +400,44 @@
   align-items: flex-start;
 }
 
+.stepper,
+.segmented,
+.formNav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stepper {
+  border-radius: 14px;
+  background: #f5f8f6;
+  padding: 8px;
+}
+
+.stepper button,
+.segmented button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #4d5955;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.stepper .stepActive,
+.segmented .segmentActive {
+  background: #00513f;
+  color: #ffffff;
+}
+
+.formNav {
+  justify-content: space-between;
+  align-items: center;
+}
+
 .formSection {
   border-radius: 14px;
   background: #f5f8f6;
@@ -437,6 +475,22 @@
 }
 
 .operations input {
+  min-height: auto;
+}
+
+.checkboxLine {
+  min-height: 44px;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.checkboxLine input {
   min-height: auto;
 }
 
@@ -638,8 +692,16 @@
 
   .topActions button,
   .rowActions button,
-  .rowActions select {
+  .rowActions select,
+  .formNav button,
+  .stepper button,
+  .segmented button {
     width: 100%;
+  }
+
+  .formNav {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .metrics,

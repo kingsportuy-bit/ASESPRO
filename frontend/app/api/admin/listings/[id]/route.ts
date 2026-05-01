@@ -34,24 +34,46 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
       return NextResponse.json({ error: existingError?.message ?? "Publicacion no encontrada." }, { status: 404 });
     }
 
-    const { error: propertyError } = await supabase
-      .from("asespro_properties")
-      .update({
-        title: input.title,
-        description: input.description,
-        property_type: input.propertyType,
-        location_text: input.locationText,
-        latitude: input.latitude,
-        longitude: input.longitude,
-        bedrooms: input.bedrooms,
-        bathrooms: input.bathrooms,
-        area_m2: input.areaM2,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", existing.property_id);
+    if (input.syncPropertyData) {
+      const { error: propertyError } = await supabase
+        .from("asespro_properties")
+        .update({
+          title: input.title,
+          description: input.description,
+          property_type: input.propertyType,
+          location_text: input.locationText,
+          latitude: input.latitude,
+          longitude: input.longitude,
+          bedrooms: input.bedrooms,
+          bathrooms: input.bathrooms,
+          area_m2: input.areaM2,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", input.propertyId ?? existing.property_id);
 
-    if (propertyError) {
-      return NextResponse.json({ error: propertyError.message }, { status: 500 });
+      if (propertyError) {
+        return NextResponse.json({ error: propertyError.message }, { status: 500 });
+      }
+    }
+
+    if (input.ownerId) {
+      const linkedPropertyId = input.propertyId ?? existing.property_id;
+      const { data: existingLink } = await supabase
+        .from("asespro_property_owners")
+        .select("property_id")
+        .eq("property_id", linkedPropertyId)
+        .eq("owner_id", input.ownerId)
+        .maybeSingle();
+
+      if (!existingLink) {
+        const { error: ownerLinkError } = await supabase.from("asespro_property_owners").insert({
+          property_id: linkedPropertyId,
+          owner_id: input.ownerId,
+        });
+        if (ownerLinkError) {
+          return NextResponse.json({ error: ownerLinkError.message }, { status: 500 });
+        }
+      }
     }
 
     const { error: listingError } = await supabase
@@ -59,6 +81,7 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
       .update({
         title: input.title,
         description: input.description,
+        property_id: input.propertyId ?? existing.property_id,
         price_amount: input.priceAmount,
         price_currency: input.priceCurrency,
         status: input.status,

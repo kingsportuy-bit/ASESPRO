@@ -42,31 +42,73 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   try {
     const input = normalizeAdminListingInput(await request.json());
-    const { data: property, error: propertyError } = await supabase
-      .from("asespro_properties")
-      .insert({
-        title: input.title,
-        description: input.description,
-        property_type: input.propertyType,
-        location_text: input.locationText,
-        latitude: input.latitude,
-        longitude: input.longitude,
-        bedrooms: input.bedrooms,
-        bathrooms: input.bathrooms,
-        area_m2: input.areaM2,
-        is_active: true,
-      })
-      .select("id")
-      .single();
+    let propertyId = input.propertyId;
 
-    if (propertyError || !property) {
-      return NextResponse.json({ error: propertyError?.message ?? "No se pudo crear el inmueble." }, { status: 500 });
+    if (!propertyId) {
+      const { data: property, error: propertyError } = await supabase
+        .from("asespro_properties")
+        .insert({
+          title: input.title,
+          description: input.description,
+          property_type: input.propertyType,
+          location_text: input.locationText,
+          latitude: input.latitude,
+          longitude: input.longitude,
+          bedrooms: input.bedrooms,
+          bathrooms: input.bathrooms,
+          area_m2: input.areaM2,
+          is_active: true,
+        })
+        .select("id")
+        .single();
+
+      if (propertyError || !property) {
+        return NextResponse.json({ error: propertyError?.message ?? "No se pudo crear el inmueble." }, { status: 500 });
+      }
+
+      propertyId = property.id;
+    } else if (input.syncPropertyData) {
+      const { error: propertyError } = await supabase
+        .from("asespro_properties")
+        .update({
+          title: input.title,
+          description: input.description,
+          property_type: input.propertyType,
+          location_text: input.locationText,
+          latitude: input.latitude,
+          longitude: input.longitude,
+          bedrooms: input.bedrooms,
+          bathrooms: input.bathrooms,
+          area_m2: input.areaM2,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", propertyId);
+
+      if (propertyError) {
+        return NextResponse.json({ error: propertyError.message }, { status: 500 });
+      }
+    }
+
+    if (input.ownerId && propertyId) {
+      const { data: existingLink } = await supabase
+        .from("asespro_property_owners")
+        .select("property_id")
+        .eq("property_id", propertyId)
+        .eq("owner_id", input.ownerId)
+        .maybeSingle();
+
+      if (!existingLink) {
+        const { error: ownerLinkError } = await supabase.from("asespro_property_owners").insert({ property_id: propertyId, owner_id: input.ownerId });
+        if (ownerLinkError) {
+          return NextResponse.json({ error: ownerLinkError.message }, { status: 500 });
+        }
+      }
     }
 
     const { data: listing, error: listingError } = await supabase
       .from("asespro_listings")
       .insert({
-        property_id: property.id,
+        property_id: propertyId,
         title: input.title,
         description: input.description,
         price_amount: input.priceAmount,

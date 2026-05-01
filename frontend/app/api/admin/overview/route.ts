@@ -23,7 +23,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       .order("created_at", { ascending: false }),
     supabase
       .from("asespro_properties")
-      .select("id,code,title,property_type,location_text,is_active,bedrooms,bathrooms,area_m2,created_at")
+      .select("id,code,title,description,property_type,location_text,latitude,longitude,is_active,bedrooms,bathrooms,area_m2,created_at,asespro_property_owners(owner_id)")
       .order("created_at", { ascending: false }),
     supabase.from("asespro_owners").select("id,full_name,phone,email,notes,created_at").order("created_at", { ascending: false }),
     supabase

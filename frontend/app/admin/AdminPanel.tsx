@@ -34,12 +34,16 @@ type AdminProperty = {
   id: string;
   code: string | null;
   title: string;
+  description: string | null;
   property_type: PropertyType;
   location_text: string | null;
+  latitude: number | null;
+  longitude: number | null;
   is_active: boolean;
   bedrooms: number | null;
   bathrooms: number | null;
   area_m2: number | null;
+  asespro_property_owners?: Array<{ owner_id: string }>;
 };
 
 type AdminOwner = {
@@ -68,6 +72,15 @@ type OverviewPayload = {
 
 type FormState = {
   id: string | null;
+  ownerId: string;
+  ownerMode: "existing" | "new";
+  newOwnerFullName: string;
+  newOwnerPhone: string;
+  newOwnerEmail: string;
+  newOwnerNotes: string;
+  propertyId: string;
+  propertyMode: "existing" | "new";
+  syncPropertyData: boolean;
   title: string;
   description: string;
   propertyType: PropertyType;
@@ -94,9 +107,19 @@ type OwnerFormState = {
 type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
 type DrawerMode = "listing" | "owner" | null;
 type ListingFilter = "todos" | PropertyStatus;
+type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
 
 const EMPTY_LISTING_FORM: FormState = {
   id: null,
+  ownerId: "",
+  ownerMode: "existing",
+  newOwnerFullName: "",
+  newOwnerPhone: "",
+  newOwnerEmail: "",
+  newOwnerNotes: "",
+  propertyId: "",
+  propertyMode: "new",
+  syncPropertyData: true,
   title: "",
   description: "",
   propertyType: "casa",
@@ -201,6 +224,7 @@ export function AdminPanel(): JSX.Element {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
   const [drawerMode, setDrawerMode] = useState<DrawerMode>(null);
+  const [wizardStep, setWizardStep] = useState<ListingWizardStep>("propietario");
   const [listingForm, setListingForm] = useState<FormState>(EMPTY_LISTING_FORM);
   const [ownerForm, setOwnerForm] = useState<OwnerFormState>(EMPTY_OWNER_FORM);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -356,6 +380,7 @@ export function AdminPanel(): JSX.Element {
 
   function openNewListingForm(): void {
     setListingForm(EMPTY_LISTING_FORM);
+    setWizardStep("propietario");
     setPhotoFile(null);
     setVideoFile(null);
     setDrawerMode("listing");
@@ -379,10 +404,43 @@ export function AdminPanel(): JSX.Element {
     });
   }
 
+  function selectPropertyForListing(propertyId: string): void {
+    const property = properties.find((item) => item.id === propertyId);
+    if (!property) {
+      setListingForm((current) => ({ ...current, propertyId }));
+      return;
+    }
+
+    setListingForm((current) => ({
+      ...current,
+      propertyId,
+      ownerId: property.asespro_property_owners?.[0]?.owner_id ?? current.ownerId,
+      title: current.title || property.title,
+      description: current.description || property.description || "",
+      propertyType: property.property_type,
+      locationText: property.location_text ?? "",
+      latitude: property.latitude?.toString() ?? "",
+      longitude: property.longitude?.toString() ?? "",
+      bedrooms: property.bedrooms?.toString() ?? "",
+      bathrooms: property.bathrooms?.toString() ?? "",
+      areaM2: property.area_m2?.toString() ?? "",
+    }));
+  }
+
   function editListing(listing: AdminListing): void {
     const operations = listing.asespro_listing_operations.map((item) => item.operation);
+    const linkedProperty = properties.find((property) => property.id === listing.property_id);
     setListingForm({
       id: listing.id,
+      ownerId: linkedProperty?.asespro_property_owners?.[0]?.owner_id ?? "",
+      ownerMode: "existing",
+      newOwnerFullName: "",
+      newOwnerPhone: "",
+      newOwnerEmail: "",
+      newOwnerNotes: "",
+      propertyId: listing.property_id,
+      propertyMode: "existing",
+      syncPropertyData: true,
       title: listing.title,
       description: listing.description ?? "",
       propertyType: listing.asespro_properties?.property_type ?? "casa",
@@ -397,6 +455,7 @@ export function AdminPanel(): JSX.Element {
       operations: operations.length > 0 ? operations : ["alquiler"],
       status: listing.status,
     });
+    setWizardStep("publicacion");
     setDrawerMode("listing");
     setActiveTab("publicaciones");
     setMessage("Editando publicacion existente.");
@@ -421,7 +480,49 @@ export function AdminPanel(): JSX.Element {
     setBusy(true);
     setMessage(null);
 
+    if (listingForm.ownerMode === "existing" && !listingForm.ownerId) {
+      setBusy(false);
+      setWizardStep("propietario");
+      setMessage("Selecciona un propietario o crea uno nuevo.");
+      return;
+    }
+
+    if (listingForm.propertyMode === "existing" && !listingForm.propertyId) {
+      setBusy(false);
+      setWizardStep("inmueble");
+      setMessage("Selecciona un inmueble o crea uno nuevo.");
+      return;
+    }
+
+    let ownerId = listingForm.ownerMode === "existing" ? listingForm.ownerId : "";
+    if (listingForm.ownerMode === "new") {
+      const ownerResponse = await fetch("/api/admin/owners", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          fullName: listingForm.newOwnerFullName,
+          phone: listingForm.newOwnerPhone,
+          email: listingForm.newOwnerEmail,
+          notes: listingForm.newOwnerNotes,
+        }),
+      });
+      const ownerPayload = (await ownerResponse.json()) as { id?: string; error?: string };
+      if (!ownerResponse.ok || !ownerPayload.id) {
+        setBusy(false);
+        setWizardStep("propietario");
+        setMessage(ownerPayload.error ?? "No se pudo crear el propietario.");
+        return;
+      }
+      ownerId = ownerPayload.id;
+    }
+
     const body = {
+      ownerId: ownerId || undefined,
+      propertyId: listingForm.propertyMode === "existing" ? listingForm.propertyId : undefined,
+      syncPropertyData: listingForm.syncPropertyData,
       title: listingForm.title,
       description: listingForm.description,
       propertyType: listingForm.propertyType,
@@ -659,10 +760,15 @@ export function AdminPanel(): JSX.Element {
         {drawerMode === "listing" ? (
           <ListingDrawer
             form={listingForm}
+            owners={owners}
+            properties={properties}
+            step={wizardStep}
             busy={busy}
             onClose={() => setDrawerMode(null)}
             onSubmit={saveListing}
             onChange={setListingForm}
+            onStepChange={setWizardStep}
+            onSelectProperty={selectPropertyForListing}
             onToggleOperation={toggleOperation}
             onPhotoChange={setPhotoFile}
             onVideoChange={setVideoFile}
@@ -912,35 +1018,130 @@ function Dashboard({
 
 function ListingDrawer({
   form,
+  owners,
+  properties,
+  step,
   busy,
   onClose,
   onSubmit,
   onChange,
+  onStepChange,
+  onSelectProperty,
   onToggleOperation,
   onPhotoChange,
   onVideoChange,
 }: {
   form: FormState;
+  owners: AdminOwner[];
+  properties: AdminProperty[];
+  step: ListingWizardStep;
   busy: boolean;
   onClose: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onChange: (form: FormState) => void;
+  onStepChange: (step: ListingWizardStep) => void;
+  onSelectProperty: (propertyId: string) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
   onPhotoChange: (file: File | null) => void;
   onVideoChange: (file: File | null) => void;
 }): JSX.Element {
+  const canContinueOwner = form.ownerMode === "new" ? form.newOwnerFullName.trim().length > 0 : form.ownerId.length > 0;
+  const canContinueProperty = form.propertyMode === "new" ? form.locationText.trim().length > 0 : form.propertyId.length > 0;
+
   return (
     <section className={styles.drawer} aria-label="Formulario de publicacion">
       <div className={styles.drawerHead}>
         <div>
-          <h3>{form.id ? "Editar publicacion" : "Crear publicacion"}</h3>
-          <p>Publicacion comercial + ficha tecnica del inmueble. La media se guarda en Supabase Storage.</p>
+          <h3>{form.id ? "Editar publicacion" : "Nueva publicacion guiada"}</h3>
+          <p>Primero propietario, despues inmueble y al final el aviso para la web.</p>
         </div>
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
       </div>
 
+      <div className={styles.stepper} aria-label="Pasos de creacion">
+        {[
+          ["propietario", "1. Propietario"],
+          ["inmueble", "2. Inmueble"],
+          ["publicacion", "3. Publicacion"],
+        ].map(([id, label]) => (
+          <button key={id} type="button" className={step === id ? styles.stepActive : ""} onClick={() => onStepChange(id as ListingWizardStep)}>
+            {label}
+          </button>
+        ))}
+      </div>
+
       <form className={styles.formPanel} onSubmit={onSubmit}>
-        <div className={styles.formSection}>
+        {step === "propietario" ? (
+          <div className={styles.formSection}>
+            <h4>Propietario</h4>
+            <div className={styles.segmented}>
+              <button type="button" className={form.ownerMode === "existing" ? styles.segmentActive : ""} onClick={() => onChange({ ...form, ownerMode: "existing" })}>Elegir existente</button>
+              <button type="button" className={form.ownerMode === "new" ? styles.segmentActive : ""} onClick={() => onChange({ ...form, ownerMode: "new" })}>Crear nuevo</button>
+            </div>
+            {form.ownerMode === "existing" ? (
+              <label>Propietario
+                <select value={form.ownerId} onChange={(event) => onChange({ ...form, ownerId: event.target.value })} required>
+                  <option value="">Seleccionar propietario</option>
+                  {owners.map((owner) => <option key={owner.id} value={owner.id}>{owner.full_name}</option>)}
+                </select>
+              </label>
+            ) : (
+              <>
+                <div className={styles.twoCols}>
+                  <label>Nombre completo<input value={form.newOwnerFullName} onChange={(event) => onChange({ ...form, newOwnerFullName: event.target.value })} required /></label>
+                  <label>Telefono<input value={form.newOwnerPhone} onChange={(event) => onChange({ ...form, newOwnerPhone: event.target.value })} /></label>
+                </div>
+                <label>Email<input type="email" value={form.newOwnerEmail} onChange={(event) => onChange({ ...form, newOwnerEmail: event.target.value })} /></label>
+                <label>Notas internas<textarea value={form.newOwnerNotes} onChange={(event) => onChange({ ...form, newOwnerNotes: event.target.value })} /></label>
+              </>
+            )}
+            <div className={styles.formNav}>
+              <button type="button" className={styles.primaryButton} disabled={!canContinueOwner} onClick={() => onStepChange("inmueble")}>Continuar al inmueble</button>
+            </div>
+          </div>
+        ) : null}
+
+        {step === "inmueble" ? (
+          <div className={styles.formSection}>
+            <h4>Inmueble</h4>
+            <div className={styles.segmented}>
+              <button type="button" className={form.propertyMode === "new" ? styles.segmentActive : ""} onClick={() => onChange({ ...form, propertyMode: "new", propertyId: "" })}>Crear inmueble</button>
+              <button type="button" className={form.propertyMode === "existing" ? styles.segmentActive : ""} onClick={() => onChange({ ...form, propertyMode: "existing" })}>Elegir existente</button>
+            </div>
+            {form.propertyMode === "existing" ? (
+              <label>Inmueble
+                <select value={form.propertyId} onChange={(event) => onSelectProperty(event.target.value)} required>
+                  <option value="">Seleccionar inmueble</option>
+                  {properties.map((property) => <option key={property.id} value={property.id}>{property.title} - {property.location_text ?? "sin ubicacion"}</option>)}
+                </select>
+              </label>
+            ) : null}
+            <div className={styles.twoCols}>
+              <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
+              <label>Ubicacion<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
+            </div>
+            <div className={styles.twoCols}>
+              <label>Latitud<input value={form.latitude} onChange={(event) => onChange({ ...form, latitude: event.target.value })} required /></label>
+              <label>Longitud<input value={form.longitude} onChange={(event) => onChange({ ...form, longitude: event.target.value })} required /></label>
+            </div>
+            <div className={styles.threeCols}>
+              <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
+              <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
+              <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
+            </div>
+            <label className={styles.checkboxLine}>
+              <input type="checkbox" checked={form.syncPropertyData} onChange={(event) => onChange({ ...form, syncPropertyData: event.target.checked })} />
+              Actualizar la ficha del inmueble con estos datos
+            </label>
+            <div className={styles.formNav}>
+              <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("propietario")}>Volver</button>
+              <button type="button" className={styles.primaryButton} disabled={!canContinueProperty} onClick={() => onStepChange("publicacion")}>Continuar a publicacion</button>
+            </div>
+          </div>
+        ) : null}
+
+        {step === "publicacion" ? (
+          <div className={styles.formSection}>
           <h4>Datos comerciales</h4>
           <div className={styles.twoCols}>
             <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
@@ -955,34 +1156,27 @@ function ListingDrawer({
             <label>Precio<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
             <label>Moneda<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
           </div>
+          <label className={styles.checkboxLine}>
+            <input type="checkbox" checked={form.syncPropertyData} onChange={(event) => onChange({ ...form, syncPropertyData: event.target.checked })} />
+            Mantener estos datos iguales en el inmueble
+          </label>
         </div>
+        ) : null}
 
-        <div className={styles.formSection}>
-          <h4>Inmueble</h4>
-          <div className={styles.twoCols}>
-            <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
-            <label>Ubicacion<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
-          </div>
-          <div className={styles.twoCols}>
-            <label>Latitud<input value={form.latitude} onChange={(event) => onChange({ ...form, latitude: event.target.value })} required /></label>
-            <label>Longitud<input value={form.longitude} onChange={(event) => onChange({ ...form, longitude: event.target.value })} required /></label>
-          </div>
-          <div className={styles.threeCols}>
-            <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
-            <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
-            <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
-          </div>
-        </div>
-
-        <div className={styles.formSection}>
+        {step === "publicacion" ? (
+          <div className={styles.formSection}>
           <h4>Media</h4>
           <div className={styles.twoCols}>
             <label>Foto principal<input type="file" accept="image/*" onChange={(event) => onPhotoChange(event.target.files?.[0] ?? null)} /></label>
             <label>Video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
           </div>
+          <div className={styles.formNav}>
+            <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
+            <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
+          </div>
         </div>
+        ) : null}
 
-        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
       </form>
     </section>
   );
