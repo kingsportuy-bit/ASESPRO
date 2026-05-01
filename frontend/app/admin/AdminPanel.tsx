@@ -220,6 +220,14 @@ function buildAddress(form: FormState): string {
   return [streetLine, form.city, form.department, form.country].filter(Boolean).join(", ");
 }
 
+function getCityCoordinates(city: FormState["city"]): { latitude: string; longitude: string } {
+  if (city === "Centenario") {
+    return { latitude: "-32.1333", longitude: "-56.4667" };
+  }
+
+  return { latitude: "-32.8167", longitude: "-56.5167" };
+}
+
 export function AdminPanel(): JSX.Element {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [email, setEmail] = useState("");
@@ -573,8 +581,8 @@ export function AdminPanel(): JSX.Element {
       description: listingForm.description,
       propertyType: listingForm.propertyType,
       locationText: listingForm.propertyMode === "existing" ? listingForm.locationText : buildAddress(listingForm),
-      latitude: "",
-      longitude: "",
+      latitude: listingForm.propertyMode === "existing" ? "" : getCityCoordinates(listingForm.city).latitude,
+      longitude: listingForm.propertyMode === "existing" ? "" : getCityCoordinates(listingForm.city).longitude,
       bedrooms: listingForm.bedrooms,
       bathrooms: listingForm.bathrooms,
       areaM2: listingForm.areaM2,

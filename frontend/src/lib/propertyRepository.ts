@@ -300,14 +300,28 @@ function normalizeCurrency(value: string | null | undefined, operation: Property
   return value?.trim() || getDefaultCurrencyForOperation(operation);
 }
 
+function defaultCoordinatesForLocation(location: string | null | undefined): CoordinatePair | null {
+  const normalized = location?.toLowerCase() ?? "";
+  if (normalized.includes("centenario")) {
+    return { lat: -32.1333, lng: -56.4667 };
+  }
+
+  if (normalized.includes("paso de los toros")) {
+    return { lat: -32.8167, lng: -56.5167 };
+  }
+
+  return null;
+}
+
 function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | null {
   const property = Array.isArray(row.asespro_properties) ? row.asespro_properties[0] : row.asespro_properties;
   if (!property || property.is_active === false) {
     return null;
   }
 
-  const lat = parseCoordinateValue(property.latitude);
-  const lng = parseCoordinateValue(property.longitude);
+  const fallbackCoordinates = defaultCoordinatesForLocation(property.location_text);
+  const lat = parseCoordinateValue(property.latitude) ?? fallbackCoordinates?.lat ?? null;
+  const lng = parseCoordinateValue(property.longitude) ?? fallbackCoordinates?.lng ?? null;
   if (lat === null || lng === null) {
     return null;
   }
