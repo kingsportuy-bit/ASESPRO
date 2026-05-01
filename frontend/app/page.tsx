@@ -10,8 +10,9 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import styles from "./HomePage.module.css";
 
 export const metadata: Metadata = {
-  title: "Inicio",
-  description: "Explora propiedades de ASESPRO con busqueda por mapa, filtros y contacto por WhatsApp.",
+  title: "Inmobiliaria en Paso de los Toros",
+  description:
+    "Alquiler y venta de casas, apartamentos y terrenos en Paso de los Toros, Pueblo Centenario y alrededores. Consulta propiedades y contacta a ASESPRO.",
 };
 
 const HERO_IMAGE = "/HERO_ASESPRO.png";
@@ -21,7 +22,7 @@ export default async function HomePage(): Promise<JSX.Element> {
   const featured = properties.slice(0, 3);
   const whatsappUrl = buildWhatsAppUrl(
     process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "59898382388",
-    "Hola ASESPRO, quiero recibir opciones de propiedades.",
+    "Hola ASESPRO, quiero consultar por propiedades disponibles. Estoy buscando alquiler o compra en Paso de los Toros, Pueblo Centenario o alrededores.",
   );
 
   return (
@@ -30,18 +31,18 @@ export default async function HomePage(): Promise<JSX.Element> {
         <img src={HERO_IMAGE} alt="" className={styles.heroBg} />
         <div className="hero-inner">
           <div className={styles.heroContent}>
-            <p className={styles.eyebrow}>Curaduria Inmobiliaria</p>
-            <h1 className={styles.heroTitle}>Encontra tu proximo hogar con confianza y criterio real.</h1>
+            <p className={styles.eyebrow}>Inmobiliaria en Paso de los Toros</p>
+            <h1 className={styles.heroTitle}>Alquiler y venta de propiedades en Paso de los Toros y Pueblo Centenario</h1>
             <p className={styles.heroText}>
-              Descubri propiedades seleccionadas para alquiler y venta, con una experiencia visual clara y contacto
-              directo por WhatsApp.
+              En ASESPRO te ayudamos a encontrar casas, apartamentos y terrenos con informacion clara, precios realistas
+              y acompanamiento personalizado durante todo el proceso.
             </p>
             <div className={styles.heroActions}>
               <Link href="/alquiler" className={styles.primaryAction}>
                 Ver alquileres
               </Link>
-              <Link href="/contacto" className={styles.secondaryAction}>
-                Contactar por WhatsApp
+              <Link href="/venta" className={styles.secondaryAction}>
+                Ver propiedades en venta
               </Link>
             </div>
           </div>
@@ -54,8 +55,8 @@ export default async function HomePage(): Promise<JSX.Element> {
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
             <h2 className={styles.quickTitle}>Alquileres</h2>
-            <p className={styles.quickText}>Descubri residencias listas para renta en ubicaciones premium.</p>
-            <span className={styles.quickLink}>Explorar alquiler</span>
+            <p className={styles.quickText}>Casas y apartamentos para vivir en Paso de los Toros, Pueblo Centenario y alrededores.</p>
+            <span className={styles.quickLink}>Explorar alquileres</span>
           </div>
         </Link>
 
@@ -64,7 +65,7 @@ export default async function HomePage(): Promise<JSX.Element> {
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
             <h2 className={styles.quickTitle}>Ventas</h2>
-            <p className={styles.quickText}>Inversiones curadas con alto potencial y respaldo profesional.</p>
+            <p className={styles.quickText}>Oportunidades de compra en casas, apartamentos y terrenos, con asesoramiento para avanzar con seguridad.</p>
             <span className={styles.quickLink}>Explorar ventas</span>
           </div>
         </Link>
@@ -73,9 +74,9 @@ export default async function HomePage(): Promise<JSX.Element> {
           <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80" alt="" />
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
-            <h2 className={styles.quickTitle}>Servicio de limpieza</h2>
-            <p className={styles.quickText}>Preparamos cada inmueble para publicacion y visitas con estandar premium.</p>
-            <span className={styles.quickLink}>Explorar servicio</span>
+            <h2 className={styles.quickTitle}>Limpieza profesional</h2>
+            <p className={styles.quickText}>Servicio de limpieza para hogares, oficinas, locales y empresas en Paso de los Toros, Montevideo y Maldonado.</p>
+            <span className={styles.quickLink}>Solicitar presupuesto</span>
           </div>
         </Link>
       </section>
@@ -83,11 +84,12 @@ export default async function HomePage(): Promise<JSX.Element> {
       <section className={`${styles.featured} ${styles.sectionFrame}`}>
         <div className={styles.featuredHead}>
           <div>
-            <p className={styles.eyebrow}>Seleccion Curada</p>
-            <h2>Propiedades destacadas</h2>
+            <p className={styles.eyebrow}>Propiedades seleccionadas</p>
+            <h2>Mira las opciones disponibles</h2>
+            <p>Revisa alquileres y ventas cargadas en la web para hacer una preseleccion antes de contactar al agente.</p>
           </div>
           <Link href="/venta" className={styles.secondaryAction}>
-            Ver catalogo completo
+            Ver catalogo
           </Link>
         </div>
 
@@ -112,47 +114,47 @@ export default async function HomePage(): Promise<JSX.Element> {
       </section>
 
       <section className={`${styles.process} ${styles.sectionFrame}`}>
-        <h2>Un proceso disenado para tu tranquilidad</h2>
-        <p>Guiamos cada decision con metodo curado, claridad y acompanamiento profesional.</p>
+        <h2>Un proceso simple para avanzar con confianza</h2>
+        <p>La web te permite revisar opciones antes de consultar, asi llegas al contacto con una idea mas clara de lo que estas buscando.</p>
         <div className={styles.steps}>
           <article className={styles.step}>
             <span>1</span>
-            <h3>Elegi una propiedad</h3>
-            <p>Explora nuestro catalogo y selecciona la opcion que mejor encaja con tus objetivos.</p>
+            <h3>Revisa las propiedades</h3>
+            <p>Explora casas, apartamentos y terrenos disponibles segun operacion, zona y presupuesto.</p>
           </article>
           <article className={styles.step}>
             <span>2</span>
-            <h3>Contactanos por WhatsApp</h3>
-            <p>Coordinamos detalles en minutos con respuesta personalizada y accion directa.</p>
+            <h3>Hace tu preseleccion</h3>
+            <p>Guarda o identifica las opciones que te interesan para consultar con mas claridad.</p>
           </article>
           <article className={styles.step}>
             <span>3</span>
-            <h3>Coordinamos la visita</h3>
-            <p>Agendamos en base a tu preferencia para avanzar con total claridad.</p>
+            <h3>Coordinamos contigo</h3>
+            <p>Te ayudamos a resolver dudas, coordinar visitas y avanzar con el proceso de alquiler o compra.</p>
           </article>
         </div>
       </section>
 
       <section className={`${styles.cleaningBanner} ${styles.sectionFrame}`}>
         <div className={styles.cleaningCopy}>
-          <p className={styles.eyebrow}>Mas que inmobiliaria</p>
-          <h2>Servicio de limpieza premium</h2>
-          <p>Preparamos cada propiedad para mostrarla impecable y maximizar su valor percibido.</p>
+          <p className={styles.eyebrow}>Servicio adicional</p>
+          <h2>Limpieza profesional para particulares y empresas</h2>
+          <p>Atendemos hogares, oficinas, locales comerciales y empresas con presupuestos personalizados segun el tipo de espacio, frecuencia y necesidad del servicio.</p>
           <div className={styles.cleaningActions}>
             <Link href="/servicio-limpieza" className={styles.primaryAction}>
-              Solicitar servicio
+              Solicitar presupuesto
             </Link>
             <Link href="/servicio-limpieza" className={styles.ghostAction}>
-              Saber mas
+              Ver servicio de limpieza
             </Link>
           </div>
         </div>
-        <img src={getPropertyCoverImage("prop-3")} alt="" className={styles.cleaningImage} />
+        <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1400&q=80" alt="" className={styles.cleaningImage} />
       </section>
 
       <section className={`${styles.mapTeaser} ${styles.sectionFrame}`}>
-        <h2>Explora por ubicacion</h2>
-        <p>Recorre propiedades y oportunidades directamente en el mapa.</p>
+        <h2>Explora propiedades por ubicacion</h2>
+        <p>Ubica rapidamente las opciones disponibles en Paso de los Toros, Pueblo Centenario y alrededores.</p>
         <div className={styles.mapShell}>
           <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={320} />
           <Link href="/mapa" className={styles.mapLockLayer}>
@@ -160,7 +162,7 @@ export default async function HomePage(): Promise<JSX.Element> {
           </Link>
           <div className={styles.mapOverlayCard}>
             <strong>Mapa de propiedades</strong>
-            <p>Activa vista completa y descubre zonas clave.</p>
+            <p>Activa la vista completa para revisar zonas y comparar ubicaciones.</p>
             <Link href="/mapa" className={styles.primaryAction}>
               Activar mapa
             </Link>
@@ -170,19 +172,19 @@ export default async function HomePage(): Promise<JSX.Element> {
 
       <section className={`${styles.trustSection} ${styles.sectionFrame}`}>
         <article className={styles.trustCopy}>
-          <h2>Por que confiar en nosotros</h2>
+          <h2>Por que contactar a ASESPRO</h2>
           <ul>
             <li>
-              <strong>Profesionalismo inmobiliario</strong>
-              <p>Curaduria y acompanamiento completo de principio a fin.</p>
+              <strong>Conocimiento local</strong>
+              <p>Trabajamos con propiedades en Paso de los Toros, Pueblo Centenario y zonas cercanas.</p>
             </li>
             <li>
-              <strong>Servicio personalizado</strong>
-              <p>Opciones recomendadas segun tus tiempos, objetivos y presupuesto.</p>
+              <strong>Atencion personalizada</strong>
+              <p>Te orientamos segun tu presupuesto, tus tiempos y el tipo de propiedad que necesitas.</p>
             </li>
             <li>
-              <strong>Asesoria financiera</strong>
-              <p>Evaluamos cada oportunidad con criterio de riesgo y retorno.</p>
+              <strong>Apoyo en financiacion</strong>
+              <p>Acompanamos consultas de credito hipotecario y contamos con acceso de gestion para evaluar opciones con Santander.</p>
             </li>
           </ul>
         </article>
@@ -193,12 +195,12 @@ export default async function HomePage(): Promise<JSX.Element> {
 
       <section className={`${styles.contactStrip} ${styles.sectionFrame}`}>
         <article className={styles.contactInfo}>
-          <h2>Listo para el siguiente paso?</h2>
-          <p>Estamos aqui para ayudarte a encontrar el lugar que estas buscando.</p>
+          <h2>Queres consultar por una propiedad?</h2>
+          <p>Escribinos con lo que estas buscando y te ayudamos a revisar las opciones disponibles.</p>
           <ul>
-            <li>+598 98 382 388</li>
-            <li>Florencio Sanchez 722</li>
-            <li>Paso de los Toros, Tacuarembo</li>
+            <li>Alquileres y ventas</li>
+            <li>Casas, apartamentos y terrenos</li>
+            <li>Paso de los Toros, Pueblo Centenario y alrededores</li>
           </ul>
         </article>
 

@@ -10,8 +10,8 @@ type MapaPageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Mapa completo",
-  description: "Vista completa del mapa de propiedades con filtros.",
+  title: "Mapa de propiedades",
+  description: "Mapa de casas, apartamentos y terrenos disponibles en Paso de los Toros, Pueblo Centenario y alrededores.",
 };
 
 export default async function MapaPage({ searchParams }: MapaPageProps): Promise<JSX.Element> {
@@ -23,8 +23,8 @@ export default async function MapaPage({ searchParams }: MapaPageProps): Promise
       <div className="page-shell">
         <PropertyExplorer
           properties={properties}
-          title="Mapa completo de propiedades"
-          hint="Usa filtros y explora todas las zonas disponibles."
+          title="Explora propiedades por ubicacion"
+          hint="Usa filtros y revisa las opciones disponibles en Paso de los Toros, Pueblo Centenario y alrededores."
           showOperationFilter={true}
           highlightedPropertyId={highlightedPropertyId}
         />

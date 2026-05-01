@@ -4,8 +4,9 @@ import { ListingWithViewToggle } from "@/features/property-explorer/ListingWithV
 import { listPublicPropertiesByOperation } from "@/lib/propertyRepository";
 
 export const metadata: Metadata = {
-  title: "Alquiler",
-  description: "Listado de propiedades en alquiler de ASESPRO con filtros visuales y acceso a vista por mapa.",
+  title: "Alquileres en Paso de los Toros",
+  description:
+    "Casas y apartamentos en alquiler en Paso de los Toros, Pueblo Centenario y alrededores. Revisa propiedades disponibles y consulta por WhatsApp.",
 };
 
 export default async function AlquilerPage(): Promise<JSX.Element> {
@@ -13,12 +14,12 @@ export default async function AlquilerPage(): Promise<JSX.Element> {
 
   return (
     <ListingWithViewToggle
-      title="Propiedades exclusivas en alquiler"
-      description="Una seleccion curada de residencias que definen estandar de vida moderno."
+      title="Alquileres en Paso de los Toros y alrededores"
+      description="Consulta casas y apartamentos disponibles para alquilar. Revisa ubicacion, precio y caracteristicas antes de contactar al agente."
       properties={properties}
-      mapTitle="Busqueda interactiva"
-      mapDescription="Explora nuestras propiedades directamente en el mapa para encontrar tu zona ideal."
-      operationHint="Filtra por tipo, precio y zona para encontrar el alquiler ideal."
+      mapTitle="Busca alquileres por zona"
+      mapDescription="Explora las propiedades disponibles en el mapa y compara ubicaciones antes de coordinar una visita."
+      operationHint="Filtra por tipo de propiedad, precio y zona para encontrar opciones que se ajusten a lo que necesitas."
     />
   );
 }

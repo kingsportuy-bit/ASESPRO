@@ -1,53 +1,48 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getPropertyCoverImage } from "@/lib/propertyVisuals";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
-
 import styles from "./ServicioLimpiezaPage.module.css";
 
-const DEFAULT_WHATSAPP_PHONE = "59898382388";
+const CLEANING_HERO_IMAGE = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80";
+const CLEANING_OFFICE_IMAGE = "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1400&q=80";
+const CLEANING_DETAIL_IMAGE = "https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=1200&q=80";
 
 export const metadata: Metadata = {
-  title: "Servicio de limpieza",
-  description: "Solicita el servicio de limpieza para inmuebles con coordinacion directa por WhatsApp.",
+  title: "Servicio de limpieza en Uruguay",
+  description:
+    "Limpieza profesional para empresas y particulares en Paso de los Toros, Montevideo y Maldonado. Solicita presupuesto personalizado por formulario.",
 };
 
 export default function ServicioLimpiezaPage(): JSX.Element {
-  const whatsappPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? DEFAULT_WHATSAPP_PHONE;
-  const whatsappUrl = buildWhatsAppUrl(
-    whatsappPhone,
-    "Hola ASESPRO, quiero cotizar un servicio de limpieza para una propiedad.",
-  );
-
   return (
     <main>
       <div className="page-shell">
         <section className={styles.hero}>
           <article className={styles.heroContent}>
-            <p className={styles.eyebrow}>Excelencia en cada rincon</p>
+            <p className={styles.eyebrow}>Limpieza profesional</p>
             <h1>
-              Limpieza profesional <span>para espacios de autor.</span>
+              Servicio de limpieza <span>para empresas y particulares.</span>
             </h1>
             <p>
-              Elevamos el estandar de higiene para residencias premium y entornos corporativos con foco en detalle,
-              discrecion y puntualidad.
+              Realizamos limpiezas para hogares, oficinas, locales comerciales y empresas en Paso de los Toros,
+              Montevideo y Maldonado. Cada presupuesto se arma segun el espacio, la frecuencia y el tipo de servicio
+              necesario.
             </p>
             <div className={styles.heroActions}>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.heroPrimary}>
-                Agendar servicio
-              </a>
+              <Link href="/contacto" className={styles.heroPrimary}>
+                Solicitar presupuesto
+              </Link>
               <Link href="/contacto" className={styles.heroSecondary}>
-                Ver portafolio
+                Completar formulario
               </Link>
             </div>
           </article>
 
           <article className={styles.heroMedia}>
-            <img src={getPropertyCoverImage("prop-3")} alt="" />
+            <img src={CLEANING_HERO_IMAGE} alt="" />
             <div className={styles.qualityBadge}>
-              <strong>100%</strong>
-              <p>Garantia de satisfaccion y discrecion absoluta.</p>
+              <strong>3</strong>
+              <p>Zonas de cobertura: Paso de los Toros, Montevideo y Maldonado.</p>
             </div>
           </article>
         </section>
@@ -55,31 +50,34 @@ export default function ServicioLimpiezaPage(): JSX.Element {
         <section className={styles.curation}>
           <div className={styles.curationHead}>
             <div>
-              <h2>Curaduria de higiene profesional</h2>
-              <p>No solo limpiamos, preservamos la integridad de cada espacio con metodologia premium.</p>
+              <h2>Servicios de limpieza a medida</h2>
+              <p>
+                Coordinamos el trabajo segun el tipo de cliente y las condiciones del lugar. Para cotizar correctamente,
+                necesitamos que nos cuentes que espacio hay que limpiar y que resultado esperas.
+              </p>
             </div>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.inlineLink}>
-              Ver todos los servicios
-            </a>
+            <Link href="/contacto" className={styles.inlineLink}>
+              Solicitar presupuesto
+            </Link>
           </div>
           <div className={styles.serviceGrid}>
             <article className={styles.serviceCard}>
-              <h3>Limpieza residencial premium</h3>
-              <p>Tratamientos para marmol, madera natural y cristales de alta gama.</p>
+              <h3>Limpieza para hogares</h3>
+              <p>Limpieza general o profunda para casas y apartamentos, ideal para mantenimiento, mudanzas o preparacion de espacios.</p>
             </article>
             <article className={`${styles.serviceCard} ${styles.serviceCardAccent}`}>
-              <h3>Compromiso eco-luxe</h3>
-              <p>Insumos biodegradables y protocolos que cuidan la salud y los materiales.</p>
+              <h3>Limpieza para oficinas y empresas</h3>
+              <p>Servicio para oficinas, comercios, locales y espacios de trabajo que necesitan higiene constante y buena presentacion.</p>
             </article>
             <article className={styles.serviceCard}>
-              <h3>Entornos corporativos</h3>
-              <p>Oficinas y espacios comerciales con estandar ejecutivo de presentacion.</p>
+              <h3>Limpieza puntual o recurrente</h3>
+              <p>Podemos coordinar trabajos por unica vez o servicios periodicos, segun la necesidad del cliente.</p>
             </article>
             <article className={styles.serviceMedia}>
-              <img src={getPropertyCoverImage("prop-4")} alt="" />
+              <img src={CLEANING_OFFICE_IMAGE} alt="" />
               <div>
-                <h3>Limpieza de fin de obra</h3>
-                <p>Dejamos cada propiedad lista para habitar o exhibir.</p>
+                <h3>Limpieza de espacios comerciales</h3>
+                <p>Atencion para locales, consultorios, areas comunes y otros espacios que requieren orden, limpieza y continuidad.</p>
               </div>
             </article>
           </div>
@@ -87,42 +85,42 @@ export default function ServicioLimpiezaPage(): JSX.Element {
 
         <section className={styles.trust}>
           <div className={styles.trustMosaic}>
-            <img src={getPropertyCoverImage("prop-5")} alt="" className={styles.mosaicMain} />
+            <img src={CLEANING_DETAIL_IMAGE} alt="" className={styles.mosaicMain} />
             <article className={styles.mosaicCard}>
-              <strong>Certificacion de calidad ISO</strong>
+              <strong>Paso de los Toros, Montevideo y Maldonado</strong>
             </article>
             <article className={styles.mosaicStat}>
-              <strong>15+</strong>
-              <p>Anos de confianza</p>
+              <strong>A medida</strong>
+              <p>Presupuesto segun espacio y necesidad</p>
             </article>
-            <img src={getPropertyCoverImage("prop-2")} alt="" className={styles.mosaicSecondary} />
+            <img src={CLEANING_OFFICE_IMAGE} alt="" className={styles.mosaicSecondary} />
           </div>
           <div className={styles.trustCopy}>
-            <h2>Por que confiar en ASESPRO</h2>
+            <h2>Limpieza coordinada con seriedad</h2>
             <ul>
               <li>
-                <strong>Profesionalismo absoluto</strong>
-                <p>Personal capacitado bajo protocolos de hospitalidad premium.</p>
+                <strong>Presupuesto personalizado</strong>
+                <p>Cotizamos segun metros, tipo de espacio, frecuencia y nivel de limpieza requerido.</p>
               </li>
               <li>
-                <strong>Confianza y discrecion</strong>
-                <p>Operamos con total reserva y respeto por la privacidad del cliente.</p>
+                <strong>Para particulares y empresas</strong>
+                <p>Atendemos hogares, oficinas, comercios y organizaciones.</p>
               </li>
               <li>
-                <strong>Filosofia eco-responsable</strong>
-                <p>Reducimos quimicos agresivos con tecnologia de limpieza sostenible.</p>
+                <strong>Coordinacion clara</strong>
+                <p>Te pedimos la informacion necesaria por formulario para responder con una propuesta ajustada.</p>
               </li>
             </ul>
           </div>
         </section>
 
         <section className={styles.cta}>
-          <p className={styles.ctaTag}>Disponibilidad inmediata</p>
-          <h2>Solicite su presupuesto personalizado via WhatsApp</h2>
-          <p>Atencion directa y agendamiento rapido para coordinar su proxima sesion de limpieza.</p>
-          <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.ctaButton}>
-            Contactar por WhatsApp
-          </a>
+          <p className={styles.ctaTag}>Presupuesto personalizado</p>
+          <h2>Solicita una cotizacion para tu limpieza</h2>
+          <p>Completa el formulario con tus datos, ciudad, tipo de espacio y detalle del servicio que necesitas.</p>
+          <Link href="/contacto" className={styles.ctaButton}>
+            Ir al formulario
+          </Link>
         </section>
       </div>
     </main>

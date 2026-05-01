@@ -77,6 +77,6 @@ export function formatPrice(price?: number, currency: PropertyCurrency = "USD"):
 }
 
 export function buildPropertyWhatsAppUrl(property: PropertyListing, phone: string): string {
-  const message = `Hola ASESPRO, me interesa la propiedad "${property.title}" en ${property.location} (${formatPrice(property.price, property.priceCurrency)}). Quiero mas informacion.`;
+  const message = `Hola ASESPRO, quiero consultar por la propiedad ${property.id.toUpperCase()}: "${property.title}" en ${property.location} (${formatPrice(property.price, property.priceCurrency)}). Me interesa recibir mas informacion y coordinar una visita.`;
   return buildWhatsAppUrl(phone, message);
 }

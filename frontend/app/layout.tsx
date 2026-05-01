@@ -16,7 +16,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${SITE_NAME} Inmobiliaria`,
+    default: `${SITE_NAME} | Inmobiliaria en Paso de los Toros`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     apple: '/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b',
   },
   openGraph: {
-    title: `${SITE_NAME} Inmobiliaria`,
+    title: `${SITE_NAME} | Inmobiliaria en Paso de los Toros`,
     description: SITE_DESCRIPTION,
     type: "website",
     locale: "es_UY",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} Inmobiliaria`,
+    title: `${SITE_NAME} | Inmobiliaria en Paso de los Toros`,
     description: SITE_DESCRIPTION,
   },
   robots: {

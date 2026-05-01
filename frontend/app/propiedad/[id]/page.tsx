@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: PropertyDetailPageProps): Pro
   if (!property) {
     return {
       title: "Propiedad no encontrada",
-      description: "La propiedad solicitada no esta disponible.",
+      description: "La propiedad solicitada no esta disponible en ASESPRO.",
     };
   }
 
   return {
     title: property.title,
-    description: `${property.location}. ${property.description}`,
+    description: `${property.location}. Revisa datos, fotos, precio y consulta disponibilidad con ASESPRO. ${property.description}`,
   };
 }
 
@@ -85,19 +85,19 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
               <span className={styles.pill}>{property.status}</span>
             </div>
 
-          <h2 className={styles.sectionTitle}>Vision de la propiedad</h2>
+          <h2 className={styles.sectionTitle}>Descripcion de la propiedad</h2>
           <p>{property.description}</p>
           <p>
-            Cada ambiente fue seleccionado para maximizar la entrada de luz natural y la integracion entre interior y
-            exterior, respetando la identidad arquitectonica del proyecto.
+            Revisa los datos principales de la propiedad y contactanos para confirmar disponibilidad, coordinar una
+            visita o pedir mas informacion.
           </p>
 
-          <h2 className={styles.sectionTitle}>Amenidades</h2>
+          <h2 className={styles.sectionTitle}>Caracteristicas</h2>
           <div className={styles.amenities}>
-            <span>Terraza privada</span>
-            <span>Seguridad 24/7</span>
-            <span>Piscina</span>
-            <span>Gimnasio equipado</span>
+            <span>{property.type}</span>
+            <span>{formatOperationLabel(property)}</span>
+            <span>{property.bedrooms ? `${property.bedrooms} dormitorios` : "Dormitorios a consultar"}</span>
+            <span>{property.areaM2 ? `${property.areaM2} m2` : "Superficie a consultar"}</span>
           </div>
 
           <h2 className={styles.sectionTitle}>Ubicacion</h2>
@@ -136,13 +136,13 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
               <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=80" alt="" />
               <div>
                 <strong>Adrian Castro</strong>
-                <p>Curador de propiedades senior</p>
+                <p>Agente inmobiliario</p>
               </div>
             </div>
 
             <div className={styles.asideActions}>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.primaryAction}>
-                Consulta por WhatsApp
+                Consultar por esta propiedad
               </a>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
                 Agendar visita

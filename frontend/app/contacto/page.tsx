@@ -10,14 +10,15 @@ const DEFAULT_WHATSAPP_PHONE = "59898382388";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Contacta a ASESPRO por WhatsApp para recibir opciones de alquiler, venta o consultas generales.",
+  description:
+    "Contacta a ASESPRO por alquileres, ventas, terrenos o servicios de limpieza. Atencion en Paso de los Toros, Pueblo Centenario, Montevideo y Maldonado.",
 };
 
 export default function ContactoPage(): JSX.Element {
   const whatsappPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? DEFAULT_WHATSAPP_PHONE;
   const directWaLink = buildWhatsAppUrl(
     whatsappPhone,
-    "Hola ASESPRO, quiero una asesoria personalizada sobre propiedades.",
+    "Hola ASESPRO, quiero consultar por propiedades disponibles o servicios de limpieza.",
   );
 
   return (
@@ -26,11 +27,11 @@ export default function ContactoPage(): JSX.Element {
         <section className={styles.hero}>
           <article className={styles.heroText}>
             <h1>
-              Conversemos sobre su proximo <span className={styles.accent}>legado.</span>
+              Contacta a <span className={styles.accent}>ASESPRO.</span>
             </h1>
             <p>
-              Nuestra curaduria arquitectonica merece una atencion personalizada. Estamos aqui para guiarle en cada paso
-              de su inversion inmobiliaria.
+              Contanos que estas buscando y te orientamos. Podemos ayudarte con alquileres, ventas, terrenos o
+              presupuestos de limpieza.
             </p>
           </article>
 
@@ -42,27 +43,28 @@ export default function ContactoPage(): JSX.Element {
         <section className={styles.layout}>
           <WhatsAppInquiryForm
             whatsappPhone={whatsappPhone}
-            title="Formulario de consulta"
-            hint="Comparta sus datos y abrimos WhatsApp con su solicitud lista para enviar."
-            submitLabel="Enviar solicitud"
+            title="Enviar consulta"
+            hint="Completa tus datos y el tipo de consulta. Te responderemos para avanzar con la informacion que necesitas."
+            submitLabel="Enviar consulta"
           />
 
           <aside className={styles.infoGrid}>
             <article className={styles.contactCard}>
               <span className={styles.icon}>TEL</span>
               <div>
-                <p className={styles.cardLabel}>Llamenos</p>
-                <strong>+598 98 382 388</strong>
+                <p className={styles.cardLabel}>Telefono</p>
+                <strong>Llamanos o escribinos</strong>
+                <p>+598 98 382 388</p>
                 <p>Lun - Sab, 9:00 - 19:00</p>
               </div>
             </article>
 
             <article className={styles.contactCard}>
-              <span className={styles.icon}>MAIL</span>
+              <span className={styles.icon}>IG</span>
               <div>
-                <p className={styles.cardLabel}>Escribanos</p>
-                <strong>asespro.servicios</strong>
-                <p>Instagram oficial de ASESPRO.</p>
+                <p className={styles.cardLabel}>Instagram</p>
+                <strong>Seguinos</strong>
+                <p>Novedades, propiedades y servicios de ASESPRO.</p>
               </div>
             </article>
 
@@ -71,6 +73,7 @@ export default function ContactoPage(): JSX.Element {
               <div>
                 <p className={styles.cardLabel}>Chat directo</p>
                 <strong>WhatsApp Business</strong>
+                <p>Escribinos por WhatsApp para consultas inmobiliarias.</p>
               </div>
               <span className={styles.arrow}>-&gt;</span>
             </a>
@@ -80,7 +83,7 @@ export default function ContactoPage(): JSX.Element {
               <img src={getPropertyCoverImage("prop-2")} alt="" />
               <div className={styles.mapCardBody}>
                 <strong>Florencio Sanchez 722</strong>
-                <p>45100 Paso de los Toros, Departamento de Tacuarembo.</p>
+                <p>Paso de los Toros, Tacuarembo.</p>
               </div>
             </article>
           </aside>

@@ -4,8 +4,9 @@ import { ListingWithViewToggle } from "@/features/property-explorer/ListingWithV
 import { listPublicPropertiesByOperation } from "@/lib/propertyRepository";
 
 export const metadata: Metadata = {
-  title: "Venta",
-  description: "Listado de propiedades en venta de ASESPRO con grilla curada y exploracion por mapa.",
+  title: "Propiedades en venta en Paso de los Toros",
+  description:
+    "Casas, apartamentos y terrenos en venta en Paso de los Toros, Pueblo Centenario y alrededores. Consulta opciones y asesoramiento.",
 };
 
 export default async function VentaPage(): Promise<JSX.Element> {
@@ -13,12 +14,12 @@ export default async function VentaPage(): Promise<JSX.Element> {
 
   return (
     <ListingWithViewToggle
-      title="Propiedades en venta"
-      description="Descubra una curaduria exclusiva de residencias disenadas bajo altos estandares de arquitectura y confort."
+      title="Propiedades en venta en Paso de los Toros y Pueblo Centenario"
+      description="Encuentra casas, apartamentos y terrenos en venta, con informacion clara y asesoramiento para avanzar con una decision segura."
       properties={properties}
-      mapTitle="Explora en el mapa"
-      mapDescription="Encuentre su proxima inversion en las ubicaciones mas estrategicas."
-      operationHint="Filtra por tipo, precio y zona para encontrar la propiedad de venta ideal."
+      mapTitle="Explora ventas por ubicacion"
+      mapDescription="Revisa las propiedades en el mapa para evaluar zona, entorno y cercania a puntos de interes."
+      operationHint="Filtra por tipo, precio y zona para comparar oportunidades de compra."
     />
   );
 }

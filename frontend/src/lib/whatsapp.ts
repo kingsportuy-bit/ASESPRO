@@ -1,4 +1,4 @@
-export type InquiryType = "general" | "alquiler" | "venta" | "limpieza";
+export type InquiryType = "general" | "alquiler" | "venta" | "terreno" | "limpieza";
 
 type InquiryPayload = {
   name: string;
@@ -11,6 +11,7 @@ const INQUIRY_LABEL: Record<InquiryType, string> = {
   general: "Consulta general",
   alquiler: "Interes en alquiler",
   venta: "Interes en compra/venta",
+  terreno: "Interes en terreno",
   limpieza: "Servicio de limpieza",
 };
 

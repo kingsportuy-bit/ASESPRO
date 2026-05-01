@@ -14,7 +14,7 @@ export function SiteFooter(): JSX.Element {
       <footer className={`${styles.footer} ${styles.adminFooter}`}>
         <div className={styles.bottomBar}>
           <p className={styles.legal}>
-            Todos los derechos reservados | &copy; {year} Asespro.uy
+            Todos los derechos reservados | &copy; {year} ASESPRO
             <span className={styles.poweredBy}>
               power by{" "}
               <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
@@ -42,7 +42,7 @@ export function SiteFooter(): JSX.Element {
             Venta
           </Link>
           <Link href="/servicio-limpieza" className={styles.link}>
-            Servicio de Limpieza
+            Servicio de limpieza
           </Link>
           <Link href="/contacto" className={styles.link}>
             Contacto
@@ -86,7 +86,7 @@ export function SiteFooter(): JSX.Element {
               Venta
             </Link>
             <Link href="/servicio-limpieza" className={styles.link}>
-              Servicio de Limpieza
+            Servicio de limpieza
             </Link>
             <Link href="/contacto" className={styles.link}>
               Contacto
@@ -111,7 +111,7 @@ export function SiteFooter(): JSX.Element {
 
       <div className={styles.bottomBar}>
         <p className={styles.legal}>
-          Todos los derechos reservados | &copy; {year} Asespro.uy
+          Todos los derechos reservados | &copy; {year} ASESPRO
           <span className={styles.poweredBy}>
             power by{" "}
             <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
