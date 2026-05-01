@@ -4,6 +4,82 @@ import { requireAdminUser } from "@/lib/adminAuth";
 import { normalizeAdminListingInput } from "@/lib/adminListings";
 import { getSupabaseAdminClient } from "@/lib/supabaseServer";
 
+type Coordinates = {
+  latitude: number | null;
+  longitude: number | null;
+};
+
+type NominatimResult = {
+  lat?: string;
+  lon?: string;
+  name?: string;
+  display_name?: string;
+};
+
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function getStreetNeedle(locationText: string): string {
+  return normalizeSearchText(locationText.split(",")[0]?.replace(/\d+/g, " ").replace(/\s+/g, " ").trim() ?? "");
+}
+
+function fallbackCoordinatesForLocation(locationText: string): Coordinates {
+  const normalized = locationText.toLowerCase();
+  if (normalized.includes("centenario")) {
+    return { latitude: -32.1333, longitude: -56.4667 };
+  }
+
+  if (normalized.includes("paso de los toros")) {
+    return { latitude: -32.8167, longitude: -56.5167 };
+  }
+
+  return { latitude: null, longitude: null };
+}
+
+async function geocodeLocation(locationText: string): Promise<Coordinates> {
+  const fallback = fallbackCoordinatesForLocation(locationText);
+  const url = new URL("https://nominatim.openstreetmap.org/search");
+  url.searchParams.set("q", locationText);
+  url.searchParams.set("format", "jsonv2");
+  url.searchParams.set("limit", "5");
+  url.searchParams.set("countrycodes", "uy");
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "ASESPRO/1.0 contacto@asespro.uy",
+      },
+      next: { revalidate: 60 * 60 * 24 * 30 },
+    });
+
+    if (!response.ok) {
+      return fallback;
+    }
+
+    const results = (await response.json()) as NominatimResult[];
+    const streetNeedle = getStreetNeedle(locationText);
+    const first =
+      results.find((result) => {
+        const haystack = normalizeSearchText(`${result.name ?? ""} ${result.display_name ?? ""}`);
+        return streetNeedle.length > 0 && haystack.includes(streetNeedle);
+      }) ?? results[0];
+    const latitude = first?.lat ? Number(first.lat) : NaN;
+    const longitude = first?.lon ? Number(first.lon) : NaN;
+
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return { latitude, longitude };
+    }
+  } catch {
+    return fallback;
+  }
+
+  return fallback;
+}
+
 export async function GET(request: Request): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -42,6 +118,9 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   try {
     const input = normalizeAdminListingInput(await request.json());
+    const geocoded = await geocodeLocation(input.locationText);
+    const latitude = input.latitude ?? geocoded.latitude;
+    const longitude = input.longitude ?? geocoded.longitude;
     let propertyId = input.propertyId;
 
     if (!propertyId) {
@@ -52,8 +131,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           description: input.description,
           property_type: input.propertyType,
           location_text: input.locationText,
-          latitude: input.latitude,
-          longitude: input.longitude,
+          latitude,
+          longitude,
           bedrooms: input.bedrooms,
           bathrooms: input.bathrooms,
           area_m2: input.areaM2,
@@ -75,8 +154,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           description: input.description,
           property_type: input.propertyType,
           location_text: input.locationText,
-          latitude: input.latitude,
-          longitude: input.longitude,
+          latitude,
+          longitude,
           bedrooms: input.bedrooms,
           bathrooms: input.bathrooms,
           area_m2: input.areaM2,
