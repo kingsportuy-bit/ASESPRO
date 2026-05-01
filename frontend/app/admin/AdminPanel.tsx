@@ -863,11 +863,6 @@ export function AdminPanel(): JSX.Element {
                 <option value="vendido">Vendidas</option>
               </select>
             ) : null}
-            {activeTab === "propietarios" ? (
-              <button type="button" className={styles.primaryButton} onClick={openNewOwnerForm}>
-                Nuevo propietario
-              </button>
-            ) : null}
           </section>
         ) : null}
 
@@ -955,9 +950,6 @@ function TabActions({
   if (activeTab === "publicaciones") {
     return (
       <div className={styles.topActions}>
-        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
-          Sincronizar
-        </button>
         <button type="button" className={styles.primaryButton} onClick={onNewListing}>
           Publicar inmueble
         </button>
@@ -968,9 +960,6 @@ function TabActions({
   if (activeTab === "inmuebles") {
     return (
       <div className={styles.topActions}>
-        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
-          Actualizar stock
-        </button>
         <button type="button" className={styles.primaryButton} onClick={onNewProperty}>
           Nuevo inmueble
         </button>
@@ -979,16 +968,7 @@ function TabActions({
   }
 
   if (activeTab === "propietarios") {
-    return (
-      <div className={styles.topActions}>
-        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
-          Actualizar fichas
-        </button>
-        <button type="button" className={styles.primaryButton} onClick={onNewOwner}>
-          Nuevo propietario
-        </button>
-      </div>
-    );
+    return <div className={styles.topActions} />;
   }
 
   return (
