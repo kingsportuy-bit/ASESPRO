@@ -47,8 +47,8 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
       ? source.status
       : "desactivado";
   const priceCurrency =
-    source.priceCurrency === "UYU" || source.priceCurrency === "USD"
-      ? source.priceCurrency
+    typeof source.priceCurrency === "string" && source.priceCurrency.trim()
+      ? source.priceCurrency.trim().toUpperCase()
       : getDefaultCurrencyForOperation(operations[0]);
 
   return {

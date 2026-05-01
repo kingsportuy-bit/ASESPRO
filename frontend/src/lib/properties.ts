@@ -5,7 +5,7 @@ import { buildWhatsAppUrl } from "./whatsapp";
 export type PropertyType = "casa" | "apartamento" | "terreno";
 export type PropertyOperation = "alquiler" | "venta";
 export type PropertyStatus = "activo" | "desactivado" | "alquilado" | "vendido";
-export type PropertyCurrency = "UYU" | "USD";
+export type PropertyCurrency = string;
 
 export type PropertyListing = {
   id: string;
@@ -65,11 +65,15 @@ export function formatPrice(price?: number, currency: PropertyCurrency = "USD"):
     return "Consultar";
   }
 
-  return new Intl.NumberFormat("es-UY", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(price);
+  try {
+    return new Intl.NumberFormat("es-UY", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(price);
+  } catch {
+    return `${currency} ${new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 }).format(price)}`;
+  }
 }
 
 export function buildPropertyWhatsAppUrl(property: PropertyListing, phone: string): string {

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireAdminUser } from "@/lib/adminAuth";
 import { normalizeAdminListingInput } from "@/lib/adminListings";
 import { getSupabaseAdminClient } from "@/lib/supabaseServer";
+import type { PropertyStatus } from "@/lib/properties";
 
 type RouteContext = {
   params: {
@@ -90,4 +91,37 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Datos invalidos." }, { status: 400 });
   }
+}
+
+export async function PATCH(request: Request, { params }: RouteContext): Promise<NextResponse> {
+  const auth = await requireAdminUser(request);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.message }, { status: auth.status });
+  }
+
+  const supabase = getSupabaseAdminClient();
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
+  }
+
+  const payload = (await request.json()) as { status?: PropertyStatus };
+  const status = payload.status;
+  if (status !== "activo" && status !== "desactivado" && status !== "alquilado" && status !== "vendido") {
+    return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
+  }
+
+  const { error } = await supabase
+    .from("asespro_listings")
+    .update({
+      status,
+      published_at: status === "activo" ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", params.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ id: params.id, status });
 }

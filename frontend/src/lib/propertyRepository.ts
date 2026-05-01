@@ -297,11 +297,7 @@ function normalizePropertyType(value: string | null | undefined): PropertyType {
 }
 
 function normalizeCurrency(value: string | null | undefined, operation: PropertyOperation): PropertyCurrency {
-  if (value === "UYU" || value === "USD") {
-    return value;
-  }
-
-  return getDefaultCurrencyForOperation(operation);
+  return value?.trim() || getDefaultCurrencyForOperation(operation);
 }
 
 function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | null {
