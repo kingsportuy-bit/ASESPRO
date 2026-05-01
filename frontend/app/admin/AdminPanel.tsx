@@ -121,7 +121,7 @@ const EMPTY_OWNER_FORM: OwnerFormState = {
 };
 
 const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
-  { id: "resumen", label: "Resumen", hint: "Estado operativo" },
+  { id: "resumen", label: "Dashboard", hint: "Estado operativo" },
   { id: "publicaciones", label: "Publicaciones", hint: "Web y estados" },
   { id: "inmuebles", label: "Inmuebles", hint: "Stock interno" },
   { id: "propietarios", label: "Propietarios", hint: "Fichas y contacto" },
@@ -131,7 +131,7 @@ const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
 const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: string }> = {
   resumen: {
     eyebrow: "Vista general",
-    title: "Resumen operativo",
+    title: "Dashboard",
     description: "Lectura rapida de la salud de la web, stock, propietarios y alertas de publicacion.",
   },
   publicaciones: {
@@ -656,13 +656,6 @@ export function AdminPanel(): JSX.Element {
 
         {message ? <p className={styles.notice}>{message}</p> : null}
 
-        <section className={styles.metrics} aria-label="Resumen operativo">
-          <Metric label="Publicaciones activas" value={activeListings.length} hint={`${listings.length} totales`} />
-          <Metric label="Stock activo" value={properties.filter((property) => property.is_active).length} hint={`${inactiveProperties.length} inactivos`} />
-          <Metric label="Propietarios" value={owners.length} hint="fichas internas" />
-          <Metric label="Alertas" value={mediaIssues.length} hint="sin media completa" tone={mediaIssues.length > 0 ? "warn" : "ok"} />
-        </section>
-
         {drawerMode === "listing" ? (
           <ListingDrawer
             form={listingForm}
@@ -711,6 +704,8 @@ export function AdminPanel(): JSX.Element {
             properties={properties}
             owners={owners}
             activeRentals={activeRentals}
+            activeListingsCount={activeListings.length}
+            inactivePropertiesCount={inactiveProperties.length}
             pricedListings={pricedListings.length}
             mediaIssues={mediaIssues}
             onNewListing={openNewListingForm}
@@ -827,6 +822,8 @@ function Dashboard({
   properties,
   owners,
   activeRentals,
+  activeListingsCount,
+  inactivePropertiesCount,
   pricedListings,
   mediaIssues,
   onNewListing,
@@ -837,6 +834,8 @@ function Dashboard({
   properties: AdminProperty[];
   owners: AdminOwner[];
   activeRentals: ActiveRental[];
+  activeListingsCount: number;
+  inactivePropertiesCount: number;
   pricedListings: number;
   mediaIssues: AdminListing[];
   onNewListing: () => void;
@@ -844,7 +843,15 @@ function Dashboard({
   onSelectTab: (tab: PanelTab) => void;
 }): JSX.Element {
   return (
-    <section className={styles.dashboardGrid}>
+    <>
+      <section className={styles.metrics} aria-label="Resumen operativo">
+        <Metric label="Publicaciones activas" value={activeListingsCount} hint={`${listings.length} totales`} />
+        <Metric label="Stock activo" value={properties.filter((property) => property.is_active).length} hint={`${inactivePropertiesCount} inactivos`} />
+        <Metric label="Propietarios" value={owners.length} hint="fichas internas" />
+        <Metric label="Alertas" value={mediaIssues.length} hint="sin media completa" tone={mediaIssues.length > 0 ? "warn" : "ok"} />
+      </section>
+
+      <section className={styles.dashboardGrid}>
       <article className={styles.workCard}>
         <div className={styles.sectionHead}>
           <div>
@@ -898,7 +905,8 @@ function Dashboard({
           {listings.length > 0 && mediaIssues.length === 0 ? <p className={styles.empty}>No hay alertas criticas de media.</p> : null}
         </div>
       </article>
-    </section>
+      </section>
+    </>
   );
 }
 
