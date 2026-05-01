@@ -85,8 +85,11 @@ type FormState = {
   description: string;
   propertyType: PropertyType;
   locationText: string;
-  latitude: string;
-  longitude: string;
+  street: string;
+  streetNumber: string;
+  city: "Paso de los Toros" | "Centenario";
+  department: "Tacuarembo" | "Durazno";
+  country: "Uruguay";
   bedrooms: string;
   bathrooms: string;
   areaM2: string;
@@ -124,15 +127,18 @@ const EMPTY_LISTING_FORM: FormState = {
   description: "",
   propertyType: "casa",
   locationText: "",
-  latitude: "",
-  longitude: "",
+  street: "",
+  streetNumber: "",
+  city: "Paso de los Toros",
+  department: "Tacuarembo",
+  country: "Uruguay",
   bedrooms: "",
   bathrooms: "",
   areaM2: "",
   priceAmount: "",
   priceCurrency: "UYU",
   operations: ["alquiler"],
-  status: "desactivado",
+  status: "activo",
 };
 
 const EMPTY_OWNER_FORM: OwnerFormState = {
@@ -145,9 +151,9 @@ const EMPTY_OWNER_FORM: OwnerFormState = {
 
 const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
   { id: "resumen", label: "Dashboard", hint: "Estado operativo" },
-  { id: "publicaciones", label: "Publicaciones", hint: "Web y estados" },
   { id: "inmuebles", label: "Inmuebles", hint: "Stock interno" },
   { id: "propietarios", label: "Propietarios", hint: "Fichas y contacto" },
+  { id: "publicaciones", label: "Publicaciones", hint: "Web y estados" },
   { id: "alquileres", label: "Alquileres", hint: "Contratos activos" },
 ];
 
@@ -160,12 +166,12 @@ const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: 
   publicaciones: {
     eyebrow: "Web publica",
     title: "Publicaciones",
-    description: "Crea, edita, activa, pausa o cierra las fichas visibles para clientes.",
+    description: "Publica inmuebles ya cargados y administra su estado desde la planilla.",
   },
   inmuebles: {
     eyebrow: "Inventario interno",
     title: "Inmuebles",
-    description: "Controla el stock fisico disponible y mantiene limpia la base operativa.",
+    description: "Ficha madre: direccion, datos tecnicos, propietario, imagenes y video.",
   },
   propietarios: {
     eyebrow: "Relacion comercial",
@@ -209,6 +215,11 @@ function matchesSearch(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.trim().toLowerCase());
 }
 
+function buildAddress(form: FormState): string {
+  const streetLine = [form.street.trim(), form.streetNumber.trim()].filter(Boolean).join(" ");
+  return [streetLine, form.city, form.department, form.country].filter(Boolean).join(", ");
+}
+
 export function AdminPanel(): JSX.Element {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [email, setEmail] = useState("");
@@ -227,7 +238,8 @@ export function AdminPanel(): JSX.Element {
   const [wizardStep, setWizardStep] = useState<ListingWizardStep>("propietario");
   const [listingForm, setListingForm] = useState<FormState>(EMPTY_LISTING_FORM);
   const [ownerForm, setOwnerForm] = useState<OwnerFormState>(EMPTY_OWNER_FORM);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [query, setQuery] = useState("");
   const [listingFilter, setListingFilter] = useState<ListingFilter>("todos");
@@ -400,7 +412,8 @@ export function AdminPanel(): JSX.Element {
   function openNewListingForm(): void {
     setListingForm(EMPTY_LISTING_FORM);
     setWizardStep("propietario");
-    setPhotoFile(null);
+    setPhotoFiles([]);
+    setCoverPhotoIndex(0);
     setVideoFile(null);
     setDrawerMode("listing");
     setActiveTab("publicaciones");
@@ -438,8 +451,11 @@ export function AdminPanel(): JSX.Element {
       description: current.description || property.description || "",
       propertyType: property.property_type,
       locationText: property.location_text ?? "",
-      latitude: property.latitude?.toString() ?? "",
-      longitude: property.longitude?.toString() ?? "",
+      street: current.street,
+      streetNumber: current.streetNumber,
+      city: current.city,
+      department: current.department,
+      country: current.country,
       bedrooms: property.bedrooms?.toString() ?? "",
       bathrooms: property.bathrooms?.toString() ?? "",
       areaM2: property.area_m2?.toString() ?? "",
@@ -464,8 +480,11 @@ export function AdminPanel(): JSX.Element {
       description: listing.description ?? "",
       propertyType: listing.asespro_properties?.property_type ?? "casa",
       locationText: listing.asespro_properties?.location_text ?? "",
-      latitude: listing.asespro_properties?.latitude?.toString() ?? "",
-      longitude: listing.asespro_properties?.longitude?.toString() ?? "",
+      street: "",
+      streetNumber: "",
+      city: "Paso de los Toros",
+      department: "Tacuarembo",
+      country: "Uruguay",
       bedrooms: listing.asespro_properties?.bedrooms?.toString() ?? "",
       bathrooms: listing.asespro_properties?.bathrooms?.toString() ?? "",
       areaM2: listing.asespro_properties?.area_m2?.toString() ?? "",
@@ -542,12 +561,12 @@ export function AdminPanel(): JSX.Element {
       ownerId: ownerId || undefined,
       propertyId: listingForm.propertyMode === "existing" ? listingForm.propertyId : undefined,
       syncPropertyData: listingForm.syncPropertyData,
-      title: listingForm.title,
+      title: listingForm.title || buildAddress(listingForm),
       description: listingForm.description,
       propertyType: listingForm.propertyType,
-      locationText: listingForm.locationText,
-      latitude: listingForm.latitude,
-      longitude: listingForm.longitude,
+      locationText: listingForm.propertyMode === "existing" ? listingForm.locationText : buildAddress(listingForm),
+      latitude: "",
+      longitude: "",
       bedrooms: listingForm.bedrooms,
       bathrooms: listingForm.bathrooms,
       areaM2: listingForm.areaM2,
@@ -574,7 +593,8 @@ export function AdminPanel(): JSX.Element {
 
     await uploadMedia(payload.id);
     setListingForm(EMPTY_LISTING_FORM);
-    setPhotoFile(null);
+    setPhotoFiles([]);
+    setCoverPhotoIndex(0);
     setVideoFile(null);
     setDrawerMode(null);
     await loadOverview(token);
@@ -652,15 +672,24 @@ export function AdminPanel(): JSX.Element {
 
   async function uploadMedia(listingId: string): Promise<void> {
     if (!token) return;
-    for (const item of [
-      { file: photoFile, mediaType: "photo" },
-      { file: videoFile, mediaType: "video" },
-    ] as const) {
+    for (const [index, file] of photoFiles.entries()) {
+      const data = new FormData();
+      data.set("file", file);
+      data.set("mediaType", "photo");
+      data.set("isCover", index === coverPhotoIndex ? "true" : "false");
+      await fetch(`/api/admin/listings/${listingId}/media`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: data,
+      });
+    }
+
+    for (const item of [{ file: videoFile, mediaType: "video" }] as const) {
       if (!item.file) continue;
       const data = new FormData();
       data.set("file", item.file);
       data.set("mediaType", item.mediaType);
-      data.set("isCover", item.mediaType === "photo" ? "true" : "false");
+      data.set("isCover", "false");
       await fetch(`/api/admin/listings/${listingId}/media`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -790,7 +819,13 @@ export function AdminPanel(): JSX.Element {
               onStepChange={setWizardStep}
               onSelectProperty={selectPropertyForListing}
               onToggleOperation={toggleOperation}
-              onPhotoChange={setPhotoFile}
+              photoFiles={photoFiles}
+              coverPhotoIndex={coverPhotoIndex}
+              onPhotosChange={(files) => {
+                setPhotoFiles(files);
+                setCoverPhotoIndex(0);
+              }}
+              onCoverPhotoChange={setCoverPhotoIndex}
               onVideoChange={setVideoFile}
             />
           </Modal>
@@ -913,7 +948,7 @@ function TabActions({
           Sincronizar
         </button>
         <button type="button" className={styles.primaryButton} onClick={onNewListing}>
-          Nueva publicacion
+          Publicar inmueble
         </button>
       </div>
     );
@@ -926,7 +961,7 @@ function TabActions({
           Actualizar stock
         </button>
         <button type="button" className={styles.primaryButton} onClick={onNewListing}>
-          Publicar inmueble
+          Nuevo inmueble
         </button>
       </div>
     );
@@ -1062,7 +1097,10 @@ function ListingDrawer({
   onStepChange,
   onSelectProperty,
   onToggleOperation,
-  onPhotoChange,
+  photoFiles,
+  coverPhotoIndex,
+  onPhotosChange,
+  onCoverPhotoChange,
   onVideoChange,
 }: {
   form: FormState;
@@ -1076,18 +1114,21 @@ function ListingDrawer({
   onStepChange: (step: ListingWizardStep) => void;
   onSelectProperty: (propertyId: string) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
-  onPhotoChange: (file: File | null) => void;
+  photoFiles: File[];
+  coverPhotoIndex: number;
+  onPhotosChange: (files: File[]) => void;
+  onCoverPhotoChange: (index: number) => void;
   onVideoChange: (file: File | null) => void;
 }): JSX.Element {
   const canContinueOwner = form.ownerMode === "new" ? form.newOwnerFullName.trim().length > 0 : form.ownerId.length > 0;
-  const canContinueProperty = form.propertyMode === "new" ? form.locationText.trim().length > 0 : form.propertyId.length > 0;
+  const canContinueProperty = form.propertyMode === "new" ? form.street.trim().length > 0 && form.streetNumber.trim().length > 0 : form.propertyId.length > 0;
 
   return (
     <section className={styles.drawer} aria-label="Formulario de publicacion">
       <div className={styles.drawerHead}>
         <div>
-          <h3>{form.id ? "Editar publicacion" : "Nueva publicacion guiada"}</h3>
-          <p>Primero propietario, despues inmueble y al final el aviso para la web.</p>
+          <h3>{form.id ? "Editar publicacion" : "Alta de inmueble y publicacion"}</h3>
+          <p>El inmueble guarda la ficha y la media. La publicacion solo define como sale a la web.</p>
         </div>
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
       </div>
@@ -1152,21 +1193,40 @@ function ListingDrawer({
             ) : null}
             <div className={styles.twoCols}>
               <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
-              <label>Ubicacion<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
+              <label>Pais<input value={form.country} readOnly /></label>
             </div>
-            <div className={styles.twoCols}>
-              <label>Latitud<input value={form.latitude} onChange={(event) => onChange({ ...form, latitude: event.target.value })} required /></label>
-              <label>Longitud<input value={form.longitude} onChange={(event) => onChange({ ...form, longitude: event.target.value })} required /></label>
-            </div>
+            {form.propertyMode === "new" ? (
+              <>
+                <div className={styles.twoCols}>
+                  <label>Calle<input value={form.street} onChange={(event) => onChange({ ...form, street: event.target.value })} required /></label>
+                  <label>Numero<input value={form.streetNumber} onChange={(event) => onChange({ ...form, streetNumber: event.target.value })} required /></label>
+                </div>
+                <div className={styles.twoCols}>
+                  <label>Ciudad<select value={form.city} onChange={(event) => {
+                    const city = event.target.value as FormState["city"];
+                    onChange({ ...form, city, department: city === "Paso de los Toros" ? "Tacuarembo" : "Durazno" });
+                  }}><option value="Paso de los Toros">Paso de los Toros</option><option value="Centenario">Centenario</option></select></label>
+                  <label>Departamento<input value={form.department} readOnly /></label>
+                </div>
+              </>
+            ) : (
+              <label>Direccion<input value={form.locationText} readOnly /></label>
+            )}
             <div className={styles.threeCols}>
               <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
               <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
               <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
             </div>
-            <label className={styles.checkboxLine}>
-              <input type="checkbox" checked={form.syncPropertyData} onChange={(event) => onChange({ ...form, syncPropertyData: event.target.checked })} />
-              Actualizar la ficha del inmueble con estos datos
-            </label>
+            <label>Descripcion / ficha general<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+            <div className={styles.twoCols}>
+              <label>Imagenes del inmueble<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
+              <label>Video del inmueble<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
+            </div>
+            {photoFiles.length > 0 ? (
+              <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
+                {photoFiles.map((file, index) => <option key={`${file.name}-${index}`} value={index}>{file.name}</option>)}
+              </select></label>
+            ) : null}
             <div className={styles.formNav}>
               <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("propietario")}>Volver</button>
               <button type="button" className={styles.primaryButton} disabled={!canContinueProperty} onClick={() => onStepChange("publicacion")}>Continuar a publicacion</button>
@@ -1176,12 +1236,7 @@ function ListingDrawer({
 
         {step === "publicacion" ? (
           <div className={styles.formSection}>
-          <h4>Datos comerciales</h4>
-          <div className={styles.twoCols}>
-            <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
-            <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyStatus })}><option value="desactivado">Desactivado</option><option value="activo">Activo</option><option value="alquilado">Alquilado</option><option value="vendido">Vendido</option></select></label>
-          </div>
-          <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+          <h4>Publicacion</h4>
           <div className={styles.operations}>
             <label><input type="checkbox" checked={form.operations.includes("alquiler")} onChange={() => onToggleOperation("alquiler")} /> Alquiler</label>
             <label><input type="checkbox" checked={form.operations.includes("venta")} onChange={() => onToggleOperation("venta")} /> Venta</label>
@@ -1190,23 +1245,9 @@ function ListingDrawer({
             <label>Precio<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
             <label>Moneda<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
           </div>
-          <label className={styles.checkboxLine}>
-            <input type="checkbox" checked={form.syncPropertyData} onChange={(event) => onChange({ ...form, syncPropertyData: event.target.checked })} />
-            Mantener estos datos iguales en el inmueble
-          </label>
-        </div>
-        ) : null}
-
-        {step === "publicacion" ? (
-          <div className={styles.formSection}>
-          <h4>Media</h4>
-          <div className={styles.twoCols}>
-            <label>Foto principal<input type="file" accept="image/*" onChange={(event) => onPhotoChange(event.target.files?.[0] ?? null)} /></label>
-            <label>Video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
-          </div>
           <div className={styles.formNav}>
             <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
-            <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
+            <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Publicando..." : "Crear publicacion"}</button>
           </div>
         </div>
         ) : null}

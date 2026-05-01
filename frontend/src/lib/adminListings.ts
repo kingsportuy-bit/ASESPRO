@@ -8,8 +8,8 @@ export type AdminListingInput = {
   description: string;
   propertyType: PropertyType;
   locationText: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
   areaM2?: number | null;
@@ -34,10 +34,10 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
 
   const title = typeof source.title === "string" ? source.title.trim() : "";
   const locationText = typeof source.locationText === "string" ? source.locationText.trim() : "";
-  const latitude = Number(source.latitude);
-  const longitude = Number(source.longitude);
-  if (!title || !locationText || !Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-    throw new Error("Titulo, ubicacion y coordenadas son obligatorios.");
+  const latitude = toOptionalNumber(source.latitude);
+  const longitude = toOptionalNumber(source.longitude);
+  if (!title || !locationText) {
+    throw new Error("Titulo y direccion son obligatorios.");
   }
 
   const propertyType =
