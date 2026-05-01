@@ -77,6 +77,10 @@ h3 {
   padding-top: 60px;
 }
 
+#main-content:has([data-admin-shell="true"]) {
+  padding-top: 0;
+}
+
 main {
   width: 100%;
   margin: 0 0 34px;

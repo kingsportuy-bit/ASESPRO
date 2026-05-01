@@ -10,7 +10,21 @@ export function SiteFooter(): JSX.Element {
   const year = new Date().getFullYear();
 
   if (pathname.startsWith("/admin")) {
-    return <></>;
+    return (
+      <footer className={`${styles.footer} ${styles.adminFooter}`}>
+        <div className={styles.bottomBar}>
+          <p className={styles.legal}>
+            Todos los derechos reservados | &copy; {year} Asespro.uy
+            <span className={styles.poweredBy}>
+              power by{" "}
+              <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
+                Codexa.uy
+              </a>
+            </span>
+          </p>
+        </div>
+      </footer>
+    );
   }
 
   return (

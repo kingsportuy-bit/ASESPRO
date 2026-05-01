@@ -5,6 +5,15 @@
   background: #f8faf7;
 }
 
+.adminFooter {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.adminFooter .bottomBar {
+  margin-top: 0;
+}
+
 .inner {
   width: min(var(--layout-max-width), calc(100vw - (var(--layout-gutter) * 2)));
   margin: 0 auto;

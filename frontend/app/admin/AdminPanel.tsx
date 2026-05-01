@@ -317,7 +317,7 @@ export function AdminPanel(): JSX.Element {
 
   if (!token) {
     return (
-      <main className={styles.loginShell}>
+      <main className={styles.loginShell} data-admin-shell="true">
         <section className={styles.loginCard}>
           <span className={styles.adminMark}>ASESPRO Backoffice</span>
           <h1>Panel interno</h1>
@@ -342,7 +342,7 @@ export function AdminPanel(): JSX.Element {
   }
 
   return (
-    <main className={styles.appShell}>
+    <main className={styles.appShell} data-admin-shell="true">
       <aside className={styles.sidebar}>
         <div>
           <span className={styles.adminMark}>ASESPRO</span>
