@@ -206,6 +206,10 @@
   display: none;
 }
 
+.mobileScrim {
+  display: none;
+}
+
 .topBar {
   min-height: 92px;
   border-radius: 16px;
@@ -554,6 +558,23 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+  }
+
+  .mobileScrim {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    border: 0;
+    background: rgba(15, 36, 32, 0.42);
+    opacity: 0;
+    pointer-events: none;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+
+  .mobileScrimOpen {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .mobileBrand {

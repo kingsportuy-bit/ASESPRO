@@ -128,6 +128,34 @@ const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
   { id: "alquileres", label: "Alquileres", hint: "Contratos activos" },
 ];
 
+const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: string }> = {
+  resumen: {
+    eyebrow: "Vista general",
+    title: "Resumen operativo",
+    description: "Lectura rapida de la salud de la web, stock, propietarios y alertas de publicacion.",
+  },
+  publicaciones: {
+    eyebrow: "Web publica",
+    title: "Publicaciones",
+    description: "Crea, edita, activa, pausa o cierra las fichas visibles para clientes.",
+  },
+  inmuebles: {
+    eyebrow: "Inventario interno",
+    title: "Inmuebles",
+    description: "Controla el stock fisico disponible y mantiene limpia la base operativa.",
+  },
+  propietarios: {
+    eyebrow: "Relacion comercial",
+    title: "Propietarios",
+    description: "Administra fichas de contacto, notas y datos utiles de cada propietario.",
+  },
+  alquileres: {
+    eyebrow: "Gestion mensual",
+    title: "Alquileres activos",
+    description: "Seguimiento de contratos vigentes, montos y fechas clave.",
+  },
+};
+
 function formatMoney(amount: number | null, currency: PropertyCurrency | null): string {
   if (typeof amount !== "number") return "Sin precio";
   const normalizedCurrency = currency || "USD";
@@ -170,6 +198,8 @@ export function AdminPanel(): JSX.Element {
   const [activeRentals, setActiveRentals] = useState<ActiveRental[]>([]);
   const [activeTab, setActiveTab] = useState<PanelTab>("resumen");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
   const [drawerMode, setDrawerMode] = useState<DrawerMode>(null);
   const [listingForm, setListingForm] = useState<FormState>(EMPTY_LISTING_FORM);
   const [ownerForm, setOwnerForm] = useState<OwnerFormState>(EMPTY_OWNER_FORM);
@@ -232,6 +262,19 @@ export function AdminPanel(): JSX.Element {
     });
   }, [supabase]);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    function onKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileMenuOpen]);
+
   async function login(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!supabase) {
@@ -283,6 +326,32 @@ export function AdminPanel(): JSX.Element {
     setMobileMenuOpen(false);
     setQuery("");
     setListingFilter("todos");
+  }
+
+  function handleTouchStart(x: number): void {
+    setTouchStartX(x);
+    setTouchCurrentX(x);
+  }
+
+  function handleTouchMove(x: number): void {
+    setTouchCurrentX(x);
+  }
+
+  function handleTouchEnd(): void {
+    if (touchStartX === null || touchCurrentX === null) return;
+    const delta = touchCurrentX - touchStartX;
+    const openedFromEdge = touchStartX < 34;
+
+    if (!mobileMenuOpen && openedFromEdge && delta > 42) {
+      setMobileMenuOpen(true);
+    }
+
+    if (mobileMenuOpen && delta < -42) {
+      setMobileMenuOpen(false);
+    }
+
+    setTouchStartX(null);
+    setTouchCurrentX(null);
   }
 
   function openNewListingForm(): void {
@@ -511,9 +580,22 @@ export function AdminPanel(): JSX.Element {
   }
 
   const title = NAV_ITEMS.find((item) => item.id === activeTab)?.label ?? "Panel";
+  const tabCopy = TAB_COPY[activeTab];
 
   return (
-    <main className={styles.appShell} data-admin-shell="true">
+    <main
+      className={styles.appShell}
+      data-admin-shell="true"
+      onTouchStart={(event) => handleTouchStart(event.touches[0]?.clientX ?? 0)}
+      onTouchMove={(event) => handleTouchMove(event.touches[0]?.clientX ?? 0)}
+      onTouchEnd={handleTouchEnd}
+    >
+      <button
+        type="button"
+        className={`${styles.mobileScrim} ${mobileMenuOpen ? styles.mobileScrimOpen : ""}`}
+        aria-label="Cerrar menu"
+        onClick={() => setMobileMenuOpen(false)}
+      />
       <aside className={`${styles.sidebar} ${mobileMenuOpen ? styles.sidebarOpen : ""}`}>
         <div>
           <div className={styles.sidebarLogoWrap}>
@@ -559,18 +641,17 @@ export function AdminPanel(): JSX.Element {
 
         <header className={styles.topBar}>
           <div>
-            <p className={styles.kicker}>Panel de administracion</p>
-            <h2>{title}</h2>
-            <span>Gestion diaria de la web y operacion inmobiliaria.</span>
+            <p className={styles.kicker}>{tabCopy.eyebrow}</p>
+            <h2>{tabCopy.title}</h2>
+            <span>{tabCopy.description}</span>
           </div>
-          <div className={styles.topActions}>
-            <button type="button" className={styles.secondaryLightButton} onClick={() => void loadOverview()}>
-              Actualizar
-            </button>
-            <button type="button" className={styles.primaryButton} onClick={openNewListingForm}>
-              Nueva publicacion
-            </button>
-          </div>
+          <TabActions
+            activeTab={activeTab}
+            onRefresh={() => void loadOverview()}
+            onNewListing={openNewListingForm}
+            onNewOwner={openNewOwnerForm}
+            onSelectTab={selectTab}
+          />
         </header>
 
         {message ? <p className={styles.notice}>{message}</p> : null}
@@ -661,6 +742,83 @@ function Metric({ label, value, hint, tone = "neutral" }: { label: string; value
       <strong>{value}</strong>
       <small>{hint}</small>
     </article>
+  );
+}
+
+function TabActions({
+  activeTab,
+  onRefresh,
+  onNewListing,
+  onNewOwner,
+  onSelectTab,
+}: {
+  activeTab: PanelTab;
+  onRefresh: () => void;
+  onNewListing: () => void;
+  onNewOwner: () => void;
+  onSelectTab: (tab: PanelTab) => void;
+}): JSX.Element {
+  if (activeTab === "resumen") {
+    return (
+      <div className={styles.topActions}>
+        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
+          Actualizar datos
+        </button>
+        <button type="button" className={styles.primaryButton} onClick={onNewListing}>
+          Crear publicacion
+        </button>
+      </div>
+    );
+  }
+
+  if (activeTab === "publicaciones") {
+    return (
+      <div className={styles.topActions}>
+        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
+          Sincronizar
+        </button>
+        <button type="button" className={styles.primaryButton} onClick={onNewListing}>
+          Nueva publicacion
+        </button>
+      </div>
+    );
+  }
+
+  if (activeTab === "inmuebles") {
+    return (
+      <div className={styles.topActions}>
+        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
+          Actualizar stock
+        </button>
+        <button type="button" className={styles.primaryButton} onClick={onNewListing}>
+          Publicar inmueble
+        </button>
+      </div>
+    );
+  }
+
+  if (activeTab === "propietarios") {
+    return (
+      <div className={styles.topActions}>
+        <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
+          Actualizar fichas
+        </button>
+        <button type="button" className={styles.primaryButton} onClick={onNewOwner}>
+          Nuevo propietario
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.topActions}>
+      <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
+        Actualizar alquileres
+      </button>
+      <button type="button" className={styles.primaryButton} onClick={() => onSelectTab("publicaciones")}>
+        Ver publicaciones
+      </button>
+    </div>
   );
 }
 
