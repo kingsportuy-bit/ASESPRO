@@ -32,10 +32,9 @@ export default async function HomePage(): Promise<JSX.Element> {
         <div className="hero-inner">
           <div className={styles.heroContent}>
             <p className={styles.eyebrow}>Inmobiliaria en Paso de los Toros</p>
-            <h1 className={styles.heroTitle}>Alquiler y venta de propiedades en Paso de los Toros y Pueblo Centenario</h1>
+            <h1 className={styles.heroTitle}>Propiedades en Paso de los Toros y Pueblo Centenario</h1>
             <p className={styles.heroText}>
-              En ASESPRO te ayudamos a encontrar casas, apartamentos y terrenos con informacion clara, precios realistas
-              y acompanamiento personalizado durante todo el proceso.
+              Casas, apartamentos y terrenos en alquiler y venta, con atencion personalizada.
             </p>
             <div className={styles.heroActions}>
               <Link href="/alquiler" className={styles.primaryAction}>
