@@ -95,7 +95,7 @@ docker build -t $ImageName .
 cd $VpsProjectPath
 docker stack deploy -c deploy.stack.yml $StackName
 docker service update --force $ServiceName
-docker service ps $ServiceName --no-trunc
+docker service ps $ServiceName
 "@
 
 if ($TailLogs) {
@@ -110,8 +110,24 @@ Invoke-Step "Deploying on VPS" {
 }
 
 Invoke-Step "Smoke test" {
-  $web = Invoke-WebRequest -Uri "https://asespro.codexa.uy" -UseBasicParsing -TimeoutSec 20
-  $panel = Invoke-WebRequest -Uri "https://panelasespro.codexa.uy/admin" -UseBasicParsing -TimeoutSec 20
+  function Invoke-SmokeRequest {
+    param([string]$Uri)
+
+    $lastError = $null
+    for ($attempt = 1; $attempt -le 5; $attempt++) {
+      try {
+        return Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 20
+      } catch {
+        $lastError = $_
+        Start-Sleep -Seconds 3
+      }
+    }
+
+    throw $lastError
+  }
+
+  $web = Invoke-SmokeRequest -Uri "https://asespro.codexa.uy/"
+  $panel = Invoke-SmokeRequest -Uri "https://panelasespro.codexa.uy/admin"
 
   Write-Host "Web status: $($web.StatusCode)"
   Write-Host "Panel status: $($panel.StatusCode)"
