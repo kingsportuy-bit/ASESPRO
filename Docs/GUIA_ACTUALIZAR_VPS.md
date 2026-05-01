@@ -26,6 +26,41 @@ Antes de actualizar, confirmar:
 
 ## 2) Actualizacion desde local
 
+### Metodo estandar ASESPRO
+
+Para ASESPRO, usar el script versionado:
+
+```powershell
+cd C:\Users\Fito\Documents\CODEX\ASESPRO
+.\scripts\deploy-asespro.ps1 -CommitMessage "mensaje claro del cambio"
+```
+
+El script ejecuta el flujo completo:
+
+1. Verifica que la rama local sea `main`.
+2. Ejecuta `git diff --check`.
+3. Compila el frontend localmente con `npm run build`.
+4. Agrega cambios, crea commit y hace `git push`.
+5. En VPS ejecuta `git pull --ff-only`.
+6. Construye la imagen Docker `asespro-web:latest`.
+7. Ejecuta `docker stack deploy`.
+8. Fuerza refresh de `asespro_asespro-web`.
+9. Valida web y panel por HTTPS.
+
+Variantes utiles:
+
+```powershell
+.\scripts\deploy-asespro.ps1 -NoCommit
+.\scripts\deploy-asespro.ps1 -SkipLocalBuild
+.\scripts\deploy-asespro.ps1 -TailLogs
+```
+
+Usar comandos manuales solo si el script falla o si se necesita diagnostico puntual.
+
+---
+
+## 2.b) Actualizacion manual desde local
+
 En la maquina local:
 
 ```bash

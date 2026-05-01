@@ -27,6 +27,7 @@ Archivos base:
 - `PROXIMOS_PASOS_FRONT.md`
 - `ESTADO_PRODUCCION.md`
 - `GUIA_GENERAL_DESPLIEGUE_GITHUB_VPS.md`
+- `GUIA_ACTUALIZAR_VPS.md`
 
 ---
 
@@ -88,3 +89,17 @@ Se construye con:
 - Una recomendacion clara por decision.
 - Evitar cambios grandes sin validar impacto.
 - Priorizar lo que desbloquea salida a produccion hoy.
+
+---
+
+## Estandar de deploy
+
+Para actualizar produccion, usar el script versionado:
+
+```powershell
+.\scripts\deploy-asespro.ps1 -CommitMessage "mensaje claro del cambio"
+```
+
+Este script es el flujo estandar: build local, commit, push, pull en VPS, build Docker, deploy Swarm, force update y smoke test.
+
+La guia detallada vive en `Docs/GUIA_ACTUALIZAR_VPS.md`.
