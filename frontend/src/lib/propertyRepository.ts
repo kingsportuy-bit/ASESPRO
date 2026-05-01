@@ -1,4 +1,4 @@
-import { MOCK_PROPERTIES } from "@/data/mockProperties";
+import { unstable_noStore as noStore } from "next/cache";
 
 import {
   getDefaultCurrencyForOperation,
@@ -77,27 +77,9 @@ function isActiveProperty(property: PropertyListing): boolean {
   return property.status === "activo";
 }
 
-function fallbackExample(operation?: PropertyOperation): PropertyListing[] {
-  const activeMock = MOCK_PROPERTIES.filter((property) => isActiveProperty(property));
-  if (activeMock.length === 0) {
-    return [];
-  }
-
-  if (!operation) {
-    return [activeMock[0]];
-  }
-
-  const activeForOperation = activeMock.filter((property) => property.operation === operation);
-  return activeForOperation.length > 0 ? [activeForOperation[0]] : [activeMock[0]];
-}
-
 function toPublicActiveList(items: PropertyListing[], operation?: PropertyOperation): PropertyListing[] {
   const activeItems = items.filter((property) => isActiveProperty(property));
-  if (activeItems.length > 0) {
-    return activeItems;
-  }
-
-  return fallbackExample(operation);
+  return activeItems;
 }
 
 function parseCoordinateValue(value: unknown): number | null {
@@ -271,18 +253,6 @@ function normalizeProperty(input: unknown): PropertyListing | null {
   };
 }
 
-class MockPropertyRepository implements PropertyRepository {
-  async list(options: ListOptions = {}): Promise<PropertyListing[]> {
-    const { operation } = options;
-    const scoped = operation ? MOCK_PROPERTIES.filter((property) => propertyMatchesOperation(property, operation)) : MOCK_PROPERTIES;
-    return toPublicActiveList(scoped, operation);
-  }
-
-  async getById(id: string): Promise<PropertyListing | null> {
-    return MOCK_PROPERTIES.find((property) => property.id === id) ?? null;
-  }
-}
-
 function parseNumber(value: unknown): number | undefined {
   const parsed = parseCoordinateValue(value);
   return parsed ?? undefined;
@@ -369,7 +339,7 @@ class SupabasePropertyRepository implements PropertyRepository {
   async list(options: ListOptions = {}): Promise<PropertyListing[]> {
     const supabase = getSupabaseAdminClient();
     if (!supabase) {
-      return new MockPropertyRepository().list(options);
+      return [];
     }
 
     const { data, error } = await supabase
@@ -381,7 +351,7 @@ class SupabasePropertyRepository implements PropertyRepository {
       .order("created_at", { ascending: false });
 
     if (error || !data) {
-      return new MockPropertyRepository().list(options);
+      return [];
     }
 
     const normalized = (data as SupabaseListingRow[])
@@ -397,7 +367,7 @@ class SupabasePropertyRepository implements PropertyRepository {
   async getById(id: string): Promise<PropertyListing | null> {
     const supabase = getSupabaseAdminClient();
     if (!supabase) {
-      return new MockPropertyRepository().getById(id);
+      return null;
     }
 
     const { data, error } = await supabase
@@ -409,7 +379,7 @@ class SupabasePropertyRepository implements PropertyRepository {
       .maybeSingle();
 
     if (error || !data) {
-      return new MockPropertyRepository().getById(id);
+      return null;
     }
 
     return normalizeSupabaseListing(data as SupabaseListingRow);
@@ -468,18 +438,18 @@ class ApiPropertyRepository implements PropertyRepository {
 }
 
 function createPropertyRepository(): PropertyRepository {
-  const source = process.env.PROPERTY_DATA_SOURCE ?? "mock";
+  const source = process.env.PROPERTY_DATA_SOURCE ?? "supabase";
   if (source === "supabase") {
     return new SupabasePropertyRepository();
   }
 
   if (source !== "api") {
-    return new MockPropertyRepository();
+    return new SupabasePropertyRepository();
   }
 
   const apiBaseUrl = process.env.PROPERTIES_API_BASE_URL;
   if (!apiBaseUrl) {
-    return new MockPropertyRepository();
+    return new SupabasePropertyRepository();
   }
 
   return new ApiPropertyRepository(apiBaseUrl);
@@ -488,13 +458,16 @@ function createPropertyRepository(): PropertyRepository {
 export const propertyRepository = createPropertyRepository();
 
 export async function listPublicProperties(): Promise<PropertyListing[]> {
+  noStore();
   return propertyRepository.list();
 }
 
 export async function listPublicPropertiesByOperation(operation: PropertyOperation): Promise<PropertyListing[]> {
+  noStore();
   return propertyRepository.list({ operation });
 }
 
 export async function getPublicPropertyById(id: string): Promise<PropertyListing | null> {
+  noStore();
   return propertyRepository.getById(id);
 }
