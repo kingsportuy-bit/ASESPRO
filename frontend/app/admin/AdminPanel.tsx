@@ -409,15 +409,23 @@ export function AdminPanel(): JSX.Element {
     setTouchCurrentX(null);
   }
 
-  function openNewListingForm(): void {
+  function openListingFormFrom(tab: PanelTab, step: ListingWizardStep): void {
     setListingForm(EMPTY_LISTING_FORM);
-    setWizardStep("propietario");
+    setWizardStep(step);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
     setDrawerMode("listing");
-    setActiveTab("publicaciones");
+    setActiveTab(tab);
     setMessage(null);
+  }
+
+  function openNewListingForm(): void {
+    openListingFormFrom("publicaciones", "publicacion");
+  }
+
+  function openNewPropertyForm(): void {
+    openListingFormFrom("inmuebles", "propietario");
   }
 
   function openNewOwnerForm(): void {
@@ -798,6 +806,7 @@ export function AdminPanel(): JSX.Element {
             activeTab={activeTab}
             onRefresh={() => void loadOverview()}
             onNewListing={openNewListingForm}
+            onNewProperty={openNewPropertyForm}
             onNewOwner={openNewOwnerForm}
             onSelectTab={selectTab}
           />
@@ -919,12 +928,14 @@ function TabActions({
   activeTab,
   onRefresh,
   onNewListing,
+  onNewProperty,
   onNewOwner,
   onSelectTab,
 }: {
   activeTab: PanelTab;
   onRefresh: () => void;
   onNewListing: () => void;
+  onNewProperty: () => void;
   onNewOwner: () => void;
   onSelectTab: (tab: PanelTab) => void;
 }): JSX.Element {
@@ -960,7 +971,7 @@ function TabActions({
         <button type="button" className={styles.secondaryLightButton} onClick={onRefresh}>
           Actualizar stock
         </button>
-        <button type="button" className={styles.primaryButton} onClick={onNewListing}>
+        <button type="button" className={styles.primaryButton} onClick={onNewProperty}>
           Nuevo inmueble
         </button>
       </div>
