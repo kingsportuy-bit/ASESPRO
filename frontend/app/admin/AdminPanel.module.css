@@ -1,61 +1,61 @@
-.shell {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 120px 0 56px;
+.loginShell,
+.appShell {
+  min-height: 100vh;
+  background: #eef3f1;
+  color: #181c1c;
 }
 
-.loginCard,
-.formPanel,
-.list,
-.header {
-  background: #f0f4f3;
-  border-radius: 18px;
-  padding: 24px;
+.loginShell {
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
 
 .loginCard {
   width: min(460px, 100%);
-  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 24px 70px rgba(24, 28, 28, 0.08);
 }
 
 .loginCard h1,
-.header h1,
-.formPanel h2 {
+.sidebar h1,
+.topBar h2,
+.drawer h3,
+.sectionHead h3 {
   margin: 0;
-  color: #181c1c;
 }
 
 .loginCard p,
-.header p,
-.item p,
-.empty {
-  margin: 8px 0 0;
-  color: #3d4a3e;
+.topBar p,
+.drawer p,
+.rowCard p,
+.empty,
+.rowCard small {
+  margin: 6px 0 0;
+  color: #5b6662;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 18px;
+.adminMark,
+.kicker {
+  display: inline-flex;
+  color: #00513f;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.form,
+.loginForm,
 .formPanel {
   display: grid;
   gap: 14px;
+  margin-top: 20px;
 }
 
-.formPanel label,
-.form label {
+.loginForm label,
+.formPanel label {
   display: grid;
   gap: 6px;
   color: #444746;
@@ -65,13 +65,13 @@
   letter-spacing: 0.04em;
 }
 
+.loginForm input,
 .formPanel input,
 .formPanel textarea,
-.formPanel select,
-.form input {
+.formPanel select {
   min-height: 46px;
-  border: 1px solid rgba(190, 201, 195, 0.42);
-  border-radius: 12px;
+  border: 1px solid rgba(139, 151, 145, 0.35);
+  border-radius: 10px;
   background: #ffffff;
   color: #181c1c;
   padding: 10px 12px;
@@ -79,8 +79,162 @@
 }
 
 .formPanel textarea {
-  min-height: 110px;
+  min-height: 108px;
   resize: vertical;
+}
+
+.appShell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.sidebar {
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  background: #0f2420;
+  color: #ffffff;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.sidebar .adminMark {
+  color: #9ef3d6;
+}
+
+.sidebar h1 {
+  margin-top: 8px;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.sideNav {
+  display: grid;
+  gap: 8px;
+}
+
+.sideNav button,
+.secondaryButton {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 10px 12px;
+  text-align: left;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sideNav .activeNav {
+  background: rgba(158, 243, 214, 0.14);
+  color: #ffffff;
+}
+
+.secondaryButton {
+  background: rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.workspace {
+  padding: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+.topBar {
+  min-height: 84px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+
+.topBar h2 {
+  font-size: clamp(1.6rem, 1.35rem + 0.8vw, 2.35rem);
+  letter-spacing: 0;
+}
+
+.primaryButton,
+.closeButton,
+.rowActions button,
+.loginForm button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  color: #ffffff;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.closeButton,
+.rowActions button {
+  background: #eef3f1;
+  color: #00513f;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metrics article,
+.drawer,
+.tablePanel,
+.notice,
+.alert {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.metrics article {
+  display: grid;
+  gap: 10px;
+}
+
+.metrics span {
+  color: #5b6662;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metrics strong {
+  color: #00513f;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.notice,
+.alert {
+  color: #00513f;
+  font-weight: 800;
+}
+
+.drawer {
+  display: grid;
+  gap: 18px;
+}
+
+.drawerHead,
+.sectionHead,
+.rowCard,
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .twoCols {
@@ -111,60 +265,95 @@
   min-height: auto;
 }
 
-.header button,
-.formPanel button,
-.form button,
-.item button {
-  min-height: 44px;
-  border: 0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
-  color: #ffffff;
-  padding: 10px 18px;
-  font: inherit;
-  font-weight: 800;
-  cursor: pointer;
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.header button,
-.item button {
-  background: #ffffff;
-  color: #00513f;
-}
-
-.notice,
-.alert {
-  border-radius: 14px;
-  background: #ffffff;
-  color: #00513f;
-  padding: 12px 14px;
-  font-weight: 700;
-}
-
-.list {
+.tablePanel {
   display: grid;
   gap: 12px;
 }
 
-.item {
-  display: flex;
-  justify-content: space-between;
+.sectionHead span {
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 999px;
+  background: #eef3f1;
+  color: #00513f;
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-  border-radius: 14px;
-  background: #ffffff;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.rowCard {
+  align-items: flex-start;
+  border-radius: 12px;
+  background: #f6faf9;
   padding: 14px;
 }
 
-@media (max-width: 900px) {
-  .grid,
+.rowCard strong {
+  display: block;
+}
+
+.statusActive,
+.statusMuted {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.statusActive {
+  background: #d9f7ec;
+  color: #00513f;
+}
+
+.statusMuted {
+  background: #e4e9e7;
+  color: #444746;
+}
+
+.empty {
+  padding: 12px;
+}
+
+@media (max-width: 980px) {
+  .appShell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    min-height: auto;
+    position: static;
+  }
+
+  .metrics,
+  .panelGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .workspace {
+    padding: 18px;
+  }
+
+  .metrics,
+  .panelGrid,
   .twoCols,
   .threeCols {
     grid-template-columns: 1fr;
   }
 
-  .header,
-  .item {
+  .topBar,
+  .drawerHead,
+  .rowCard,
+  .rowActions {
     align-items: stretch;
     flex-direction: column;
   }

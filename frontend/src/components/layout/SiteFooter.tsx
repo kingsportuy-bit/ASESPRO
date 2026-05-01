@@ -1,9 +1,17 @@
-﻿import Link from "next/link";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import styles from "./SiteFooter.module.css";
 
 export function SiteFooter(): JSX.Element {
+  const pathname = usePathname();
   const year = new Date().getFullYear();
+
+  if (pathname.startsWith("/admin")) {
+    return <></>;
+  }
 
   return (
     <footer className={styles.footer}>
@@ -101,4 +109,3 @@ export function SiteFooter(): JSX.Element {
     </footer>
   );
 }
-

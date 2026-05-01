@@ -30,6 +30,10 @@ export function TopNavBar(): JSX.Element {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
 
+  if (pathname.startsWith("/admin")) {
+    return <></>;
+  }
+
   function onTouchStart(x: number): void {
     setTouchStartX(x);
     setTouchCurrentX(x);
