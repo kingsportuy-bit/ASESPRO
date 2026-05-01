@@ -299,6 +299,25 @@ export function AdminPanel(): JSX.Element {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+    if (!drawerMode) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        setDrawerMode(null);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [drawerMode]);
+
   async function login(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!supabase) {
@@ -758,25 +777,29 @@ export function AdminPanel(): JSX.Element {
         {message ? <p className={styles.notice}>{message}</p> : null}
 
         {drawerMode === "listing" ? (
-          <ListingDrawer
-            form={listingForm}
-            owners={owners}
-            properties={properties}
-            step={wizardStep}
-            busy={busy}
-            onClose={() => setDrawerMode(null)}
-            onSubmit={saveListing}
-            onChange={setListingForm}
-            onStepChange={setWizardStep}
-            onSelectProperty={selectPropertyForListing}
-            onToggleOperation={toggleOperation}
-            onPhotoChange={setPhotoFile}
-            onVideoChange={setVideoFile}
-          />
+          <Modal onClose={() => setDrawerMode(null)}>
+            <ListingDrawer
+              form={listingForm}
+              owners={owners}
+              properties={properties}
+              step={wizardStep}
+              busy={busy}
+              onClose={() => setDrawerMode(null)}
+              onSubmit={saveListing}
+              onChange={setListingForm}
+              onStepChange={setWizardStep}
+              onSelectProperty={selectPropertyForListing}
+              onToggleOperation={toggleOperation}
+              onPhotoChange={setPhotoFile}
+              onVideoChange={setVideoFile}
+            />
+          </Modal>
         ) : null}
 
         {drawerMode === "owner" ? (
-          <OwnerDrawer form={ownerForm} busy={busy} onClose={() => setDrawerMode(null)} onSubmit={saveOwner} onChange={setOwnerForm} />
+          <Modal onClose={() => setDrawerMode(null)}>
+            <OwnerDrawer form={ownerForm} busy={busy} onClose={() => setDrawerMode(null)} onSubmit={saveOwner} onChange={setOwnerForm} />
+          </Modal>
         ) : null}
 
         {activeTab !== "resumen" ? (
@@ -843,6 +866,17 @@ function Metric({ label, value, hint, tone = "neutral" }: { label: string; value
       <strong>{value}</strong>
       <small>{hint}</small>
     </article>
+  );
+}
+
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }): JSX.Element {
+  return (
+    <div className={styles.modalLayer} role="presentation">
+      <button type="button" className={styles.modalBackdrop} aria-label="Cerrar ventana" onClick={onClose} />
+      <div className={styles.modalWindow} role="dialog" aria-modal="true">
+        {children}
+      </div>
+    </div>
   );
 }
 
