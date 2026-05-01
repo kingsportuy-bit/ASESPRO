@@ -27,8 +27,10 @@ type AdminListing = {
     area_m2: number | null;
   } | null;
   asespro_listing_operations: Array<{ operation: PropertyOperation }>;
-  asespro_listing_media: Array<{ id: string; media_type: "photo" | "video"; public_url: string | null }>;
+  asespro_listing_media: Array<{ id: string; media_type: "photo" | "video"; public_url: string | null; is_cover?: boolean | null; sort_order?: number | null }>;
 };
+
+type PropertyOperationalStatus = "disponible" | "alquilado" | "vendido";
 
 type AdminProperty = {
   id: string;
@@ -40,6 +42,7 @@ type AdminProperty = {
   latitude: number | null;
   longitude: number | null;
   is_active: boolean;
+  status: PropertyOperationalStatus;
   bedrooms: number | null;
   bathrooms: number | null;
   area_m2: number | null;
@@ -107,8 +110,20 @@ type OwnerFormState = {
   notes: string;
 };
 
+type PropertyFormState = {
+  id: string;
+  title: string;
+  description: string;
+  propertyType: PropertyType;
+  locationText: string;
+  bedrooms: string;
+  bathrooms: string;
+  areaM2: string;
+  status: PropertyOperationalStatus;
+};
+
 type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
-type DrawerMode = "listing" | "owner" | null;
+type DrawerMode = "listing" | "owner" | "property" | null;
 type ListingFilter = "todos" | PropertyStatus;
 type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
 
@@ -147,6 +162,18 @@ const EMPTY_OWNER_FORM: OwnerFormState = {
   phone: "",
   email: "",
   notes: "",
+};
+
+const EMPTY_PROPERTY_FORM: PropertyFormState = {
+  id: "",
+  title: "",
+  description: "",
+  propertyType: "casa",
+  locationText: "",
+  bedrooms: "",
+  bathrooms: "",
+  areaM2: "",
+  status: "disponible",
 };
 
 const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
@@ -238,6 +265,7 @@ export function AdminPanel(): JSX.Element {
   const [wizardStep, setWizardStep] = useState<ListingWizardStep>("propietario");
   const [listingForm, setListingForm] = useState<FormState>(EMPTY_LISTING_FORM);
   const [ownerForm, setOwnerForm] = useState<OwnerFormState>(EMPTY_OWNER_FORM);
+  const [propertyForm, setPropertyForm] = useState<PropertyFormState>(EMPTY_PROPERTY_FORM);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -520,6 +548,23 @@ export function AdminPanel(): JSX.Element {
     setMessage("Editando propietario.");
   }
 
+  function editProperty(property: AdminProperty): void {
+    setPropertyForm({
+      id: property.id,
+      title: property.title,
+      description: property.description ?? "",
+      propertyType: property.property_type,
+      locationText: property.location_text ?? "",
+      bedrooms: property.bedrooms?.toString() ?? "",
+      bathrooms: property.bathrooms?.toString() ?? "",
+      areaM2: property.area_m2?.toString() ?? "",
+      status: property.status ?? "disponible",
+    });
+    setDrawerMode("property");
+    setActiveTab("inmuebles");
+    setMessage("Editando inmueble.");
+  }
+
   async function saveListing(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!token) return;
@@ -636,6 +681,34 @@ export function AdminPanel(): JSX.Element {
     await loadOverview(token);
     setBusy(false);
     setMessage("Propietario guardado.");
+  }
+
+  async function saveProperty(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    if (!token || !propertyForm.id) return;
+    setBusy(true);
+    setMessage(null);
+
+    const response = await fetch(`/api/admin/properties/${propertyForm.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(propertyForm),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) {
+      setBusy(false);
+      setMessage(payload.error ?? "No se pudo actualizar el inmueble.");
+      return;
+    }
+
+    setPropertyForm(EMPTY_PROPERTY_FORM);
+    setDrawerMode(null);
+    await loadOverview(token);
+    setBusy(false);
+    setMessage("Inmueble actualizado.");
   }
 
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
@@ -846,6 +919,12 @@ export function AdminPanel(): JSX.Element {
           </Modal>
         ) : null}
 
+        {drawerMode === "property" ? (
+          <Modal onClose={() => setDrawerMode(null)}>
+            <PropertyDrawer form={propertyForm} busy={busy} onClose={() => setDrawerMode(null)} onSubmit={saveProperty} onChange={setPropertyForm} />
+          </Modal>
+        ) : null}
+
         {activeTab !== "resumen" ? (
           <section className={styles.toolbar}>
             <input
@@ -887,10 +966,10 @@ export function AdminPanel(): JSX.Element {
         ) : null}
 
         {activeTab === "inmuebles" ? (
-          <PropertyTable properties={filteredProperties} busy={busy} onToggleActive={updatePropertyActive} />
+          <PropertyTable properties={filteredProperties} listings={listings} busy={busy} onEdit={editProperty} />
         ) : null}
 
-        {activeTab === "propietarios" ? <OwnerTable owners={filteredOwners} onEdit={editOwner} /> : null}
+        {activeTab === "propietarios" ? <OwnerTable owners={filteredOwners} properties={properties} onEdit={editOwner} /> : null}
 
         {activeTab === "alquileres" ? <RentalsPanel rentals={activeRentals} /> : null}
       </section>
@@ -915,6 +994,23 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
       <div className={styles.modalWindow} role="dialog" aria-modal="true">
         {children}
       </div>
+    </div>
+  );
+}
+
+function MediaPreview({ media }: { media: AdminListing["asespro_listing_media"] }): JSX.Element {
+  const photos = media.filter((item) => item.media_type === "photo" && item.public_url).sort((a, b) => {
+    if (a.is_cover && !b.is_cover) return -1;
+    if (!a.is_cover && b.is_cover) return 1;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+  const cover = photos[0];
+  const video = media.find((item) => item.media_type === "video" && item.public_url);
+
+  return (
+    <div className={styles.mediaPreview}>
+      {cover?.public_url ? <img src={cover.public_url} alt="" /> : <span>Sin foto</span>}
+      {video?.public_url ? <video src={video.public_url} muted playsInline preload="metadata" /> : null}
     </div>
   );
 }
@@ -1287,6 +1383,49 @@ function OwnerDrawer({
   );
 }
 
+function PropertyDrawer({
+  form,
+  busy,
+  onClose,
+  onSubmit,
+  onChange,
+}: {
+  form: PropertyFormState;
+  busy: boolean;
+  onClose: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  onChange: (form: PropertyFormState) => void;
+}): JSX.Element {
+  return (
+    <section className={styles.drawer} aria-label="Formulario de inmueble">
+      <div className={styles.drawerHead}>
+        <div>
+          <h3>Editar inmueble</h3>
+          <p>Ficha interna del inmueble. El estado de publicacion se maneja en Publicaciones.</p>
+        </div>
+        <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
+      </div>
+      <form className={styles.formPanel} onSubmit={onSubmit}>
+        <div className={styles.twoCols}>
+          <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
+          <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyOperationalStatus })}><option value="disponible">Disponible</option><option value="alquilado">Alquilado</option><option value="vendido">Vendido</option></select></label>
+        </div>
+        <div className={styles.twoCols}>
+          <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
+          <label>Direccion<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
+        </div>
+        <div className={styles.threeCols}>
+          <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
+          <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
+          <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
+        </div>
+        <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar inmueble"}</button>
+      </form>
+    </section>
+  );
+}
+
 function ListingTable({
   listings,
   busy,
@@ -1311,7 +1450,8 @@ function ListingTable({
         const photos = listing.asespro_listing_media.filter((item) => item.media_type === "photo").length;
         const hasVideo = listing.asespro_listing_media.some((item) => item.media_type === "video");
         return (
-          <article key={listing.id} className={styles.rowCard}>
+          <article key={listing.id} className={`${styles.rowCard} ${styles.rowCardWithMedia}`}>
+            <MediaPreview media={listing.asespro_listing_media} />
             <div className={styles.rowMain}>
               <strong>{listing.title}</strong>
               <p>{listing.asespro_properties?.location_text ?? "Sin ubicacion"} - {operationLabel(listing.asespro_listing_operations)} - {formatMoney(listing.price_amount, listing.price_currency)}</p>
@@ -1321,8 +1461,6 @@ function ListingTable({
               <select value={listing.status} disabled={busy} onChange={(event) => void onStatusChange(listing, event.target.value as PropertyStatus)}>
                 <option value="activo">Activo</option>
                 <option value="desactivado">Desactivado</option>
-                <option value="alquilado">Alquilado</option>
-                <option value="vendido">Vendido</option>
               </select>
               <button type="button" onClick={() => onEdit(listing)}>Editar</button>
             </div>
@@ -1336,43 +1474,50 @@ function ListingTable({
 
 function PropertyTable({
   properties,
+  listings,
   busy,
-  onToggleActive,
+  onEdit,
 }: {
   properties: AdminProperty[];
+  listings: AdminListing[];
   busy: boolean;
-  onToggleActive: (property: AdminProperty, isActive: boolean) => Promise<void>;
+  onEdit: (property: AdminProperty) => void;
 }): JSX.Element {
   return (
     <section className={styles.tablePanel}>
       <div className={styles.sectionHead}>
         <div>
           <h3>Inmuebles</h3>
-          <p>Inventario fisico. Activar o desactivar aca afecta el stock interno disponible.</p>
+          <p>Inventario fisico. El estado operativo no activa ni desactiva publicaciones.</p>
         </div>
         <span>{properties.length}</span>
       </div>
-      {properties.map((property) => (
-        <article key={property.id} className={styles.rowCard}>
-          <div className={styles.rowMain}>
-            <strong>{property.title}</strong>
-            <p>{property.location_text ?? "Sin ubicacion"} - {property.property_type}</p>
-            <small>{property.bedrooms ?? "N/D"} dorm - {property.bathrooms ?? "N/D"} banos - {property.area_m2 ?? "N/D"} m2</small>
-          </div>
-          <div className={styles.rowActions}>
-            <span className={property.is_active ? styles.statusActive : styles.statusMuted}>{property.is_active ? "Activo" : "Inactivo"}</span>
-            <button type="button" disabled={busy} onClick={() => void onToggleActive(property, !property.is_active)}>
-              {property.is_active ? "Desactivar" : "Activar"}
-            </button>
-          </div>
-        </article>
-      ))}
+      {properties.map((property) => {
+        const propertyListings = listings.filter((listing) => listing.property_id === property.id);
+        const media = propertyListings.flatMap((listing) => listing.asespro_listing_media);
+        return (
+          <article key={property.id} className={`${styles.rowCard} ${styles.rowCardWithMedia}`}>
+            <MediaPreview media={media} />
+            <div className={styles.rowMain}>
+              <strong>{property.title}</strong>
+              <p>{property.location_text ?? "Sin ubicacion"} - {property.property_type}</p>
+              <small>{property.bedrooms ?? "N/D"} dorm - {property.bathrooms ?? "N/D"} banos - {property.area_m2 ?? "N/D"} m2</small>
+            </div>
+            <div className={styles.rowActions}>
+              <span className={property.status === "disponible" ? styles.statusActive : styles.statusMuted}>{property.status}</span>
+              <button type="button" disabled={busy} onClick={() => onEdit(property)}>
+                Editar
+              </button>
+            </div>
+          </article>
+        );
+      })}
       {properties.length === 0 ? <p className={styles.empty}>Todavia no hay inmuebles cargados.</p> : null}
     </section>
   );
 }
 
-function OwnerTable({ owners, onEdit }: { owners: AdminOwner[]; onEdit: (owner: AdminOwner) => void }): JSX.Element {
+function OwnerTable({ owners, properties, onEdit }: { owners: AdminOwner[]; properties: AdminProperty[]; onEdit: (owner: AdminOwner) => void }): JSX.Element {
   return (
     <section className={styles.tablePanel}>
       <div className={styles.sectionHead}>
@@ -1382,19 +1527,22 @@ function OwnerTable({ owners, onEdit }: { owners: AdminOwner[]; onEdit: (owner: 
         </div>
         <span>{owners.length}</span>
       </div>
-      {owners.map((owner) => (
-        <article key={owner.id} className={styles.rowCard}>
-          <div className={styles.rowMain}>
-            <strong>{owner.full_name}</strong>
-            <p>{owner.phone ?? "Sin telefono"} - {owner.email ?? "Sin email"}</p>
-            <small>{owner.notes || "Sin notas internas"}</small>
-          </div>
-          <div className={styles.rowActions}>
-            <span className={styles.statusMuted}>Ficha</span>
-            <button type="button" onClick={() => onEdit(owner)}>Editar</button>
-          </div>
-        </article>
-      ))}
+      {owners.map((owner) => {
+        const linkedProperties = properties.filter((property) => property.asespro_property_owners?.some((link) => link.owner_id === owner.id));
+        return (
+          <article key={owner.id} className={styles.rowCard}>
+            <div className={styles.rowMain}>
+              <strong>{owner.full_name}</strong>
+              <p>{owner.phone ?? "Sin telefono"} - {owner.email ?? "Sin email"}</p>
+              <small>{linkedProperties.length > 0 ? linkedProperties.map((property) => property.title).join(" | ") : "Sin inmuebles vinculados"}</small>
+            </div>
+            <div className={styles.rowActions}>
+              <span className={styles.statusMuted}>{linkedProperties.length} inmuebles</span>
+              <button type="button" onClick={() => onEdit(owner)}>Editar</button>
+            </div>
+          </article>
+        );
+      })}
       {owners.length === 0 ? <p className={styles.empty}>Todavia no hay propietarios cargados.</p> : null}
     </section>
   );

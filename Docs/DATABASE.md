@@ -30,11 +30,13 @@ Todas las tablas usan prefijo `asespro_`.
 - `bathrooms` (int)
 - `area_m2` (numeric)
 - `is_active` (bool)
+- `status` (text: `disponible`, `alquilado`, `vendido`)
 - `created_at`, `updated_at`
 
 Indices:
 
 - `(is_active)`
+- `(status)`
 - `(latitude, longitude)`
 - `(property_type)`
 

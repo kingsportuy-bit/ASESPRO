@@ -563,6 +563,37 @@
   align-items: center;
 }
 
+.rowCardWithMedia {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.mediaPreview {
+  width: 118px;
+  min-height: 74px;
+  border-radius: 10px;
+  background: #e5ebe8;
+  display: grid;
+  grid-template-columns: 1fr 42px;
+  overflow: hidden;
+}
+
+.mediaPreview img,
+.mediaPreview video {
+  width: 100%;
+  height: 74px;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaPreview span {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  color: #5b6662;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 .rowMain {
   min-width: 0;
 }

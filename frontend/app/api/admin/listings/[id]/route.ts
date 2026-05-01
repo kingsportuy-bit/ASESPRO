@@ -129,7 +129,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
 
   const payload = (await request.json()) as { status?: PropertyStatus };
   const status = payload.status;
-  if (status !== "activo" && status !== "desactivado" && status !== "alquilado" && status !== "vendido") {
+  if (status !== "activo" && status !== "desactivado") {
     return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
   }
 
