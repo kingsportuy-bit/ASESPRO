@@ -123,7 +123,7 @@ type PropertyFormState = {
 };
 
 type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
-type DrawerMode = "listing" | "owner" | "property" | null;
+type DrawerMode = "listing" | "owner" | "property" | "publication" | null;
 type ListingFilter = "todos" | PropertyStatus;
 type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
 
@@ -529,8 +529,7 @@ export function AdminPanel(): JSX.Element {
       operations: operations.length > 0 ? operations : ["alquiler"],
       status: listing.status,
     });
-    setWizardStep("publicacion");
-    setDrawerMode("listing");
+    setDrawerMode("publication");
     setActiveTab("publicaciones");
     setMessage("Editando publicacion existente.");
   }
@@ -909,6 +908,19 @@ export function AdminPanel(): JSX.Element {
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
               onVideoChange={setVideoFile}
+            />
+          </Modal>
+        ) : null}
+
+        {drawerMode === "publication" ? (
+          <Modal onClose={() => setDrawerMode(null)}>
+            <PublicationDrawer
+              form={listingForm}
+              busy={busy}
+              onClose={() => setDrawerMode(null)}
+              onSubmit={saveListing}
+              onChange={setListingForm}
+              onToggleOperation={toggleOperation}
             />
           </Modal>
         ) : null}
@@ -1343,6 +1355,50 @@ function ListingDrawer({
         </div>
         ) : null}
 
+      </form>
+    </section>
+  );
+}
+
+function PublicationDrawer({
+  form,
+  busy,
+  onClose,
+  onSubmit,
+  onChange,
+  onToggleOperation,
+}: {
+  form: FormState;
+  busy: boolean;
+  onClose: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  onChange: (form: FormState) => void;
+  onToggleOperation: (operation: PropertyOperation) => void;
+}): JSX.Element {
+  return (
+    <section className={styles.drawer} aria-label="Ficha de publicacion">
+      <div className={styles.drawerHead}>
+        <div>
+          <h3>Editar publicacion</h3>
+          <p>Ficha comercial visible en la web. La ficha del inmueble se edita desde Inmuebles.</p>
+        </div>
+        <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
+      </div>
+      <form className={styles.formPanel} onSubmit={onSubmit}>
+        <div className={styles.twoCols}>
+          <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
+          <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyStatus })}><option value="activo">Activo</option><option value="desactivado">Desactivado</option></select></label>
+        </div>
+        <label>Descripcion comercial<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+        <div className={styles.operations}>
+          <label><input type="checkbox" checked={form.operations.includes("alquiler")} onChange={() => onToggleOperation("alquiler")} /> Alquiler</label>
+          <label><input type="checkbox" checked={form.operations.includes("venta")} onChange={() => onToggleOperation("venta")} /> Venta</label>
+        </div>
+        <div className={styles.twoCols}>
+          <label>Precio a publicar<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
+          <label>Moneda a publicar<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /></label>
+        </div>
+        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
       </form>
     </section>
   );
