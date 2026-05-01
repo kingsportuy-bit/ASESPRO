@@ -1228,6 +1228,10 @@ function ListingDrawer({
               <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
               <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
             </div>
+            <div className={styles.twoCols}>
+              <label>Precio base del inmueble<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
+              <label>Moneda base<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
+            </div>
             <label>Descripcion / ficha general<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
             <div className={styles.twoCols}>
               <label>Imagenes del inmueble<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
@@ -1253,8 +1257,8 @@ function ListingDrawer({
             <label><input type="checkbox" checked={form.operations.includes("venta")} onChange={() => onToggleOperation("venta")} /> Venta</label>
           </div>
           <div className={styles.twoCols}>
-            <label>Precio<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
-            <label>Moneda<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
+            <label>Precio a publicar<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
+            <label>Moneda a publicar<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /></label>
           </div>
           <div className={styles.formNav}>
             <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
