@@ -127,6 +127,7 @@ export function AdminPanel(): JSX.Element {
   const [owners, setOwners] = useState<AdminOwner[]>([]);
   const [activeRentals, setActiveRentals] = useState<ActiveRental[]>([]);
   const [activeTab, setActiveTab] = useState<PanelTab>("publicaciones");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -347,7 +348,7 @@ export function AdminPanel(): JSX.Element {
 
   return (
     <main className={styles.appShell} data-admin-shell="true">
-      <aside className={styles.sidebar}>
+      <aside className={`${styles.sidebar} ${mobileMenuOpen ? styles.sidebarOpen : ""}`}>
         <div>
           <div className={styles.sidebarLogoWrap}>
             <img src="/LOGO_ASESPRO_transparente_horizontal.png?v=20260429b" alt="ASESPRO" className={styles.logoDesktop} />
@@ -356,16 +357,16 @@ export function AdminPanel(): JSX.Element {
           <h1>Panel interno</h1>
         </div>
         <nav className={styles.sideNav} aria-label="Secciones del panel">
-          <button className={activeTab === "publicaciones" ? styles.activeNav : ""} type="button" onClick={() => setActiveTab("publicaciones")}>
+          <button className={activeTab === "publicaciones" ? styles.activeNav : ""} type="button" onClick={() => { setActiveTab("publicaciones"); setMobileMenuOpen(false); }}>
             Publicaciones
           </button>
-          <button className={activeTab === "inmuebles" ? styles.activeNav : ""} type="button" onClick={() => setActiveTab("inmuebles")}>
+          <button className={activeTab === "inmuebles" ? styles.activeNav : ""} type="button" onClick={() => { setActiveTab("inmuebles"); setMobileMenuOpen(false); }}>
             Inmuebles
           </button>
-          <button className={activeTab === "duenos" ? styles.activeNav : ""} type="button" onClick={() => setActiveTab("duenos")}>
+          <button className={activeTab === "duenos" ? styles.activeNav : ""} type="button" onClick={() => { setActiveTab("duenos"); setMobileMenuOpen(false); }}>
             Duenos
           </button>
-          <button className={activeTab === "alquileres" ? styles.activeNav : ""} type="button" onClick={() => setActiveTab("alquileres")}>
+          <button className={activeTab === "alquileres" ? styles.activeNav : ""} type="button" onClick={() => { setActiveTab("alquileres"); setMobileMenuOpen(false); }}>
             Alquileres activos
           </button>
         </nav>
@@ -375,6 +376,24 @@ export function AdminPanel(): JSX.Element {
       </aside>
 
       <section className={styles.workspace}>
+        <div className={styles.mobileAdminBar}>
+          <div className={styles.mobileBrand}>
+            <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b" alt="ASESPRO" />
+            <span>Panel interno</span>
+          </div>
+          <button
+            type="button"
+            className={styles.hamburgerButton}
+            aria-label={mobileMenuOpen ? "Cerrar menu" : "Abrir menu"}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
+
         <header className={styles.topBar}>
           <div>
             <p className={styles.kicker}>Gestion diaria</p>

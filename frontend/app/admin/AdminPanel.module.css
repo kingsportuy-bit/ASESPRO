@@ -170,6 +170,10 @@
   gap: 18px;
 }
 
+.mobileAdminBar {
+  display: none;
+}
+
 .topBar {
   min-height: 84px;
   display: flex;
@@ -351,8 +355,17 @@
   }
 
   .sidebar {
-    min-height: auto;
-    position: static;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 80;
+    width: min(82vw, 320px);
+    min-height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform 0.24s ease;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
   }
 
   .sidebarLogoWrap {
@@ -364,6 +377,53 @@
   }
 
   .logoMobile {
+    display: block;
+  }
+
+  .mobileAdminBar {
+    min-height: 58px;
+    border-radius: 14px;
+    background: #0f2420;
+    color: #ffffff;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobileBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+  }
+
+  .mobileBrand img {
+    width: 38px;
+    height: auto;
+    display: block;
+  }
+
+  .hamburgerButton {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .hamburgerButton span {
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: #ffffff;
     display: block;
   }
 
