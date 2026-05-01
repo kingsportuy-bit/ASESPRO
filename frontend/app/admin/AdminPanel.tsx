@@ -319,6 +319,10 @@ export function AdminPanel(): JSX.Element {
     return (
       <main className={styles.loginShell} data-admin-shell="true">
         <section className={styles.loginCard}>
+          <div className={styles.loginLogoWrap}>
+            <img src="/LOGO_ASESPRO_transparente_horizontal.png?v=20260429b" alt="ASESPRO" className={styles.logoDesktop} />
+            <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b" alt="ASESPRO" className={styles.logoMobile} />
+          </div>
           <span className={styles.adminMark}>ASESPRO Backoffice</span>
           <h1>Panel interno</h1>
           <p>Ingresar para gestionar publicaciones, inmuebles y fichas internas.</p>
@@ -345,7 +349,10 @@ export function AdminPanel(): JSX.Element {
     <main className={styles.appShell} data-admin-shell="true">
       <aside className={styles.sidebar}>
         <div>
-          <span className={styles.adminMark}>ASESPRO</span>
+          <div className={styles.sidebarLogoWrap}>
+            <img src="/LOGO_ASESPRO_transparente_horizontal.png?v=20260429b" alt="ASESPRO" className={styles.logoDesktop} />
+            <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b" alt="ASESPRO" className={styles.logoMobile} />
+          </div>
           <h1>Panel interno</h1>
         </div>
         <nav className={styles.sideNav} aria-label="Secciones del panel">

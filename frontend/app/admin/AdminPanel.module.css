@@ -86,6 +86,7 @@
 .appShell {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
+  margin-bottom: 0;
 }
 
 .sidebar {
@@ -102,14 +103,36 @@
   gap: 28px;
 }
 
-.sidebar .adminMark {
-  color: #9ef3d6;
-}
-
 .sidebar h1 {
-  margin-top: 8px;
+  margin-top: 18px;
   font-size: 26px;
   line-height: 1;
+}
+
+.loginLogoWrap,
+.sidebarLogoWrap {
+  display: flex;
+  align-items: center;
+}
+
+.loginLogoWrap {
+  margin-bottom: 22px;
+}
+
+.sidebarLogoWrap {
+  min-height: 48px;
+}
+
+.logoDesktop {
+  display: block;
+  width: min(190px, 100%);
+  height: auto;
+}
+
+.logoMobile {
+  display: none;
+  width: 46px;
+  height: auto;
 }
 
 .sideNav {
@@ -330,6 +353,18 @@
   .sidebar {
     min-height: auto;
     position: static;
+  }
+
+  .sidebarLogoWrap {
+    min-height: 42px;
+  }
+
+  .logoDesktop {
+    display: none;
+  }
+
+  .logoMobile {
+    display: block;
   }
 
   .metrics,
