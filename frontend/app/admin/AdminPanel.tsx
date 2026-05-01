@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 import type { PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "@/lib/properties";
@@ -63,7 +64,7 @@ const EMPTY_FORM: FormState = {
 };
 
 export function AdminPanel(): JSX.Element {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState<string | null>(null);
@@ -75,10 +76,23 @@ export function AdminPanel(): JSX.Element {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
-      return;
-    }
+    fetch("/api/public/supabase-config")
+      .then((response) => response.json())
+      .then((config: { url?: string; anonKey?: string; error?: string }) => {
+        const client = createSupabaseBrowserClient(
+          config.url && config.anonKey ? { url: config.url, anonKey: config.anonKey } : null,
+        );
+        if (!client) {
+          setMessage(config.error ?? "Supabase publico no esta configurado.");
+          return;
+        }
+        setSupabase(client);
+      })
+      .catch(() => setMessage("No se pudo cargar la configuracion de Supabase."));
+  }, []);
 
+  useEffect(() => {
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       const accessToken = data.session?.access_token ?? null;
       setToken(accessToken);
