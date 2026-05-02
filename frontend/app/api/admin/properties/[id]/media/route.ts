@@ -104,12 +104,14 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
   }
 
   const formData = await request.formData();
+  const intent = formData.get("intent");
   const file = formData.get("file");
   const mediaType = formData.get("mediaType");
   const isCover = formData.get("isCover") === "true";
   const replaceGroup = formData.get("replaceGroup") === "true";
+  const existingStoragePath = formData.get("storagePath");
 
-  if (!(file instanceof File) || (mediaType !== "photo" && mediaType !== "video")) {
+  if (mediaType !== "photo" && mediaType !== "video") {
     return NextResponse.json({ error: "Archivo o tipo de media invalido." }, { status: 400 });
   }
 
@@ -118,11 +120,55 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
     return NextResponse.json({ error: "Inmueble no encontrado." }, { status: 404 });
   }
 
+  if (intent === "signedUpload") {
+    const fileName = String(formData.get("fileName") ?? "upload.mp4").toLowerCase();
+    const extension = fileName.includes(".") ? fileName.split(".").pop()?.replace(/[^a-z0-9]/g, "") || "mp4" : "mp4";
+    const storagePath = `properties/${params.id}/${mediaType}-${Date.now()}.${extension}`;
+    const { data, error } = await supabase.storage.from(BUCKET).createSignedUploadUrl(storagePath);
+    if (error || !data) {
+      return NextResponse.json({ error: error?.message ?? "No se pudo crear la URL firmada de carga." }, { status: 500 });
+    }
+    return NextResponse.json({ path: storagePath, token: data.token });
+  }
+
   if (replaceGroup || mediaType === "video") {
     const { error: deleteError } = await supabase.from("asespro_property_media").delete().eq("property_id", params.id).eq("media_type", mediaType);
     if (deleteError) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
+  }
+
+  if (intent === "registerUploaded") {
+    if (typeof existingStoragePath !== "string" || existingStoragePath.length === 0) {
+      return NextResponse.json({ error: "No se recibio la ruta del archivo cargado." }, { status: 400 });
+    }
+    const { data: publicData } = supabase.storage.from(BUCKET).getPublicUrl(existingStoragePath);
+    const { count } = await supabase
+      .from("asespro_property_media")
+      .select("id", { count: "exact", head: true })
+      .eq("property_id", params.id);
+
+    const { data: media, error: mediaError } = await supabase
+      .from("asespro_property_media")
+      .insert({
+        property_id: params.id,
+        media_type: mediaType,
+        storage_path: existingStoragePath,
+        public_url: publicData.publicUrl,
+        sort_order: count ?? 0,
+        is_cover: mediaType === "photo" && isCover,
+      })
+      .select("id,media_type,public_url,storage_path,sort_order,is_cover")
+      .maybeSingle();
+
+    if (mediaError || !media) {
+      return NextResponse.json({ error: mediaError?.message ?? "El archivo subio, pero no quedo registrado en la base." }, { status: 500 });
+    }
+    return NextResponse.json({ media });
+  }
+
+  if (!(file instanceof File)) {
+    return NextResponse.json({ error: "Archivo o tipo de media invalido." }, { status: 400 });
   }
 
   let uploadBody: File | Buffer = file;

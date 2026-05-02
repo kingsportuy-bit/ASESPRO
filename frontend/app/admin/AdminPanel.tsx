@@ -1043,16 +1043,51 @@ export function AdminPanel(): JSX.Element {
   }
 
   async function uploadPropertyVideo(propertyId: string): Promise<void> {
-    if (!token || !propertyId || !videoFile) return;
-    const data = new FormData();
-    data.set("file", videoFile);
-    data.set("mediaType", "video");
-    data.set("isCover", "false");
-    data.set("replaceGroup", "true");
-    const payload = await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo video ${videoFile.name}`);
-    if (payload.media?.media_type !== "video") {
-      throw new Error(`El video ${videoFile.name} subio, pero no quedo registrado como video.`);
+    if (!token || !propertyId || !videoFile || !supabase) return;
+    const startData = new FormData();
+    startData.set("intent", "signedUpload");
+    startData.set("mediaType", "video");
+    startData.set("fileName", videoFile.name);
+    startData.set("replaceGroup", "true");
+
+    const signedResponse = await fetch(`/api/admin/properties/${propertyId}/media`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: startData,
+    });
+    const signedPayload = (await signedResponse.json().catch(() => null)) as { error?: string; path?: string; token?: string } | null;
+    if (!signedResponse.ok || !signedPayload?.path || !signedPayload?.token) {
+      throw new Error(signedPayload?.error ?? "No se pudo iniciar la carga de video.");
     }
+
+    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 1 });
+    const uploadResult = await supabase.storage
+      .from("asespro-media")
+      .uploadToSignedUrl(signedPayload.path, signedPayload.token, videoFile, {
+        contentType: videoFile.type || "video/mp4",
+      });
+    if (uploadResult.error) {
+      throw new Error(uploadResult.error.message);
+    }
+
+    setMediaUploadProgress({ label: "Registrando video en el inmueble...", percent: 99 });
+    const registerData = new FormData();
+    registerData.set("intent", "registerUploaded");
+    registerData.set("mediaType", "video");
+    registerData.set("replaceGroup", "true");
+    registerData.set("storagePath", signedPayload.path);
+    registerData.set("isCover", "false");
+
+    const registerResponse = await fetch(`/api/admin/properties/${propertyId}/media`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: registerData,
+    });
+    const registerPayload = (await registerResponse.json().catch(() => null)) as MediaUploadResponse | null;
+    if (!registerResponse.ok || registerPayload?.media?.media_type !== "video") {
+      throw new Error(registerPayload?.error ?? `El video ${videoFile.name} no se pudo registrar en la ficha.`);
+    }
+    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 100 });
   }
 
   async function uploadSelectedPropertyVideo(): Promise<void> {
