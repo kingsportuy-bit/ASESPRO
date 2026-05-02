@@ -673,6 +673,35 @@
   flex-wrap: wrap;
 }
 
+.pendingVideoBox {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 81, 63, 0.14);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pendingVideoBox div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pendingVideoBox strong {
+  color: #00513f;
+  font-size: 13px;
+}
+
+.pendingVideoBox span {
+  color: #4d5955;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 .uploadProgress {
   border-radius: 12px;
   background: #ffffff;
