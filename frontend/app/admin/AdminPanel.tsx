@@ -344,6 +344,7 @@ function getPublicationOperations(form: FormState): PropertyOperation[] {
 
 export function AdminPanel(): JSX.Element {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
+  const [supabasePublicUrl, setSupabasePublicUrl] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [sessionEmail, setSessionEmail] = useState("");
@@ -412,6 +413,7 @@ export function AdminPanel(): JSX.Element {
           setMessage(config.error ?? "Supabase publico no esta configurado.");
           return;
         }
+        setSupabasePublicUrl(config.url ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
         setSupabase(client);
       })
       .catch(() => setMessage("No se pudo cargar la configuracion de Supabase."));
@@ -1043,7 +1045,7 @@ export function AdminPanel(): JSX.Element {
   }
 
   async function uploadPropertyVideo(propertyId: string): Promise<void> {
-    if (!token || !propertyId || !videoFile || !supabase) return;
+    if (!token || !propertyId || !videoFile || !supabase || !supabasePublicUrl) return;
     const startData = new FormData();
     startData.set("intent", "signedUpload");
     startData.set("mediaType", "video");
@@ -1060,30 +1062,14 @@ export function AdminPanel(): JSX.Element {
       throw new Error(signedPayload?.error ?? "No se pudo iniciar la carga de video.");
     }
 
-    let simulatedPercent = 1;
-    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: simulatedPercent });
-    const progressTimer = window.setInterval(() => {
-      simulatedPercent = Math.min(95, simulatedPercent + (simulatedPercent < 60 ? 3 : 1));
-      setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: simulatedPercent });
-    }, 800);
-
-    let uploadErrorMessage: string | null = null;
-    try {
-      const uploadResult = await supabase.storage
-        .from("asespro-media")
-        .uploadToSignedUrl(signedPayload.path, signedPayload.token, videoFile, {
-          contentType: videoFile.type || "video/mp4",
-        });
-      if (uploadResult.error) {
-        uploadErrorMessage = uploadResult.error.message;
-      }
-    } finally {
-      window.clearInterval(progressTimer);
-    }
-
-    if (uploadErrorMessage) {
-      throw new Error(uploadErrorMessage);
-    }
+    await uploadSignedVideoWithProgress({
+      baseUrl: supabasePublicUrl,
+      bucket: "asespro-media",
+      path: signedPayload.path,
+      token: signedPayload.token,
+      file: videoFile,
+      onProgress: (percent) => setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent }),
+    });
 
     setMediaUploadProgress({ label: "Registrando video en el inmueble...", percent: 99 });
     const registerData = new FormData();
@@ -1103,6 +1089,50 @@ export function AdminPanel(): JSX.Element {
       throw new Error(registerPayload?.error ?? `El video ${videoFile.name} no se pudo registrar en la ficha.`);
     }
     setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 100 });
+  }
+
+  function uploadSignedVideoWithProgress({
+    baseUrl,
+    bucket,
+    path,
+    token: signedToken,
+    file,
+    onProgress,
+  }: {
+    baseUrl: string;
+    bucket: string;
+    path: string;
+    token: string;
+    file: File;
+    onProgress: (percent: number) => void;
+  }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const encodedPath = path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+      const endpoint = `${baseUrl.replace(/\/$/, "")}/storage/v1/object/upload/sign/${bucket}/${encodedPath}?token=${encodeURIComponent(signedToken)}`;
+      const request = new XMLHttpRequest();
+      request.open("PUT", endpoint, true);
+      request.timeout = 1000 * 60 * 30;
+      request.setRequestHeader("Content-Type", file.type || "video/mp4");
+      request.setRequestHeader("x-upsert", "true");
+
+      request.upload.onprogress = (event) => {
+        if (!event.lengthComputable) return;
+        const percent = Math.max(1, Math.min(95, Math.round((event.loaded / event.total) * 95)));
+        onProgress(percent);
+      };
+
+      request.onload = () => {
+        if (request.status >= 200 && request.status < 300) {
+          resolve();
+          return;
+        }
+        reject(new Error(request.responseText || `No se pudo subir el video (${request.status}).`));
+      };
+
+      request.onerror = () => reject(new Error("Error de red al subir el video a Storage."));
+      request.ontimeout = () => reject(new Error("La carga del video excedio el tiempo limite."));
+      request.send(file);
+    });
   }
 
   async function uploadSelectedPropertyVideo(): Promise<void> {
