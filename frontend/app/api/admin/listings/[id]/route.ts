@@ -47,6 +47,12 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
           bedrooms: input.bedrooms,
           bathrooms: input.bathrooms,
           area_m2: input.areaM2,
+          for_sale: input.forSale,
+          sale_price: input.salePrice,
+          sale_currency: input.saleCurrency,
+          for_rent: input.forRent,
+          rent_price: input.rentPrice,
+          rent_currency: input.rentCurrency,
           updated_at: new Date().toISOString(),
         })
         .eq("id", input.propertyId ?? existing.property_id);
@@ -55,6 +61,10 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
         return NextResponse.json({ error: propertyError.message }, { status: 500 });
       }
     }
+
+    const operation = input.operations[0];
+    const priceAmount = operation === "alquiler" ? input.rentPrice : input.salePrice;
+    const priceCurrency = operation === "alquiler" ? input.rentCurrency : input.saleCurrency;
 
     if (input.ownerId) {
       const linkedPropertyId = input.propertyId ?? existing.property_id;
@@ -82,8 +92,8 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
         title: input.title,
         description: input.description,
         property_id: input.propertyId ?? existing.property_id,
-        price_amount: input.priceAmount,
-        price_currency: input.priceCurrency,
+        price_amount: priceAmount,
+        price_currency: priceCurrency,
         status: input.status,
         published_at: input.status === "activo" ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),

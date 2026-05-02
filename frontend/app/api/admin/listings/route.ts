@@ -94,7 +94,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const { data, error } = await supabase
     .from("asespro_listings")
     .select(
-      "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)",
+      "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)",
     )
     .order("created_at", { ascending: false });
 
@@ -122,6 +122,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const latitude = input.latitude ?? geocoded.latitude;
     const longitude = input.longitude ?? geocoded.longitude;
     let propertyId = input.propertyId;
+    const sourceListingPropertyId = propertyId;
 
     if (!propertyId) {
       const { data: property, error: propertyError } = await supabase
@@ -136,6 +137,12 @@ export async function POST(request: Request): Promise<NextResponse> {
           bedrooms: input.bedrooms,
           bathrooms: input.bathrooms,
           area_m2: input.areaM2,
+          for_sale: input.forSale,
+          sale_price: input.salePrice,
+          sale_currency: input.saleCurrency,
+          for_rent: input.forRent,
+          rent_price: input.rentPrice,
+          rent_currency: input.rentCurrency,
           is_active: true,
         })
         .select("id")
@@ -159,6 +166,12 @@ export async function POST(request: Request): Promise<NextResponse> {
           bedrooms: input.bedrooms,
           bathrooms: input.bathrooms,
           area_m2: input.areaM2,
+          for_sale: input.forSale,
+          sale_price: input.salePrice,
+          sale_currency: input.saleCurrency,
+          for_rent: input.forRent,
+          rent_price: input.rentPrice,
+          rent_currency: input.rentCurrency,
           updated_at: new Date().toISOString(),
         })
         .eq("id", propertyId);
@@ -184,14 +197,18 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     }
 
+    const operation = input.operations[0];
+    const priceAmount = operation === "alquiler" ? input.rentPrice : input.salePrice;
+    const priceCurrency = operation === "alquiler" ? input.rentCurrency : input.saleCurrency;
+
     const { data: listing, error: listingError } = await supabase
       .from("asespro_listings")
       .insert({
         property_id: propertyId,
         title: input.title,
         description: input.description,
-        price_amount: input.priceAmount,
-        price_currency: input.priceCurrency,
+        price_amount: priceAmount,
+        price_currency: priceCurrency,
         status: input.status,
         published_at: input.status === "activo" ? new Date().toISOString() : null,
       })
@@ -211,6 +228,40 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     if (operationsError) {
       return NextResponse.json({ error: operationsError.message }, { status: 500 });
+    }
+
+    if (sourceListingPropertyId) {
+      const { data: sourceListing } = await supabase
+        .from("asespro_listings")
+        .select("id")
+        .eq("property_id", sourceListingPropertyId)
+        .neq("id", listing.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (sourceListing?.id) {
+        const { data: sourceMedia, error: mediaReadError } = await supabase
+          .from("asespro_listing_media")
+          .select("media_type,storage_path,public_url,sort_order,is_cover")
+          .eq("listing_id", sourceListing.id);
+
+        if (mediaReadError) {
+          return NextResponse.json({ error: mediaReadError.message }, { status: 500 });
+        }
+
+        if (sourceMedia && sourceMedia.length > 0) {
+          const { error: mediaCopyError } = await supabase.from("asespro_listing_media").insert(
+            sourceMedia.map((media) => ({
+              ...media,
+              listing_id: listing.id,
+            })),
+          );
+          if (mediaCopyError) {
+            return NextResponse.json({ error: mediaCopyError.message }, { status: 500 });
+          }
+        }
+      }
     }
 
     return NextResponse.json({ id: listing.id }, { status: 201 });

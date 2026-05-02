@@ -1,4 +1,4 @@
-import { getDefaultCurrencyForOperation, type PropertyCurrency, type PropertyOperation, type PropertyStatus, type PropertyType } from "./properties";
+import type { PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "./properties";
 
 export type AdminListingInput = {
   ownerId?: string;
@@ -13,8 +13,12 @@ export type AdminListingInput = {
   bedrooms?: number | null;
   bathrooms?: number | null;
   areaM2?: number | null;
-  priceAmount?: number | null;
-  priceCurrency?: PropertyCurrency;
+  forSale: boolean;
+  salePrice?: number | null;
+  saleCurrency: PropertyCurrency;
+  forRent: boolean;
+  rentPrice?: number | null;
+  rentCurrency: PropertyCurrency;
   operations: PropertyOperation[];
   status: PropertyStatus;
 };
@@ -48,10 +52,10 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
     source.status === "activo" || source.status === "desactivado" || source.status === "alquilado" || source.status === "vendido"
       ? source.status
       : "desactivado";
-  const priceCurrency =
-    typeof source.priceCurrency === "string" && source.priceCurrency.trim()
-      ? source.priceCurrency.trim().toUpperCase()
-      : getDefaultCurrencyForOperation(operations[0]);
+  const saleCurrency = typeof source.saleCurrency === "string" && source.saleCurrency.trim() ? source.saleCurrency.trim().toUpperCase() : "USD";
+  const rentCurrency = typeof source.rentCurrency === "string" && source.rentCurrency.trim() ? source.rentCurrency.trim().toUpperCase() : "UYU";
+  const forSale = source.forSale === true;
+  const forRent = source.forRent === true;
 
   return {
     ownerId: typeof source.ownerId === "string" && source.ownerId ? source.ownerId : undefined,
@@ -66,8 +70,12 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
     bedrooms: toOptionalNumber(source.bedrooms),
     bathrooms: toOptionalNumber(source.bathrooms),
     areaM2: toOptionalNumber(source.areaM2),
-    priceAmount: toOptionalNumber(source.priceAmount),
-    priceCurrency,
+    forSale,
+    salePrice: toOptionalNumber(source.salePrice),
+    saleCurrency,
+    forRent,
+    rentPrice: toOptionalNumber(source.rentPrice),
+    rentCurrency,
     operations,
     status,
   };

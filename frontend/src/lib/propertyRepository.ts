@@ -316,8 +316,8 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
 
   return {
     id: row.id,
-    title: row.title ?? property.title ?? "Propiedad ASESPRO",
-    description: row.description ?? property.description ?? "",
+    title: property.title ?? row.title ?? "Propiedad ASESPRO",
+    description: property.description ?? row.description ?? "",
     location: property.location_text ?? "",
     type: normalizePropertyType(property.property_type),
     operation: primaryOperation,

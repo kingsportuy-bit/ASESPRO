@@ -86,7 +86,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
             </div>
 
           <h2 className={styles.sectionTitle}>Descripcion de la propiedad</h2>
-          <p>{property.description}</p>
+          <p className={styles.commercialDescription}>{property.description}</p>
           <p>
             Revisa los datos principales de la propiedad y contactanos para confirmar disponibilidad, coordinar una
             visita o pedir mas informacion.

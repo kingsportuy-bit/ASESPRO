@@ -18,6 +18,8 @@ type AdminListing = {
   status: PropertyStatus;
   created_at?: string;
   asespro_properties: {
+    title?: string | null;
+    description?: string | null;
     property_type: PropertyType;
     location_text: string | null;
     latitude: number | null;
@@ -25,6 +27,12 @@ type AdminListing = {
     bedrooms: number | null;
     bathrooms: number | null;
     area_m2: number | null;
+    for_sale?: boolean | null;
+    sale_price?: number | null;
+    sale_currency?: PropertyCurrency | null;
+    for_rent?: boolean | null;
+    rent_price?: number | null;
+    rent_currency?: PropertyCurrency | null;
   } | null;
   asespro_listing_operations: Array<{ operation: PropertyOperation }>;
   asespro_listing_media: Array<{ id: string; media_type: "photo" | "video"; public_url: string | null; is_cover?: boolean | null; sort_order?: number | null }>;
@@ -46,6 +54,12 @@ type AdminProperty = {
   bedrooms: number | null;
   bathrooms: number | null;
   area_m2: number | null;
+  for_sale?: boolean | null;
+  sale_price?: number | null;
+  sale_currency?: PropertyCurrency | null;
+  for_rent?: boolean | null;
+  rent_price?: number | null;
+  rent_currency?: PropertyCurrency | null;
   asespro_property_owners?: Array<{ owner_id: string }>;
 };
 
@@ -96,8 +110,12 @@ type FormState = {
   bedrooms: string;
   bathrooms: string;
   areaM2: string;
-  priceAmount: string;
-  priceCurrency: PropertyCurrency;
+  forSale: boolean;
+  salePrice: string;
+  saleCurrency: PropertyCurrency;
+  forRent: boolean;
+  rentPrice: string;
+  rentCurrency: PropertyCurrency;
   operations: PropertyOperation[];
   status: PropertyStatus;
 };
@@ -120,6 +138,12 @@ type PropertyFormState = {
   bathrooms: string;
   areaM2: string;
   status: PropertyOperationalStatus;
+  forSale: boolean;
+  salePrice: string;
+  saleCurrency: PropertyCurrency;
+  forRent: boolean;
+  rentPrice: string;
+  rentCurrency: PropertyCurrency;
 };
 
 type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
@@ -150,8 +174,12 @@ const EMPTY_LISTING_FORM: FormState = {
   bedrooms: "",
   bathrooms: "",
   areaM2: "",
-  priceAmount: "",
-  priceCurrency: "UYU",
+  forSale: false,
+  salePrice: "",
+  saleCurrency: "USD",
+  forRent: false,
+  rentPrice: "",
+  rentCurrency: "UYU",
   operations: ["alquiler"],
   status: "activo",
 };
@@ -174,6 +202,12 @@ const EMPTY_PROPERTY_FORM: PropertyFormState = {
   bathrooms: "",
   areaM2: "",
   status: "disponible",
+  forSale: false,
+  salePrice: "",
+  saleCurrency: "USD",
+  forRent: false,
+  rentPrice: "",
+  rentCurrency: "UYU",
 };
 
 const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
@@ -247,6 +281,21 @@ function buildAddress(form: FormState): string {
   return [streetLine, form.city, form.department, form.country].filter(Boolean).join(", ");
 }
 
+const PANEL_TABS: PanelTab[] = ["resumen", "inmuebles", "propietarios", "publicaciones", "alquileres"];
+
+function getAvailableOperations(form: Pick<FormState, "forRent" | "forSale">): PropertyOperation[] {
+  return [
+    form.forRent ? "alquiler" : null,
+    form.forSale ? "venta" : null,
+  ].filter((operation): operation is PropertyOperation => operation !== null);
+}
+
+function ensureOperationForProperty(form: FormState): FormState {
+  const available = getAvailableOperations(form);
+  const selected = form.operations.find((operation) => available.includes(operation)) ?? available[0];
+  return { ...form, operations: selected ? [selected] : [] };
+}
+
 export function AdminPanel(): JSX.Element {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [email, setEmail] = useState("");
@@ -315,6 +364,17 @@ export function AdminPanel(): JSX.Element {
       })
       .catch(() => setMessage("No se pudo cargar la configuracion de Supabase."));
   }, []);
+
+  useEffect(() => {
+    const storedTab = window.localStorage.getItem("asespro_admin_tab") as PanelTab | null;
+    if (storedTab && PANEL_TABS.includes(storedTab)) {
+      setActiveTab(storedTab);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("asespro_admin_tab", activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -465,10 +525,9 @@ export function AdminPanel(): JSX.Element {
 
   function toggleOperation(operation: PropertyOperation): void {
     setListingForm((current) => {
-      const exists = current.operations.includes(operation);
-      const operations = exists ? current.operations.filter((item) => item !== operation) : [...current.operations, operation];
-      const nextOperations = operations.length > 0 ? operations : [operation];
-      return { ...current, operations: nextOperations };
+      const available = getAvailableOperations(current);
+      if (!available.includes(operation)) return current;
+      return { ...current, operations: [operation] };
     });
   }
 
@@ -479,23 +538,31 @@ export function AdminPanel(): JSX.Element {
       return;
     }
 
-    setListingForm((current) => ({
-      ...current,
-      propertyId,
-      ownerId: property.asespro_property_owners?.[0]?.owner_id ?? current.ownerId,
-      title: current.title || property.title,
-      description: current.description || property.description || "",
-      propertyType: property.property_type,
-      locationText: property.location_text ?? "",
-      street: current.street,
-      streetNumber: current.streetNumber,
-      city: current.city,
-      department: current.department,
-      country: current.country,
-      bedrooms: property.bedrooms?.toString() ?? "",
-      bathrooms: property.bathrooms?.toString() ?? "",
-      areaM2: property.area_m2?.toString() ?? "",
-    }));
+    setListingForm((current) =>
+      ensureOperationForProperty({
+        ...current,
+        propertyId,
+        ownerId: property.asespro_property_owners?.[0]?.owner_id ?? current.ownerId,
+        title: property.title,
+        description: property.description || "",
+        propertyType: property.property_type,
+        locationText: property.location_text ?? "",
+        street: current.street,
+        streetNumber: current.streetNumber,
+        city: current.city,
+        department: current.department,
+        country: current.country,
+        bedrooms: property.bedrooms?.toString() ?? "",
+        bathrooms: property.bathrooms?.toString() ?? "",
+        areaM2: property.area_m2?.toString() ?? "",
+        forSale: property.for_sale === true,
+        salePrice: property.sale_price?.toString() ?? "",
+        saleCurrency: property.sale_currency ?? "USD",
+        forRent: property.for_rent === true,
+        rentPrice: property.rent_price?.toString() ?? "",
+        rentCurrency: property.rent_currency ?? "UYU",
+      }),
+    );
   }
 
   function editListing(listing: AdminListing): void {
@@ -524,8 +591,12 @@ export function AdminPanel(): JSX.Element {
       bedrooms: listing.asespro_properties?.bedrooms?.toString() ?? "",
       bathrooms: listing.asespro_properties?.bathrooms?.toString() ?? "",
       areaM2: listing.asespro_properties?.area_m2?.toString() ?? "",
-      priceAmount: listing.price_amount?.toString() ?? "",
-      priceCurrency: listing.price_currency ?? "USD",
+      forSale: listing.asespro_properties?.for_sale === true || operations.includes("venta"),
+      salePrice: listing.asespro_properties?.sale_price?.toString() ?? (operations.includes("venta") ? listing.price_amount?.toString() ?? "" : ""),
+      saleCurrency: listing.asespro_properties?.sale_currency ?? (operations.includes("venta") ? listing.price_currency ?? "USD" : "USD"),
+      forRent: listing.asespro_properties?.for_rent === true || operations.includes("alquiler"),
+      rentPrice: listing.asespro_properties?.rent_price?.toString() ?? (operations.includes("alquiler") ? listing.price_amount?.toString() ?? "" : ""),
+      rentCurrency: listing.asespro_properties?.rent_currency ?? (operations.includes("alquiler") ? listing.price_currency ?? "UYU" : "UYU"),
       operations: operations.length > 0 ? operations : ["alquiler"],
       status: listing.status,
     });
@@ -558,6 +629,12 @@ export function AdminPanel(): JSX.Element {
       bathrooms: property.bathrooms?.toString() ?? "",
       areaM2: property.area_m2?.toString() ?? "",
       status: property.status ?? "disponible",
+      forSale: property.for_sale === true,
+      salePrice: property.sale_price?.toString() ?? "",
+      saleCurrency: property.sale_currency ?? "USD",
+      forRent: property.for_rent === true,
+      rentPrice: property.rent_price?.toString() ?? "",
+      rentCurrency: property.rent_currency ?? "UYU",
     });
     setDrawerMode("property");
     setActiveTab("inmuebles");
@@ -622,8 +699,12 @@ export function AdminPanel(): JSX.Element {
       bedrooms: listingForm.bedrooms,
       bathrooms: listingForm.bathrooms,
       areaM2: listingForm.areaM2,
-      priceAmount: listingForm.priceAmount,
-      priceCurrency: listingForm.priceCurrency,
+      forSale: listingForm.forSale,
+      salePrice: listingForm.salePrice,
+      saleCurrency: listingForm.saleCurrency,
+      forRent: listingForm.forRent,
+      rentPrice: listingForm.rentPrice,
+      rentCurrency: listingForm.rentCurrency,
       operations: listingForm.operations,
       status: listingForm.status,
     };
@@ -643,7 +724,13 @@ export function AdminPanel(): JSX.Element {
       return;
     }
 
-    await uploadMedia(payload.id);
+    try {
+      await uploadMedia(payload.id);
+    } catch (error) {
+      setBusy(false);
+      setMessage(error instanceof Error ? error.message : "La publicacion se guardo, pero fallo la carga de media.");
+      return;
+    }
     setListingForm(EMPTY_LISTING_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
@@ -688,6 +775,13 @@ export function AdminPanel(): JSX.Element {
     setBusy(true);
     setMessage(null);
 
+    const original = properties.find((property) => property.id === propertyForm.id);
+    const priceChanged =
+      (original?.sale_price?.toString() ?? "") !== propertyForm.salePrice ||
+      (original?.sale_currency ?? "USD") !== propertyForm.saleCurrency ||
+      (original?.rent_price?.toString() ?? "") !== propertyForm.rentPrice ||
+      (original?.rent_currency ?? "UYU") !== propertyForm.rentCurrency;
+
     const response = await fetch(`/api/admin/properties/${propertyForm.id}`, {
       method: "PATCH",
       headers: {
@@ -707,7 +801,7 @@ export function AdminPanel(): JSX.Element {
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
-    setMessage("Inmueble actualizado.");
+    setMessage(priceChanged ? "Inmueble actualizado. Revisa Publicaciones para confirmar el precio publicado." : "Inmueble actualizado y sincronizado con sus publicaciones.");
   }
 
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
@@ -757,11 +851,15 @@ export function AdminPanel(): JSX.Element {
       data.set("file", file);
       data.set("mediaType", "photo");
       data.set("isCover", index === coverPhotoIndex ? "true" : "false");
-      await fetch(`/api/admin/listings/${listingId}/media`, {
+      const response = await fetch(`/api/admin/listings/${listingId}/media`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: data,
       });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error ?? `No se pudo subir la imagen ${file.name}.`);
+      }
     }
 
     for (const item of [{ file: videoFile, mediaType: "video" }] as const) {
@@ -770,11 +868,15 @@ export function AdminPanel(): JSX.Element {
       data.set("file", item.file);
       data.set("mediaType", item.mediaType);
       data.set("isCover", "false");
-      await fetch(`/api/admin/listings/${listingId}/media`, {
+      const response = await fetch(`/api/admin/listings/${listingId}/media`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: data,
       });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error ?? `No se pudo subir el video ${item.file.name}.`);
+      }
     }
   }
 
@@ -1020,7 +1122,7 @@ function MediaPreview({ media }: { media: AdminListing["asespro_listing_media"] 
   const video = media.find((item) => item.media_type === "video" && item.public_url);
 
   return (
-    <div className={styles.mediaPreview}>
+    <div className={`${styles.mediaPreview} ${cover?.public_url && video?.public_url ? styles.mediaPreviewWithVideo : ""}`}>
       {cover?.public_url ? <img src={cover.public_url} alt="" /> : <span>Sin foto</span>}
       {video?.public_url ? <video src={video.public_url} muted playsInline preload="metadata" /> : null}
     </div>
@@ -1221,6 +1323,7 @@ function ListingDrawer({
 }): JSX.Element {
   const canContinueOwner = form.ownerMode === "new" ? form.newOwnerFullName.trim().length > 0 : form.ownerId.length > 0;
   const canContinueProperty = form.propertyMode === "new" ? form.street.trim().length > 0 && form.streetNumber.trim().length > 0 : form.propertyId.length > 0;
+  const availableOperations = getAvailableOperations(form);
 
   return (
     <section className={styles.drawer} aria-label="Formulario de publicacion">
@@ -1316,10 +1419,22 @@ function ListingDrawer({
               <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
               <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
             </div>
-            <div className={styles.twoCols}>
-              <label>Precio base del inmueble<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
-              <label>Moneda base<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
+            <div className={styles.operations}>
+              <label><input type="checkbox" checked={form.forRent} onChange={(event) => onChange(ensureOperationForProperty({ ...form, forRent: event.target.checked }))} /> Disponible para alquiler</label>
+              <label><input type="checkbox" checked={form.forSale} onChange={(event) => onChange(ensureOperationForProperty({ ...form, forSale: event.target.checked }))} /> Disponible para venta</label>
             </div>
+            {form.forRent ? (
+              <div className={styles.twoCols}>
+                <label>Precio alquiler<input inputMode="decimal" value={form.rentPrice} onChange={(event) => onChange({ ...form, rentPrice: event.target.value })} /></label>
+                <label>Moneda alquiler<input list="admin-currencies" value={form.rentCurrency} onChange={(event) => onChange({ ...form, rentCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /><datalist id="admin-currencies"><option value="UYU" /><option value="USD" /><option value="EUR" /></datalist></label>
+              </div>
+            ) : null}
+            {form.forSale ? (
+              <div className={styles.twoCols}>
+                <label>Precio venta<input inputMode="decimal" value={form.salePrice} onChange={(event) => onChange({ ...form, salePrice: event.target.value })} /></label>
+                <label>Moneda venta<input list="admin-currencies" value={form.saleCurrency} onChange={(event) => onChange({ ...form, saleCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /></label>
+              </div>
+            ) : null}
             <label>Descripcion / ficha general<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
             <div className={styles.twoCols}>
               <label>Imagenes del inmueble<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
@@ -1340,17 +1455,15 @@ function ListingDrawer({
         {step === "publicacion" ? (
           <div className={styles.formSection}>
           <h4>Publicacion</h4>
+          {availableOperations.length === 0 ? <p className={styles.empty}>Activa venta o alquiler en el inmueble para poder crear una publicacion.</p> : null}
           <div className={styles.operations}>
-            <label><input type="checkbox" checked={form.operations.includes("alquiler")} onChange={() => onToggleOperation("alquiler")} /> Alquiler</label>
-            <label><input type="checkbox" checked={form.operations.includes("venta")} onChange={() => onToggleOperation("venta")} /> Venta</label>
-          </div>
-          <div className={styles.twoCols}>
-            <label>Precio a publicar<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
-            <label>Moneda a publicar<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /></label>
+            {availableOperations.map((operation) => (
+              <label key={operation}><input type="radio" checked={form.operations[0] === operation} onChange={() => onToggleOperation(operation)} /> {operation === "alquiler" ? "Alquiler" : "Venta"}</label>
+            ))}
           </div>
           <div className={styles.formNav}>
             <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
-            <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Publicando..." : "Crear publicacion"}</button>
+            <button type="submit" className={styles.primaryButton} disabled={busy || availableOperations.length === 0}>{busy ? "Publicando..." : "Crear publicacion"}</button>
           </div>
         </div>
         ) : null}
@@ -1375,6 +1488,7 @@ function PublicationDrawer({
   onChange: (form: FormState) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
 }): JSX.Element {
+  const availableOperations = getAvailableOperations(form);
   return (
     <section className={styles.drawer} aria-label="Ficha de publicacion">
       <div className={styles.drawerHead}>
@@ -1386,17 +1500,13 @@ function PublicationDrawer({
       </div>
       <form className={styles.formPanel} onSubmit={onSubmit}>
         <div className={styles.twoCols}>
-          <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
           <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyStatus })}><option value="activo">Activo</option><option value="desactivado">Desactivado</option></select></label>
+          <label>Inmueble<input value={form.title} readOnly /></label>
         </div>
-        <label>Descripcion comercial<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
         <div className={styles.operations}>
-          <label><input type="checkbox" checked={form.operations.includes("alquiler")} onChange={() => onToggleOperation("alquiler")} /> Alquiler</label>
-          <label><input type="checkbox" checked={form.operations.includes("venta")} onChange={() => onToggleOperation("venta")} /> Venta</label>
-        </div>
-        <div className={styles.twoCols}>
-          <label>Precio a publicar<input inputMode="decimal" value={form.priceAmount} onChange={(event) => onChange({ ...form, priceAmount: event.target.value })} /></label>
-          <label>Moneda a publicar<input list="admin-currencies" value={form.priceCurrency} onChange={(event) => onChange({ ...form, priceCurrency: event.target.value.toUpperCase() })} /></label>
+          {availableOperations.map((operation) => (
+            <label key={operation}><input type="radio" checked={form.operations[0] === operation} onChange={() => onToggleOperation(operation)} /> {operation === "alquiler" ? "Alquiler" : "Venta"}</label>
+          ))}
         </div>
         <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
       </form>
@@ -1475,6 +1585,22 @@ function PropertyDrawer({
           <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
           <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
         </div>
+        <div className={styles.operations}>
+          <label><input type="checkbox" checked={form.forRent} onChange={(event) => onChange({ ...form, forRent: event.target.checked })} /> Disponible para alquiler</label>
+          <label><input type="checkbox" checked={form.forSale} onChange={(event) => onChange({ ...form, forSale: event.target.checked })} /> Disponible para venta</label>
+        </div>
+        {form.forRent ? (
+          <div className={styles.twoCols}>
+            <label>Precio alquiler<input inputMode="decimal" value={form.rentPrice} onChange={(event) => onChange({ ...form, rentPrice: event.target.value })} /></label>
+            <label>Moneda alquiler<input list="admin-currencies" value={form.rentCurrency} onChange={(event) => onChange({ ...form, rentCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /></label>
+          </div>
+        ) : null}
+        {form.forSale ? (
+          <div className={styles.twoCols}>
+            <label>Precio venta<input inputMode="decimal" value={form.salePrice} onChange={(event) => onChange({ ...form, salePrice: event.target.value })} /></label>
+            <label>Moneda venta<input list="admin-currencies" value={form.saleCurrency} onChange={(event) => onChange({ ...form, saleCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /></label>
+          </div>
+        ) : null}
         <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
         <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar inmueble"}</button>
       </form>

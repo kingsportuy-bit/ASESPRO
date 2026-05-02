@@ -140,6 +140,10 @@
   line-height: 1.7;
 }
 
+.commercialDescription {
+  white-space: pre-line;
+}
+
 .amenities {
   display: grid;
   grid-template-columns: 1fr 1fr;

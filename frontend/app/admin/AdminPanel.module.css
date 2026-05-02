@@ -573,8 +573,12 @@
   border-radius: 10px;
   background: #e5ebe8;
   display: grid;
-  grid-template-columns: 1fr 42px;
+  grid-template-columns: 1fr;
   overflow: hidden;
+}
+
+.mediaPreviewWithVideo {
+  grid-template-columns: 1fr 42px;
 }
 
 .mediaPreview img,
@@ -582,6 +586,7 @@
   width: 100%;
   height: 74px;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
