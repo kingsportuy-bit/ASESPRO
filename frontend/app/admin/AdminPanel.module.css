@@ -583,6 +583,43 @@
   gap: 10px;
 }
 
+.fileSections {
+  display: grid;
+  gap: 14px;
+}
+
+.fileSection {
+  display: grid;
+  gap: 10px;
+}
+
+.fileSectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.fileSectionHead strong {
+  color: #00513f;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.fileSectionHead span {
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 999px;
+  background: #edf2ef;
+  color: #00513f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .fileTile {
   border-radius: 12px;
   background: #f5f8f6;

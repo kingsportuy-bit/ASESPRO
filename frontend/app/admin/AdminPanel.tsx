@@ -22,6 +22,11 @@ type MediaUploadProgress = {
   percent: number;
 };
 
+type MediaUploadResponse = {
+  media?: AdminMedia;
+  error?: string;
+};
+
 type AdminListing = {
   id: string;
   property_id: string;
@@ -965,7 +970,10 @@ export function AdminPanel(): JSX.Element {
       data.set("mediaType", "photo");
       data.set("isCover", index === coverPhotoIndex ? "true" : "false");
       data.set("replaceGroup", index === 0 ? "true" : "false");
-      await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo imagen ${index + 1} de ${photoFiles.length}`);
+      const payload = await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo imagen ${index + 1} de ${photoFiles.length}`);
+      if (payload.media?.media_type !== "photo") {
+        throw new Error(`La imagen ${file.name} subio, pero no quedo registrada como foto.`);
+      }
     }
 
     for (const item of [{ file: videoFile, mediaType: "video" }] as const) {
@@ -975,11 +983,14 @@ export function AdminPanel(): JSX.Element {
       data.set("mediaType", item.mediaType);
       data.set("isCover", "false");
       data.set("replaceGroup", "true");
-      await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo video ${item.file.name}`);
+      const payload = await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo video ${item.file.name}`);
+      if (payload.media?.media_type !== "video") {
+        throw new Error(`El video ${item.file.name} subio, pero no quedo registrado como video.`);
+      }
     }
   }
 
-  function uploadMediaRequest(url: string, data: FormData, accessToken: string, label: string): Promise<void> {
+  function uploadMediaRequest(url: string, data: FormData, accessToken: string, label: string): Promise<MediaUploadResponse> {
     return new Promise((resolve, reject) => {
       const request = new XMLHttpRequest();
       setMediaUploadProgress({ label, percent: 0 });
@@ -993,7 +1004,7 @@ export function AdminPanel(): JSX.Element {
       };
 
       request.onload = () => {
-        let payload: { error?: string } | null = null;
+        let payload: MediaUploadResponse | null = null;
         try {
           payload = request.responseText ? (JSON.parse(request.responseText) as { error?: string }) : null;
         } catch {
@@ -1002,7 +1013,7 @@ export function AdminPanel(): JSX.Element {
 
         if (request.status >= 200 && request.status < 300) {
           setMediaUploadProgress({ label, percent: 100 });
-          resolve();
+          resolve(payload ?? {});
           return;
         }
 
@@ -1769,6 +1780,8 @@ function PropertyDrawer({
     if (!a.is_cover && b.is_cover) return 1;
     return (a.sort_order ?? 0) - (b.sort_order ?? 0);
   });
+  const photoMedia = sortedMedia.filter((item) => item.media_type === "photo");
+  const videoMedia = sortedMedia.filter((item) => item.media_type === "video");
 
   return (
     <section className={styles.drawer} aria-label="Formulario de inmueble">
@@ -1816,24 +1829,9 @@ function PropertyDrawer({
             <span>{sortedMedia.length} archivos</span>
           </div>
           {sortedMedia.length > 0 ? (
-            <div className={styles.fileGrid}>
-              {sortedMedia.map((item) => (
-                <article key={item.id} className={styles.fileTile}>
-                  <div className={styles.fileThumb}>
-                    {item.media_type === "video" && item.public_url ? (
-                      <video src={item.public_url} muted playsInline preload="metadata" />
-                    ) : item.public_url ? (
-                      <img src={item.public_url} alt="" />
-                    ) : (
-                      <span>Sin vista</span>
-                    )}
-                    <small>{item.media_type === "video" ? "Video" : item.is_cover ? "Principal" : "Foto"}</small>
-                  </div>
-                  <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => onDeleteMedia(item.id)}>
-                    Eliminar
-                  </button>
-                </article>
-              ))}
+            <div className={styles.fileSections}>
+              <MediaSection title="Fotos" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} />
+              <MediaSection title="Videos" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} />
             </div>
           ) : (
             <p className={styles.empty}>Este inmueble todavia no tiene archivos cargados.</p>
@@ -1857,6 +1855,40 @@ function PropertyDrawer({
           </button>
         </div>
       </form>
+    </section>
+  );
+}
+
+function MediaSection({ title, items, busy, onDeleteMedia }: { title: string; items: AdminMedia[]; busy: boolean; onDeleteMedia: (mediaId: string) => void }): JSX.Element {
+  return (
+    <section className={styles.fileSection}>
+      <div className={styles.fileSectionHead}>
+        <strong>{title}</strong>
+        <span>{items.length}</span>
+      </div>
+      {items.length > 0 ? (
+        <div className={styles.fileGrid}>
+          {items.map((item) => (
+            <article key={item.id} className={styles.fileTile}>
+              <div className={styles.fileThumb}>
+                {item.media_type === "video" && item.public_url ? (
+                  <video src={item.public_url} controls preload="metadata" />
+                ) : item.public_url ? (
+                  <img src={item.public_url} alt="" />
+                ) : (
+                  <span>Sin vista</span>
+                )}
+                <small>{item.media_type === "video" ? "MP4" : item.is_cover ? "Principal" : "Foto"}</small>
+              </div>
+              <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => onDeleteMedia(item.id)}>
+                Eliminar
+              </button>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className={styles.empty}>Sin {title.toLowerCase()} cargados.</p>
+      )}
     </section>
   );
 }

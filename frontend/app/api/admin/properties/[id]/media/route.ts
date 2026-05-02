@@ -11,6 +11,9 @@ type RouteContext = {
 
 const BUCKET = "asespro-media";
 
+export const runtime = "nodejs";
+export const maxDuration = 120;
+
 export async function POST(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -44,10 +47,10 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
     }
   }
 
-  const extension = file.name.includes(".") ? file.name.split(".").pop() : "bin";
+  const extension = file.name.includes(".") ? file.name.split(".").pop()?.toLowerCase() : "bin";
   const storagePath = `properties/${params.id}/${mediaType}-${Date.now()}.${extension}`;
   const { error: uploadError } = await supabase.storage.from(BUCKET).upload(storagePath, file, {
-    contentType: file.type || undefined,
+    contentType: file.type || (extension === "mp4" ? "video/mp4" : undefined),
     upsert: false,
   });
 
@@ -61,18 +64,22 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
     .select("id", { count: "exact", head: true })
     .eq("property_id", params.id);
 
-  const { error: mediaError } = await supabase.from("asespro_property_media").insert({
-    property_id: params.id,
-    media_type: mediaType,
-    storage_path: storagePath,
-    public_url: publicData.publicUrl,
-    sort_order: count ?? 0,
-    is_cover: mediaType === "photo" && isCover,
-  });
+  const { data: media, error: mediaError } = await supabase
+    .from("asespro_property_media")
+    .insert({
+      property_id: params.id,
+      media_type: mediaType,
+      storage_path: storagePath,
+      public_url: publicData.publicUrl,
+      sort_order: count ?? 0,
+      is_cover: mediaType === "photo" && isCover,
+    })
+    .select("id,media_type,public_url,storage_path,sort_order,is_cover")
+    .maybeSingle();
 
-  if (mediaError) {
-    return NextResponse.json({ error: mediaError.message }, { status: 500 });
+  if (mediaError || !media) {
+    return NextResponse.json({ error: mediaError?.message ?? "El archivo subio, pero no quedo registrado en la base." }, { status: 500 });
   }
 
-  return NextResponse.json({ publicUrl: publicData.publicUrl, storagePath });
+  return NextResponse.json({ media });
 }
