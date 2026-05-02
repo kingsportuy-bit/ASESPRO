@@ -276,6 +276,35 @@
   opacity: 0.65;
 }
 
+.disabledSaveButton {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: #d6dedb;
+  color: #65716d;
+  font: inherit;
+  font-weight: 900;
+  cursor: not-allowed;
+}
+
+.dangerButton {
+  min-height: 36px;
+  border: 0;
+  border-radius: 9px;
+  background: #f7dedb;
+  color: #8a231c;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.dangerButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .notice,
 .alert,
 .drawer,
@@ -521,6 +550,90 @@
 
 .checkboxLine input {
   min-height: auto;
+}
+
+.fileManager {
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.fileManagerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fileManagerHead strong {
+  color: #181c1c;
+}
+
+.fileManagerHead span {
+  color: #5b6662;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 10px;
+}
+
+.fileTile {
+  border-radius: 12px;
+  background: #f5f8f6;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.fileThumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e5ebe8;
+}
+
+.fileThumb img,
+.fileThumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fileThumb span {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #5b6662;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.fileThumb small {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  border-radius: 999px;
+  background: rgba(0, 81, 63, 0.9);
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.formFooterActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .uploadProgress {

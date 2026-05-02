@@ -12,6 +12,7 @@ type AdminMedia = {
   id: string;
   media_type: "photo" | "video";
   public_url: string | null;
+  storage_path?: string | null;
   is_cover?: boolean | null;
   sort_order?: number | null;
 };
@@ -342,6 +343,7 @@ export function AdminPanel(): JSX.Element {
   const [listingForm, setListingForm] = useState<FormState>(EMPTY_LISTING_FORM);
   const [ownerForm, setOwnerForm] = useState<OwnerFormState>(EMPTY_OWNER_FORM);
   const [propertyForm, setPropertyForm] = useState<PropertyFormState>(EMPTY_PROPERTY_FORM);
+  const [propertyFormBaseline, setPropertyFormBaseline] = useState<PropertyFormState>(EMPTY_PROPERTY_FORM);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -350,6 +352,10 @@ export function AdminPanel(): JSX.Element {
   const [listingFilter, setListingFilter] = useState<ListingFilter>("todos");
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const propertyHasPendingChanges = useMemo(() => {
+    if (drawerMode !== "property") return false;
+    return JSON.stringify(propertyForm) !== JSON.stringify(propertyFormBaseline) || photoFiles.length > 0 || Boolean(videoFile);
+  }, [drawerMode, propertyForm, propertyFormBaseline, photoFiles, videoFile]);
 
   const activeListings = useMemo(() => listings.filter((listing) => listing.status === "activo"), [listings]);
   const inactiveProperties = useMemo(() => properties.filter((property) => !property.is_active), [properties]);
@@ -652,7 +658,7 @@ export function AdminPanel(): JSX.Element {
     setCoverPhotoIndex(0);
     setVideoFile(null);
     setMediaUploadProgress(null);
-    setPropertyForm({
+    const nextForm = {
       id: property.id,
       title: property.title,
       description: property.description ?? "",
@@ -668,7 +674,9 @@ export function AdminPanel(): JSX.Element {
       forRent: property.for_rent === true,
       rentPrice: property.rent_price?.toString() ?? "",
       rentCurrency: property.rent_currency ?? "UYU",
-    });
+    };
+    setPropertyForm(nextForm);
+    setPropertyFormBaseline(nextForm);
     setDrawerMode("property");
     setActiveTab("inmuebles");
     setMessage("Editando inmueble.");
@@ -877,6 +885,7 @@ export function AdminPanel(): JSX.Element {
     }
 
     setPropertyForm(EMPTY_PROPERTY_FORM);
+    setPropertyFormBaseline(EMPTY_PROPERTY_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
@@ -885,6 +894,27 @@ export function AdminPanel(): JSX.Element {
     await loadOverview(token);
     setBusy(false);
     setMessage(priceChanged ? "Inmueble actualizado. Revisa Publicaciones para confirmar el precio publicado." : "Inmueble actualizado y sincronizado con sus publicaciones.");
+  }
+
+  async function deletePropertyMedia(propertyId: string, mediaId: string): Promise<void> {
+    if (!token || !propertyId || !mediaId) return;
+    setBusy(true);
+    setMessage(null);
+
+    const response = await fetch(`/api/admin/properties/${propertyId}/media/${mediaId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    if (!response.ok) {
+      setBusy(false);
+      setMessage(payload?.error ?? "No se pudo eliminar el archivo.");
+      return;
+    }
+
+    await loadOverview(token);
+    setBusy(false);
+    setMessage("Archivo eliminado.");
   }
 
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
@@ -1154,6 +1184,8 @@ export function AdminPanel(): JSX.Element {
               mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
               videoFile={videoFile}
+              currentMedia={properties.find((property) => property.id === propertyForm.id)?.asespro_property_media ?? []}
+              hasPendingChanges={propertyHasPendingChanges}
               onClose={() => setDrawerMode(null)}
               onSubmit={saveProperty}
               onChange={setPropertyForm}
@@ -1167,6 +1199,7 @@ export function AdminPanel(): JSX.Element {
                 setVideoFile(file);
                 setMediaUploadProgress(null);
               }}
+              onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
             />
           </Modal>
         ) : null}
@@ -1705,12 +1738,15 @@ function PropertyDrawer({
   mediaUploadProgress,
   coverPhotoIndex,
   videoFile,
+  currentMedia,
+  hasPendingChanges,
   onClose,
   onSubmit,
   onChange,
   onPhotosChange,
   onCoverPhotoChange,
   onVideoChange,
+  onDeleteMedia,
 }: {
   form: PropertyFormState;
   busy: boolean;
@@ -1718,13 +1754,22 @@ function PropertyDrawer({
   mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
   videoFile: File | null;
+  currentMedia: AdminMedia[];
+  hasPendingChanges: boolean;
   onClose: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onChange: (form: PropertyFormState) => void;
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
   onVideoChange: (file: File | null) => void;
+  onDeleteMedia: (mediaId: string) => void;
 }): JSX.Element {
+  const sortedMedia = [...currentMedia].sort((a, b) => {
+    if (a.is_cover && !b.is_cover) return -1;
+    if (!a.is_cover && b.is_cover) return 1;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+
   return (
     <section className={styles.drawer} aria-label="Formulario de inmueble">
       <div className={styles.drawerHead}>
@@ -1732,7 +1777,7 @@ function PropertyDrawer({
           <h3>Editar inmueble</h3>
           <p>Ficha interna del inmueble. El estado de publicacion se maneja en Publicaciones.</p>
         </div>
-        <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
+        <button type="button" className={styles.closeButton} aria-label="Cerrar" onClick={onClose}>x</button>
       </div>
       <form className={styles.formPanel} onSubmit={onSubmit}>
         <div className={styles.twoCols}>
@@ -1765,6 +1810,35 @@ function PropertyDrawer({
           </div>
         ) : null}
         <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+        <div className={styles.fileManager}>
+          <div className={styles.fileManagerHead}>
+            <strong>Archivos de la propiedad</strong>
+            <span>{sortedMedia.length} archivos</span>
+          </div>
+          {sortedMedia.length > 0 ? (
+            <div className={styles.fileGrid}>
+              {sortedMedia.map((item) => (
+                <article key={item.id} className={styles.fileTile}>
+                  <div className={styles.fileThumb}>
+                    {item.media_type === "video" && item.public_url ? (
+                      <video src={item.public_url} muted playsInline preload="metadata" />
+                    ) : item.public_url ? (
+                      <img src={item.public_url} alt="" />
+                    ) : (
+                      <span>Sin vista</span>
+                    )}
+                    <small>{item.media_type === "video" ? "Video" : item.is_cover ? "Principal" : "Foto"}</small>
+                  </div>
+                  <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => onDeleteMedia(item.id)}>
+                    Eliminar
+                  </button>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.empty}>Este inmueble todavia no tiene archivos cargados.</p>
+          )}
+        </div>
         <div className={styles.twoCols}>
           <label>Nuevas imagenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
           <label>Nuevo video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
@@ -1776,7 +1850,12 @@ function PropertyDrawer({
         ) : null}
         {videoFile ? <p className={styles.empty}>Video seleccionado: {videoFile.name}</p> : null}
         {mediaUploadProgress ? <UploadProgress progress={mediaUploadProgress} /> : null}
-        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar inmueble"}</button>
+        <div className={styles.formFooterActions}>
+          <button type="button" className={styles.secondaryLightButton} disabled={busy} onClick={onClose}>Cerrar</button>
+          <button type="submit" className={hasPendingChanges ? styles.primaryButton : styles.disabledSaveButton} disabled={busy || !hasPendingChanges}>
+            {busy ? "Guardando..." : "Guardar inmueble"}
+          </button>
+        </div>
       </form>
     </section>
   );
