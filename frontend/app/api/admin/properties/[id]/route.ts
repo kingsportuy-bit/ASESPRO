@@ -155,10 +155,10 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     return NextResponse.json({ error: "No hay cambios validos." }, { status: 400 });
   }
 
-  const { error } = await supabase.from("asespro_properties").update(updates).eq("id", params.id);
+  const { data: updatedProperty, error } = await supabase.from("asespro_properties").update(updates).eq("id", params.id).select("id").maybeSingle();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error || !updatedProperty) {
+    return NextResponse.json({ error: error?.message ?? "Inmueble no encontrado." }, { status: error ? 500 : 404 });
   }
 
   const listingUpdates: Record<string, string> = {

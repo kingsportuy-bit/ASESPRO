@@ -143,24 +143,32 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
   }
 
-  const { error } = await supabase
-    .from("asespro_listings")
-    .update({
-      status,
-      published_at: status === "activo" ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", params.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  const updates: Record<string, string | null> = {
+    status,
+    published_at: status === "activo" ? new Date().toISOString() : null,
+    updated_at: new Date().toISOString(),
+  };
 
   if (Array.isArray(payload.operations)) {
     const operations = payload.operations.filter((operation): operation is "alquiler" | "venta" => operation === "alquiler" || operation === "venta");
     if (operations.length === 0) {
       return NextResponse.json({ error: "Selecciona una operacion valida." }, { status: 400 });
     }
+
+    const { data: listing, error: listingReadError } = await supabase
+      .from("asespro_listings")
+      .select("property_id,asespro_properties(sale_price,sale_currency,rent_price,rent_currency)")
+      .eq("id", params.id)
+      .maybeSingle();
+
+    if (listingReadError || !listing) {
+      return NextResponse.json({ error: listingReadError?.message ?? "Publicacion no encontrada." }, { status: 404 });
+    }
+
+    const property = Array.isArray(listing.asespro_properties) ? listing.asespro_properties[0] : listing.asespro_properties;
+    const operation = operations[0];
+    updates.price_amount = operation === "alquiler" ? property?.rent_price ?? null : property?.sale_price ?? null;
+    updates.price_currency = operation === "alquiler" ? property?.rent_currency ?? "UYU" : property?.sale_currency ?? "USD";
 
     const { error: deleteOperationsError } = await supabase.from("asespro_listing_operations").delete().eq("listing_id", params.id);
     if (deleteOperationsError) {
@@ -178,5 +186,16 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     }
   }
 
-  return NextResponse.json({ id: params.id, status });
+  const { data: updated, error } = await supabase
+    .from("asespro_listings")
+    .update(updates)
+    .eq("id", params.id)
+    .select("id,status")
+    .maybeSingle();
+
+  if (error || !updated) {
+    return NextResponse.json({ error: error?.message ?? "Publicacion no encontrada." }, { status: error ? 500 : 404 });
+  }
+
+  return NextResponse.json({ id: updated.id, status: updated.status });
 }

@@ -8,6 +8,14 @@ import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
 import styles from "./AdminPanel.module.css";
 
+type AdminMedia = {
+  id: string;
+  media_type: "photo" | "video";
+  public_url: string | null;
+  is_cover?: boolean | null;
+  sort_order?: number | null;
+};
+
 type AdminListing = {
   id: string;
   property_id: string;
@@ -33,9 +41,10 @@ type AdminListing = {
     for_rent?: boolean | null;
     rent_price?: number | null;
     rent_currency?: PropertyCurrency | null;
+    asespro_property_media?: AdminMedia[];
   } | null;
   asespro_listing_operations: Array<{ operation: PropertyOperation }>;
-  asespro_listing_media: Array<{ id: string; media_type: "photo" | "video"; public_url: string | null; is_cover?: boolean | null; sort_order?: number | null }>;
+  asespro_listing_media: AdminMedia[];
 };
 
 type PropertyOperationalStatus = "disponible" | "alquilado" | "vendido";
@@ -61,6 +70,7 @@ type AdminProperty = {
   rent_price?: number | null;
   rent_currency?: PropertyCurrency | null;
   asespro_property_owners?: Array<{ owner_id: string }>;
+  asespro_property_media?: AdminMedia[];
 };
 
 type AdminOwner = {
@@ -267,9 +277,15 @@ function operationLabel(operations: Array<{ operation: PropertyOperation }>): st
 }
 
 function listingHasMediaIssue(listing: AdminListing): boolean {
-  const photos = listing.asespro_listing_media.filter((item) => item.media_type === "photo").length;
-  const hasVideo = listing.asespro_listing_media.some((item) => item.media_type === "video");
+  const media = getListingMedia(listing);
+  const photos = media.filter((item) => item.media_type === "photo").length;
+  const hasVideo = media.some((item) => item.media_type === "video");
   return photos === 0 || !hasVideo;
+}
+
+function getListingMedia(listing: AdminListing): AdminMedia[] {
+  const propertyMedia = listing.asespro_properties?.asespro_property_media ?? [];
+  return propertyMedia.length > 0 ? propertyMedia : listing.asespro_listing_media;
 }
 
 function matchesSearch(text: string, query: string): boolean {
@@ -725,7 +741,7 @@ export function AdminPanel(): JSX.Element {
       },
       body: JSON.stringify(body),
     });
-    const payload = (await response.json()) as { id?: string; error?: string };
+    const payload = (await response.json()) as { id?: string; propertyId?: string; error?: string };
 
     if (!response.ok || !payload.id) {
       setBusy(false);
@@ -734,7 +750,7 @@ export function AdminPanel(): JSX.Element {
     }
 
     try {
-      await uploadMedia(payload.id);
+      await uploadPropertyMedia(payload.propertyId ?? listingForm.propertyId);
     } catch (error) {
       setBusy(false);
       setMessage(error instanceof Error ? error.message : "La publicacion se guardo, pero fallo la carga de media.");
@@ -837,10 +853,9 @@ export function AdminPanel(): JSX.Element {
       return;
     }
 
-    const relatedListing = listings.find((listing) => listing.property_id === propertyForm.id);
-    if (relatedListing && (photoFiles.length > 0 || videoFile)) {
+    if (photoFiles.length > 0 || videoFile) {
       try {
-        await uploadMedia(relatedListing.id);
+        await uploadPropertyMedia(propertyForm.id);
       } catch (error) {
         setBusy(false);
         setMessage(error instanceof Error ? error.message : "El inmueble se guardo, pero fallo la carga de media.");
@@ -898,14 +913,15 @@ export function AdminPanel(): JSX.Element {
     setBusy(false);
   }
 
-  async function uploadMedia(listingId: string): Promise<void> {
-    if (!token) return;
+  async function uploadPropertyMedia(propertyId: string): Promise<void> {
+    if (!token || !propertyId) return;
     for (const [index, file] of photoFiles.entries()) {
       const data = new FormData();
       data.set("file", file);
       data.set("mediaType", "photo");
       data.set("isCover", index === coverPhotoIndex ? "true" : "false");
-      const response = await fetch(`/api/admin/listings/${listingId}/media`, {
+      data.set("replaceGroup", index === 0 ? "true" : "false");
+      const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: data,
@@ -922,7 +938,8 @@ export function AdminPanel(): JSX.Element {
       data.set("file", item.file);
       data.set("mediaType", item.mediaType);
       data.set("isCover", "false");
-      const response = await fetch(`/api/admin/listings/${listingId}/media`, {
+      data.set("replaceGroup", "true");
+      const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: data,
@@ -1181,7 +1198,7 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
   );
 }
 
-function MediaPreview({ media }: { media: AdminListing["asespro_listing_media"] }): JSX.Element {
+function MediaPreview({ media }: { media: AdminMedia[] }): JSX.Element {
   const photos = media.filter((item) => item.media_type === "photo" && item.public_url).sort((a, b) => {
     if (a.is_cover && !b.is_cover) return -1;
     if (!a.is_cover && b.is_cover) return 1;
@@ -1720,11 +1737,12 @@ function ListingTable({
         <span>{listings.length}</span>
       </div>
       {listings.map((listing) => {
-        const photos = listing.asespro_listing_media.filter((item) => item.media_type === "photo").length;
-        const hasVideo = listing.asespro_listing_media.some((item) => item.media_type === "video");
+        const media = getListingMedia(listing);
+        const photos = media.filter((item) => item.media_type === "photo").length;
+        const hasVideo = media.some((item) => item.media_type === "video");
         return (
           <article key={listing.id} className={`${styles.rowCard} ${styles.rowCardWithMedia}`}>
-            <MediaPreview media={listing.asespro_listing_media} />
+            <MediaPreview media={media} />
             <div className={styles.rowMain}>
               <strong>{listing.title}</strong>
               <p>{listing.asespro_properties?.location_text ?? "Sin ubicacion"} - {operationLabel(listing.asespro_listing_operations)} - {formatMoney(listing.price_amount, listing.price_currency)}</p>
@@ -1767,7 +1785,7 @@ function PropertyTable({
       </div>
       {properties.map((property) => {
         const propertyListings = listings.filter((listing) => listing.property_id === property.id);
-        const media = propertyListings.flatMap((listing) => listing.asespro_listing_media);
+        const media = property.asespro_property_media?.length ? property.asespro_property_media : propertyListings.flatMap((listing) => listing.asespro_listing_media);
         return (
           <article key={property.id} className={`${styles.rowCard} ${styles.rowCardWithMedia}`}>
             <MediaPreview media={media} />

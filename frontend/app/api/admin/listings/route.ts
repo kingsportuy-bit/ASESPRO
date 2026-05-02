@@ -94,7 +94,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const { data, error } = await supabase
     .from("asespro_listings")
     .select(
-      "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)",
+      "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)",
     )
     .order("created_at", { ascending: false });
 
@@ -264,7 +264,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     }
 
-    return NextResponse.json({ id: listing.id }, { status: 201 });
+    return NextResponse.json({ id: listing.id, propertyId }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Datos invalidos." }, { status: 400 });
   }

@@ -55,6 +55,14 @@ type SupabaseListingRow = {
     | null;
 };
 
+type SupabaseMediaRow = {
+  media_type: "photo" | "video" | null;
+  public_url: string | null;
+  storage_path: string | null;
+  sort_order: number | null;
+  is_cover: boolean | null;
+};
+
 type SupabasePropertyRow = {
         title: string | null;
         description: string | null;
@@ -66,6 +74,7 @@ type SupabasePropertyRow = {
         bathrooms: number | null;
         area_m2: number | string | null;
         is_active: boolean | null;
+        asespro_property_media?: SupabaseMediaRow[] | null;
 };
 
 export interface PropertyRepository {
@@ -300,7 +309,8 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     .map((item) => item.operation)
     .filter((operation): operation is PropertyOperation => operation === "alquiler" || operation === "venta");
   const primaryOperation = operations[0] ?? "venta";
-  const media = [...(row.asespro_listing_media ?? [])].sort((a, b) => {
+  const sourceMedia = property.asespro_property_media?.length ? property.asespro_property_media : row.asespro_listing_media ?? [];
+  const media = [...sourceMedia].sort((a, b) => {
     if (a.is_cover && !b.is_cover) return -1;
     if (!a.is_cover && b.is_cover) return 1;
     return (a.sort_order ?? 0) - (b.sort_order ?? 0);
@@ -345,7 +355,7 @@ class SupabasePropertyRepository implements PropertyRepository {
     const { data, error } = await supabase
       .from("asespro_listings")
       .select(
-        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
+        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
       )
       .eq("status", "activo")
       .order("created_at", { ascending: false });
@@ -373,7 +383,7 @@ class SupabasePropertyRepository implements PropertyRepository {
     const { data, error } = await supabase
       .from("asespro_listings")
       .select(
-        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
+        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
       )
       .eq("id", id)
       .maybeSingle();
