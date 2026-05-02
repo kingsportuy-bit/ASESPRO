@@ -9,11 +9,83 @@ type RouteContext = {
     id: string;
   };
 };
+type ReorderPayload = {
+  mediaType?: "photo" | "video";
+  items?: Array<{ id?: string; sortOrder?: number; isCover?: boolean }>;
+};
 
 const BUCKET = "asespro-media";
 
 export const runtime = "nodejs";
 export const maxDuration = 1800;
+
+export async function PATCH(request: Request, { params }: RouteContext): Promise<NextResponse> {
+  const auth = await requireAdminUser(request);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.message }, { status: auth.status });
+  }
+
+  const supabase = getSupabaseAdminClient();
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
+  }
+
+  const payload = (await request.json()) as ReorderPayload;
+  const mediaType = payload.mediaType;
+  const items = Array.isArray(payload.items) ? payload.items : [];
+  if ((mediaType !== "photo" && mediaType !== "video") || items.length === 0) {
+    return NextResponse.json({ error: "Datos de orden invalidos." }, { status: 400 });
+  }
+
+  const mediaIds = items.map((item) => item.id).filter((id): id is string => typeof id === "string" && id.length > 0);
+  if (mediaIds.length !== items.length) {
+    return NextResponse.json({ error: "Algunos archivos no tienen id valido." }, { status: 400 });
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from("asespro_property_media")
+    .select("id")
+    .eq("property_id", params.id)
+    .eq("media_type", mediaType)
+    .in("id", mediaIds);
+  if (existingError) {
+    return NextResponse.json({ error: existingError.message }, { status: 500 });
+  }
+  if ((existing ?? []).length !== mediaIds.length) {
+    return NextResponse.json({ error: "No se pudieron validar todos los archivos del inmueble." }, { status: 400 });
+  }
+
+  if (mediaType === "photo") {
+    const { error: clearCoverError } = await supabase
+      .from("asespro_property_media")
+      .update({ is_cover: false })
+      .eq("property_id", params.id)
+      .eq("media_type", "photo");
+    if (clearCoverError) {
+      return NextResponse.json({ error: clearCoverError.message }, { status: 500 });
+    }
+  }
+
+  for (let index = 0; index < items.length; index += 1) {
+    const item = items[index];
+    const sortOrder = Number.isFinite(item.sortOrder as number) ? Number(item.sortOrder) : index;
+    const updates: Record<string, number | boolean> = { sort_order: sortOrder };
+    if (mediaType === "photo") {
+      updates.is_cover = item.isCover === true;
+    }
+    const { error } = await supabase
+      .from("asespro_property_media")
+      .update(updates)
+      .eq("id", item.id)
+      .eq("property_id", params.id)
+      .eq("media_type", mediaType);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ ok: true });
+}
 
 export async function POST(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);

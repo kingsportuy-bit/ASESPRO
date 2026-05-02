@@ -43,7 +43,7 @@
 }
 
 .primaryPhotoCard {
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 3 / 4;
 }
 
 .sidePhotoStack {
@@ -53,7 +53,7 @@
 }
 
 .sidePhotoCard {
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 3 / 4;
 }
 
 .primaryPhotoCard img,
@@ -240,7 +240,7 @@
 
 .videoPanel video {
   width: 100%;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 3 / 4;
   display: block;
   object-fit: cover;
 }
@@ -264,7 +264,7 @@
 
 .lightboxMedia {
   width: min(620px, 92vw);
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 4;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
@@ -272,7 +272,7 @@
 }
 
 .lightboxMediaVideo {
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 3 / 4;
 }
 
 .lightboxMedia img,

@@ -306,6 +306,16 @@ function matchesSearch(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.trim().toLowerCase());
 }
 
+function reorderMediaItems(items: AdminMedia[], fromId: string, toId: string): AdminMedia[] {
+  const fromIndex = items.findIndex((item) => item.id === fromId);
+  const toIndex = items.findIndex((item) => item.id === toId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return items;
+  const copy = [...items];
+  const [moved] = copy.splice(fromIndex, 1);
+  copy.splice(toIndex, 0, moved);
+  return copy;
+}
+
 function buildAddress(form: FormState): string {
   const streetLine = [form.street.trim(), form.streetNumber.trim()].filter(Boolean).join(" ");
   return [streetLine, form.city, form.department, form.country].filter(Boolean).join(", ");
@@ -928,6 +938,40 @@ export function AdminPanel(): JSX.Element {
     setMessage("Archivo eliminado.");
   }
 
+  async function reorderPropertyMedia(propertyId: string, mediaType: "photo" | "video", orderedItems: AdminMedia[]): Promise<void> {
+    if (!token || !propertyId || orderedItems.length === 0) return;
+    setBusy(true);
+    setMessage(null);
+
+    const body = {
+      mediaType,
+      items: orderedItems.map((item, index) => ({
+        id: item.id,
+        sortOrder: index,
+        isCover: mediaType === "photo" ? index === 0 : false,
+      })),
+    };
+
+    const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+    if (!response.ok) {
+      setBusy(false);
+      setMessage(payload?.error ?? "No se pudo reordenar los archivos.");
+      return;
+    }
+
+    await loadOverview(token);
+    setBusy(false);
+    setMessage("Orden de archivos actualizado.");
+  }
+
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
     if (!token) return;
     setBusy(true);
@@ -1272,6 +1316,7 @@ export function AdminPanel(): JSX.Element {
               }}
               onUploadVideo={() => void uploadSelectedPropertyVideo()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
+              onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
             />
           </Modal>
         ) : null}
@@ -1834,6 +1879,7 @@ function PropertyDrawer({
   onVideoChange,
   onUploadVideo,
   onDeleteMedia,
+  onReorderMedia,
 }: {
   form: PropertyFormState;
   busy: boolean;
@@ -1851,6 +1897,7 @@ function PropertyDrawer({
   onVideoChange: (file: File | null) => void;
   onUploadVideo: () => void;
   onDeleteMedia: (mediaId: string) => void;
+  onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
 }): JSX.Element {
   const sortedMedia = [...currentMedia].sort((a, b) => {
     if (a.is_cover && !b.is_cover) return -1;
@@ -1907,8 +1954,8 @@ function PropertyDrawer({
           </div>
           {sortedMedia.length > 0 ? (
             <div className={styles.fileSections}>
-              <MediaSection title="Fotos" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} />
-              <MediaSection title="Videos" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} />
+              <MediaSection title="Fotos" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("photo", orderedItems)} />
+              <MediaSection title="Videos" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("video", orderedItems)} />
             </div>
           ) : (
             <p className={styles.empty}>Este inmueble todavia no tiene archivos cargados.</p>
@@ -1946,7 +1993,21 @@ function PropertyDrawer({
   );
 }
 
-function MediaSection({ title, items, busy, onDeleteMedia }: { title: string; items: AdminMedia[]; busy: boolean; onDeleteMedia: (mediaId: string) => void }): JSX.Element {
+function MediaSection({
+  title,
+  items,
+  busy,
+  onDeleteMedia,
+  onReorder,
+}: {
+  title: string;
+  items: AdminMedia[];
+  busy: boolean;
+  onDeleteMedia: (mediaId: string) => void;
+  onReorder: (orderedItems: AdminMedia[]) => void;
+}): JSX.Element {
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+
   return (
     <section className={styles.fileSection}>
       <div className={styles.fileSectionHead}>
@@ -1956,7 +2017,20 @@ function MediaSection({ title, items, busy, onDeleteMedia }: { title: string; it
       {items.length > 0 ? (
         <div className={styles.fileGrid}>
           {items.map((item) => (
-            <article key={item.id} className={styles.fileTile}>
+            <article
+              key={item.id}
+              className={`${styles.fileTile} ${draggingId === item.id ? styles.fileTileDragging : ""}`}
+              draggable={!busy}
+              onDragStart={() => setDraggingId(item.id)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault();
+                if (!draggingId || draggingId === item.id) return;
+                onReorder(reorderMediaItems(items, draggingId, item.id));
+                setDraggingId(null);
+              }}
+              onDragEnd={() => setDraggingId(null)}
+            >
               <div className={styles.fileThumb}>
                 {item.media_type === "video" && item.public_url ? (
                   <video src={item.public_url} controls preload="metadata" />
