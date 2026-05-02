@@ -16,6 +16,11 @@ type AdminMedia = {
   sort_order?: number | null;
 };
 
+type MediaUploadProgress = {
+  label: string;
+  percent: number;
+};
+
 type AdminListing = {
   id: string;
   property_id: string;
@@ -340,6 +345,7 @@ export function AdminPanel(): JSX.Element {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [mediaUploadProgress, setMediaUploadProgress] = useState<MediaUploadProgress | null>(null);
   const [query, setQuery] = useState("");
   const [listingFilter, setListingFilter] = useState<ListingFilter>("todos");
   const [message, setMessage] = useState<string | null>(null);
@@ -525,6 +531,7 @@ export function AdminPanel(): JSX.Element {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
+    setMediaUploadProgress(null);
     setDrawerMode("listing");
     setActiveTab(tab);
     setMessage(null);
@@ -644,6 +651,7 @@ export function AdminPanel(): JSX.Element {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
+    setMediaUploadProgress(null);
     setPropertyForm({
       id: property.id,
       title: property.title,
@@ -753,6 +761,7 @@ export function AdminPanel(): JSX.Element {
       await uploadPropertyMedia(payload.propertyId ?? listingForm.propertyId);
     } catch (error) {
       setBusy(false);
+      setMediaUploadProgress(null);
       setMessage(error instanceof Error ? error.message : "La publicacion se guardo, pero fallo la carga de media.");
       return;
     }
@@ -760,6 +769,7 @@ export function AdminPanel(): JSX.Element {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
+    setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
@@ -829,6 +839,7 @@ export function AdminPanel(): JSX.Element {
     event.preventDefault();
     if (!token || !propertyForm.id) return;
     setBusy(true);
+    setMediaUploadProgress(null);
     setMessage(null);
 
     const original = properties.find((property) => property.id === propertyForm.id);
@@ -849,6 +860,7 @@ export function AdminPanel(): JSX.Element {
     const payload = (await response.json()) as { error?: string };
     if (!response.ok) {
       setBusy(false);
+      setMediaUploadProgress(null);
       setMessage(payload.error ?? "No se pudo actualizar el inmueble.");
       return;
     }
@@ -858,6 +870,7 @@ export function AdminPanel(): JSX.Element {
         await uploadPropertyMedia(propertyForm.id);
       } catch (error) {
         setBusy(false);
+        setMediaUploadProgress(null);
         setMessage(error instanceof Error ? error.message : "El inmueble se guardo, pero fallo la carga de media.");
         return;
       }
@@ -867,6 +880,7 @@ export function AdminPanel(): JSX.Element {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
     setVideoFile(null);
+    setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
@@ -921,15 +935,7 @@ export function AdminPanel(): JSX.Element {
       data.set("mediaType", "photo");
       data.set("isCover", index === coverPhotoIndex ? "true" : "false");
       data.set("replaceGroup", index === 0 ? "true" : "false");
-      const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error ?? `No se pudo subir la imagen ${file.name}.`);
-      }
+      await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo imagen ${index + 1} de ${photoFiles.length}`);
     }
 
     for (const item of [{ file: videoFile, mediaType: "video" }] as const) {
@@ -939,16 +945,46 @@ export function AdminPanel(): JSX.Element {
       data.set("mediaType", item.mediaType);
       data.set("isCover", "false");
       data.set("replaceGroup", "true");
-      const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error ?? `No se pudo subir el video ${item.file.name}.`);
-      }
+      await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo video ${item.file.name}`);
     }
+  }
+
+  function uploadMediaRequest(url: string, data: FormData, accessToken: string, label: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest();
+      setMediaUploadProgress({ label, percent: 0 });
+
+      request.upload.onprogress = (event) => {
+        if (!event.lengthComputable) {
+          setMediaUploadProgress({ label, percent: 0 });
+          return;
+        }
+        setMediaUploadProgress({ label, percent: Math.min(99, Math.round((event.loaded / event.total) * 100)) });
+      };
+
+      request.onload = () => {
+        let payload: { error?: string } | null = null;
+        try {
+          payload = request.responseText ? (JSON.parse(request.responseText) as { error?: string }) : null;
+        } catch {
+          payload = null;
+        }
+
+        if (request.status >= 200 && request.status < 300) {
+          setMediaUploadProgress({ label, percent: 100 });
+          resolve();
+          return;
+        }
+
+        reject(new Error(payload?.error ?? `No se pudo completar la carga (${request.status}).`));
+      };
+
+      request.onerror = () => reject(new Error("No se pudo conectar con el servidor durante la carga."));
+      request.onabort = () => reject(new Error("La carga fue cancelada."));
+      request.open("POST", url);
+      request.setRequestHeader("Authorization", `Bearer ${accessToken}`);
+      request.send(data);
+    });
   }
 
   if (!token) {
@@ -1074,13 +1110,18 @@ export function AdminPanel(): JSX.Element {
               onSelectProperty={selectPropertyForListing}
               onToggleOperation={toggleOperation}
               photoFiles={photoFiles}
+              mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
               onPhotosChange={(files) => {
                 setPhotoFiles(files);
                 setCoverPhotoIndex(0);
+                setMediaUploadProgress(null);
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
-              onVideoChange={setVideoFile}
+              onVideoChange={(file) => {
+                setVideoFile(file);
+                setMediaUploadProgress(null);
+              }}
             />
           </Modal>
         ) : null}
@@ -1110,6 +1151,7 @@ export function AdminPanel(): JSX.Element {
               form={propertyForm}
               busy={busy}
               photoFiles={photoFiles}
+              mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
               videoFile={videoFile}
               onClose={() => setDrawerMode(null)}
@@ -1118,9 +1160,13 @@ export function AdminPanel(): JSX.Element {
               onPhotosChange={(files) => {
                 setPhotoFiles(files);
                 setCoverPhotoIndex(0);
+                setMediaUploadProgress(null);
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
-              onVideoChange={setVideoFile}
+              onVideoChange={(file) => {
+                setVideoFile(file);
+                setMediaUploadProgress(null);
+              }}
             />
           </Modal>
         ) : null}
@@ -1211,6 +1257,20 @@ function MediaPreview({ media }: { media: AdminMedia[] }): JSX.Element {
     <div className={`${styles.mediaPreview} ${cover?.public_url && video?.public_url ? styles.mediaPreviewWithVideo : ""}`}>
       {cover?.public_url ? <img src={cover.public_url} alt="" /> : <span>Sin foto</span>}
       {video?.public_url ? <video src={video.public_url} muted playsInline preload="metadata" /> : null}
+    </div>
+  );
+}
+
+function UploadProgress({ progress }: { progress: MediaUploadProgress }): JSX.Element {
+  return (
+    <div className={styles.uploadProgress} role="status" aria-live="polite">
+      <div>
+        <strong>{progress.label}</strong>
+        <span>{progress.percent > 0 ? `${progress.percent}%` : "Preparando carga..."}</span>
+      </div>
+      <div className={styles.uploadTrack}>
+        <span style={{ width: `${Math.max(progress.percent, 4)}%` }} />
+      </div>
     </div>
   );
 }
@@ -1385,6 +1445,7 @@ function ListingDrawer({
   onSelectProperty,
   onToggleOperation,
   photoFiles,
+  mediaUploadProgress,
   coverPhotoIndex,
   onPhotosChange,
   onCoverPhotoChange,
@@ -1402,6 +1463,7 @@ function ListingDrawer({
   onSelectProperty: (propertyId: string) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
   photoFiles: File[];
+  mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
@@ -1531,6 +1593,7 @@ function ListingDrawer({
                 {photoFiles.map((file, index) => <option key={`${file.name}-${index}`} value={index}>{file.name}</option>)}
               </select></label>
             ) : null}
+            {mediaUploadProgress ? <UploadProgress progress={mediaUploadProgress} /> : null}
             <div className={styles.formNav}>
               <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("propietario")}>Volver</button>
               <button type="button" className={styles.primaryButton} disabled={!canContinueProperty} onClick={() => onStepChange("publicacion")}>Continuar a publicacion</button>
@@ -1639,6 +1702,7 @@ function PropertyDrawer({
   form,
   busy,
   photoFiles,
+  mediaUploadProgress,
   coverPhotoIndex,
   videoFile,
   onClose,
@@ -1651,6 +1715,7 @@ function PropertyDrawer({
   form: PropertyFormState;
   busy: boolean;
   photoFiles: File[];
+  mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
   videoFile: File | null;
   onClose: () => void;
@@ -1710,6 +1775,7 @@ function PropertyDrawer({
           </select></label>
         ) : null}
         {videoFile ? <p className={styles.empty}>Video seleccionado: {videoFile.name}</p> : null}
+        {mediaUploadProgress ? <UploadProgress progress={mediaUploadProgress} /> : null}
         <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar inmueble"}</button>
       </form>
     </section>

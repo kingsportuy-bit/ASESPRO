@@ -523,6 +523,43 @@
   min-height: auto;
 }
 
+.uploadProgress {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 81, 63, 0.12);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.uploadProgress div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #00513f;
+  font-size: 13px;
+}
+
+.uploadProgress span {
+  font-weight: 900;
+}
+
+.uploadTrack {
+  height: 9px;
+  border-radius: 999px;
+  background: #e5ebe8;
+  overflow: hidden;
+}
+
+.uploadTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #00513f;
+  transition: width 160ms ease;
+}
+
 .toolbar {
   border-radius: 16px;
   background: #ffffff;
