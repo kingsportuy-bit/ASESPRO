@@ -137,7 +137,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
   }
 
-  const payload = (await request.json()) as { status?: PropertyStatus };
+  const payload = (await request.json()) as { status?: PropertyStatus; operations?: unknown };
   const status = payload.status;
   if (status !== "activo" && status !== "desactivado") {
     return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
@@ -154,6 +154,28 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (Array.isArray(payload.operations)) {
+    const operations = payload.operations.filter((operation): operation is "alquiler" | "venta" => operation === "alquiler" || operation === "venta");
+    if (operations.length === 0) {
+      return NextResponse.json({ error: "Selecciona una operacion valida." }, { status: 400 });
+    }
+
+    const { error: deleteOperationsError } = await supabase.from("asespro_listing_operations").delete().eq("listing_id", params.id);
+    if (deleteOperationsError) {
+      return NextResponse.json({ error: deleteOperationsError.message }, { status: 500 });
+    }
+
+    const { error: operationsError } = await supabase.from("asespro_listing_operations").insert(
+      operations.map((operation) => ({
+        listing_id: params.id,
+        operation,
+      })),
+    );
+    if (operationsError) {
+      return NextResponse.json({ error: operationsError.message }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ id: params.id, status });

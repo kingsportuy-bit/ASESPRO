@@ -296,6 +296,12 @@ function ensureOperationForProperty(form: FormState): FormState {
   return { ...form, operations: selected ? [selected] : [] };
 }
 
+function getPublicationOperations(form: FormState): PropertyOperation[] {
+  const available = getAvailableOperations(form);
+  const merged = [...available, ...form.operations];
+  return merged.filter((operation, index) => merged.indexOf(operation) === index);
+}
+
 export function AdminPanel(): JSX.Element {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [email, setEmail] = useState("");
@@ -525,7 +531,7 @@ export function AdminPanel(): JSX.Element {
 
   function toggleOperation(operation: PropertyOperation): void {
     setListingForm((current) => {
-      const available = getAvailableOperations(current);
+      const available = getPublicationOperations(current);
       if (!available.includes(operation)) return current;
       return { ...current, operations: [operation] };
     });
@@ -619,6 +625,9 @@ export function AdminPanel(): JSX.Element {
   }
 
   function editProperty(property: AdminProperty): void {
+    setPhotoFiles([]);
+    setCoverPhotoIndex(0);
+    setVideoFile(null);
     setPropertyForm({
       id: property.id,
       title: property.title,
@@ -769,6 +778,37 @@ export function AdminPanel(): JSX.Element {
     setMessage("Propietario guardado.");
   }
 
+  async function savePublication(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    if (!token || !listingForm.id) return;
+    setBusy(true);
+    setMessage(null);
+
+    const response = await fetch(`/api/admin/listings/${listingForm.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        status: listingForm.status,
+        operations: listingForm.operations,
+      }),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) {
+      setBusy(false);
+      setMessage(payload.error ?? "No se pudo guardar la publicacion.");
+      return;
+    }
+
+    setListingForm(EMPTY_LISTING_FORM);
+    setDrawerMode(null);
+    await loadOverview(token);
+    setBusy(false);
+    setMessage("Publicacion actualizada.");
+  }
+
   async function saveProperty(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!token || !propertyForm.id) return;
@@ -797,7 +837,21 @@ export function AdminPanel(): JSX.Element {
       return;
     }
 
+    const relatedListing = listings.find((listing) => listing.property_id === propertyForm.id);
+    if (relatedListing && (photoFiles.length > 0 || videoFile)) {
+      try {
+        await uploadMedia(relatedListing.id);
+      } catch (error) {
+        setBusy(false);
+        setMessage(error instanceof Error ? error.message : "El inmueble se guardo, pero fallo la carga de media.");
+        return;
+      }
+    }
+
     setPropertyForm(EMPTY_PROPERTY_FORM);
+    setPhotoFiles([]);
+    setCoverPhotoIndex(0);
+    setVideoFile(null);
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
@@ -1020,7 +1074,7 @@ export function AdminPanel(): JSX.Element {
               form={listingForm}
               busy={busy}
               onClose={() => setDrawerMode(null)}
-              onSubmit={saveListing}
+              onSubmit={savePublication}
               onChange={setListingForm}
               onToggleOperation={toggleOperation}
             />
@@ -1035,7 +1089,22 @@ export function AdminPanel(): JSX.Element {
 
         {drawerMode === "property" ? (
           <Modal onClose={() => setDrawerMode(null)}>
-            <PropertyDrawer form={propertyForm} busy={busy} onClose={() => setDrawerMode(null)} onSubmit={saveProperty} onChange={setPropertyForm} />
+            <PropertyDrawer
+              form={propertyForm}
+              busy={busy}
+              photoFiles={photoFiles}
+              coverPhotoIndex={coverPhotoIndex}
+              videoFile={videoFile}
+              onClose={() => setDrawerMode(null)}
+              onSubmit={saveProperty}
+              onChange={setPropertyForm}
+              onPhotosChange={(files) => {
+                setPhotoFiles(files);
+                setCoverPhotoIndex(0);
+              }}
+              onCoverPhotoChange={setCoverPhotoIndex}
+              onVideoChange={setVideoFile}
+            />
           </Modal>
         ) : null}
 
@@ -1488,7 +1557,7 @@ function PublicationDrawer({
   onChange: (form: FormState) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
 }): JSX.Element {
-  const availableOperations = getAvailableOperations(form);
+  const availableOperations = getPublicationOperations(form);
   return (
     <section className={styles.drawer} aria-label="Ficha de publicacion">
       <div className={styles.drawerHead}>
@@ -1552,15 +1621,27 @@ function OwnerDrawer({
 function PropertyDrawer({
   form,
   busy,
+  photoFiles,
+  coverPhotoIndex,
+  videoFile,
   onClose,
   onSubmit,
   onChange,
+  onPhotosChange,
+  onCoverPhotoChange,
+  onVideoChange,
 }: {
   form: PropertyFormState;
   busy: boolean;
+  photoFiles: File[];
+  coverPhotoIndex: number;
+  videoFile: File | null;
   onClose: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onChange: (form: PropertyFormState) => void;
+  onPhotosChange: (files: File[]) => void;
+  onCoverPhotoChange: (index: number) => void;
+  onVideoChange: (file: File | null) => void;
 }): JSX.Element {
   return (
     <section className={styles.drawer} aria-label="Formulario de inmueble">
@@ -1602,6 +1683,16 @@ function PropertyDrawer({
           </div>
         ) : null}
         <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+        <div className={styles.twoCols}>
+          <label>Nuevas imagenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
+          <label>Nuevo video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
+        </div>
+        {photoFiles.length > 0 ? (
+          <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
+            {photoFiles.map((file, index) => <option key={`${file.name}-${index}`} value={index}>{file.name}</option>)}
+          </select></label>
+        ) : null}
+        {videoFile ? <p className={styles.empty}>Video seleccionado: {videoFile.name}</p> : null}
         <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar inmueble"}</button>
       </form>
     </section>
