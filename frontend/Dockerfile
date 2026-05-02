@@ -15,6 +15,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+RUN apk add --no-cache ffmpeg
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next

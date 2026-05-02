@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireAdminUser } from "@/lib/adminAuth";
 import { getSupabaseAdminClient } from "@/lib/supabaseServer";
+import { transcodeVideoToWebMp4 } from "@/lib/videoTranscode";
 
 type RouteContext = {
   params: {
@@ -47,10 +48,25 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
     }
   }
 
-  const extension = file.name.includes(".") ? file.name.split(".").pop()?.toLowerCase() : "bin";
+  let uploadBody: File | Buffer = file;
+  let contentType = file.type || undefined;
+  let extension = file.name.includes(".") ? file.name.split(".").pop()?.toLowerCase() : "bin";
+
+  if (mediaType === "video") {
+    try {
+      const transcoded = await transcodeVideoToWebMp4(file);
+      uploadBody = transcoded.buffer;
+      contentType = transcoded.contentType;
+      extension = transcoded.extension;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error desconocido al convertir video.";
+      return NextResponse.json({ error: `No se pudo procesar el video para web: ${message}` }, { status: 422 });
+    }
+  }
+
   const storagePath = `properties/${params.id}/${mediaType}-${Date.now()}.${extension}`;
-  const { error: uploadError } = await supabase.storage.from(BUCKET).upload(storagePath, file, {
-    contentType: file.type || (extension === "mp4" ? "video/mp4" : undefined),
+  const { error: uploadError } = await supabase.storage.from(BUCKET).upload(storagePath, uploadBody, {
+    contentType: contentType || (extension === "mp4" ? "video/mp4" : undefined),
     upsert: false,
   });
 
