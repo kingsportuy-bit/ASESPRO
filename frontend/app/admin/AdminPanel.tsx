@@ -372,7 +372,7 @@ export function AdminPanel(): JSX.Element {
   const [busy, setBusy] = useState(false);
   const propertyHasPendingChanges = useMemo(() => {
     if (drawerMode !== "property") return false;
-    return JSON.stringify(propertyForm) !== JSON.stringify(propertyFormBaseline) || photoFiles.length > 0;
+    return JSON.stringify(propertyForm) !== JSON.stringify(propertyFormBaseline);
   }, [drawerMode, propertyForm, propertyFormBaseline, photoFiles]);
 
   const activeListings = useMemo(() => listings.filter((listing) => listing.status === "activo"), [listings]);
@@ -894,17 +894,6 @@ export function AdminPanel(): JSX.Element {
       return;
     }
 
-    if (photoFiles.length > 0) {
-      try {
-        await uploadPropertyPhotos(propertyForm.id);
-      } catch (error) {
-        setBusy(false);
-        setMediaUploadProgress(null);
-        setMessage(error instanceof Error ? error.message : "El inmueble se guardo, pero fallo la carga de media.");
-        return;
-      }
-    }
-
     setPropertyForm(EMPTY_PROPERTY_FORM);
     setPropertyFormBaseline(EMPTY_PROPERTY_FORM);
     setPhotoFiles([]);
@@ -1045,7 +1034,7 @@ export function AdminPanel(): JSX.Element {
       data.set("file", file);
       data.set("mediaType", "photo");
       data.set("isCover", index === coverPhotoIndex ? "true" : "false");
-      data.set("replaceGroup", index === 0 ? "true" : "false");
+      data.set("replaceGroup", "false");
       const payload = await uploadMediaRequest(`/api/admin/properties/${propertyId}/media`, data, token, `Subiendo imagen ${index + 1} de ${photoFiles.length}`);
       if (payload.media?.media_type !== "photo") {
         throw new Error(`La imagen ${file.name} subio, pero no quedo registrada como foto.`);
@@ -1080,6 +1069,27 @@ export function AdminPanel(): JSX.Element {
       setMessage("Video cargado y registrado en el inmueble.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "No se pudo cargar el video.");
+      setMediaUploadProgress(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function uploadSelectedPropertyPhotos(): Promise<void> {
+    if (!token || !propertyForm.id || photoFiles.length === 0) return;
+    setBusy(true);
+    setMessage(null);
+    setMediaUploadProgress(null);
+
+    try {
+      await uploadPropertyPhotos(propertyForm.id);
+      setPhotoFiles([]);
+      setCoverPhotoIndex(0);
+      setMediaUploadProgress(null);
+      await loadOverview(token);
+      setMessage("Imagenes cargadas y agregadas al inmueble.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "No se pudieron cargar las imagenes.");
       setMediaUploadProgress(null);
     } finally {
       setBusy(false);
@@ -1314,6 +1324,7 @@ export function AdminPanel(): JSX.Element {
                 setVideoFile(file);
                 setMediaUploadProgress(null);
               }}
+              onUploadPhotos={() => void uploadSelectedPropertyPhotos()}
               onUploadVideo={() => void uploadSelectedPropertyVideo()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
               onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
@@ -1877,6 +1888,7 @@ function PropertyDrawer({
   onPhotosChange,
   onCoverPhotoChange,
   onVideoChange,
+  onUploadPhotos,
   onUploadVideo,
   onDeleteMedia,
   onReorderMedia,
@@ -1895,6 +1907,7 @@ function PropertyDrawer({
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
   onVideoChange: (file: File | null) => void;
+  onUploadPhotos: () => void;
   onUploadVideo: () => void;
   onDeleteMedia: (mediaId: string) => void;
   onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
@@ -1966,9 +1979,20 @@ function PropertyDrawer({
           <label>Nuevo video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
         </div>
         {photoFiles.length > 0 ? (
-          <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
-            {photoFiles.map((file, index) => <option key={`${file.name}-${index}`} value={index}>{file.name}</option>)}
-          </select></label>
+          <>
+            <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
+              {photoFiles.map((file, index) => <option key={`${file.name}-${index}`} value={index}>{file.name}</option>)}
+            </select></label>
+            <div className={styles.pendingVideoBox}>
+              <div>
+                <strong>Imagenes seleccionadas</strong>
+                <span>{photoFiles.length} archivos listos para cargar</span>
+              </div>
+              <button type="button" className={styles.primaryButton} disabled={busy} onClick={onUploadPhotos}>
+                {busy ? "Cargando..." : "Cargar imagenes"}
+              </button>
+            </div>
+          </>
         ) : null}
         {videoFile ? (
           <div className={styles.pendingVideoBox}>
