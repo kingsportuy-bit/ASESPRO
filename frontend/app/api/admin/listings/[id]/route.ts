@@ -17,6 +17,10 @@ function isMissingFeaturedColumn(message: string | undefined): boolean {
   return normalized.includes("is_featured") && normalized.includes("column");
 }
 
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function PUT(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -107,10 +111,15 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
     let listingResponse = await supabase.from("asespro_listings").update(listingUpdates).eq("id", params.id);
     if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
       if (input.isFeatured === true) {
-        return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+        await wait(1200);
+        listingResponse = await supabase.from("asespro_listings").update(listingUpdates).eq("id", params.id);
+        if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
+          return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+        }
+      } else {
+        const { is_featured: _dropFeatured, ...fallbackUpdates } = listingUpdates;
+        listingResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id);
       }
-      const { is_featured: _dropFeatured, ...fallbackUpdates } = listingUpdates;
-      listingResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id);
     }
     const listingError = listingResponse.error;
 
@@ -214,10 +223,15 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   let updateResponse = await supabase.from("asespro_listings").update(updates).eq("id", params.id).select("id,status").maybeSingle();
   if (updateResponse.error && isMissingFeaturedColumn(updateResponse.error.message)) {
     if (typeof payload.isFeatured === "boolean") {
-      return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+      await wait(1200);
+      updateResponse = await supabase.from("asespro_listings").update(updates).eq("id", params.id).select("id,status").maybeSingle();
+      if (updateResponse.error && isMissingFeaturedColumn(updateResponse.error.message)) {
+        return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+      }
+    } else {
+      const { is_featured: _dropFeatured, ...fallbackUpdates } = updates;
+      updateResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id).select("id,status").maybeSingle();
     }
-    const { is_featured: _dropFeatured, ...fallbackUpdates } = updates;
-    updateResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id).select("id,status").maybeSingle();
   }
 
   const updated = updateResponse.data;
