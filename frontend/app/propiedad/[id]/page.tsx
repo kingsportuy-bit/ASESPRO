@@ -16,6 +16,7 @@ type PropertyDetailPageProps = {
 };
 
 const DEFAULT_WHATSAPP_PHONE = "59898382388";
+const DROPBOX_TEST_HLS_URL = "https://ucce2e7fda5abcbd31a8d5c16b1c.previews.dropboxusercontent.com/p/hls_master_playlist/AC-es4VfOKDWPPVQ1VvMlfCsIXc9fUmuCgr4YprgtfX4vcEOZ4Q4EDKQokp2R99zWWNybmKt3Zsak4YgdYs8idGzR2XGpxvf2Ezsn_-qapsh-hTH7EZ9LE522AuIjR8dP2xQdgz3UQCUtZbcBEXPdj7rBisj054zl5y9sM29i-Oj_CwlfEmQ3QBKyvYN69x2wRiXL2d8N_UnoRkxZr2tCijDSDE2ezS027C-vDFio_ruBBTW_seGJxm22qUghoY0bbFDmligyaXmljP4zF3cyHtklyDbkAOW9n-pxby5EnpWBvdnggudPKbz4Cg9C_YL0NYGPw0pLMyyKgLNh8IZmqxb/p.m3u8";
 
 export async function generateMetadata({ params }: PropertyDetailPageProps): Promise<Metadata> {
   const property = await getPublicPropertyById(params.id);
@@ -45,6 +46,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
   const fallbackImage = getPropertyCoverImage(property.id);
   const gallery = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);
   const galleryWithFallback = gallery.length > 0 ? gallery : [fallbackImage];
+  const videoUrl = property.videoUrl ?? DROPBOX_TEST_HLS_URL;
   const priceLabel = propertyMatchesOperation(property, "alquiler") ? "Precio de alquiler" : "Precio de venta";
 
   return (
@@ -54,7 +56,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
           title={property.title}
           location={property.location}
           photos={galleryWithFallback}
-          videoUrl={property.videoUrl}
+          videoUrl={videoUrl}
           fallbackImage={fallbackImage}
         />
 

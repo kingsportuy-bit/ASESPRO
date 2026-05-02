@@ -21,6 +21,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
   const extraPhotosCount = Math.max(photos.length - 4, 0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [videoError, setVideoError] = useState(false);
+  const videoSourceType = videoUrl?.toLowerCase().includes(".m3u8") ? "application/x-mpegURL" : "video/mp4";
   const activeMedia = activeIndex !== null ? galleryMedia[activeIndex] : null;
 
   if (galleryMedia.length === 0) return <section className={styles.gallery} />;
@@ -79,7 +80,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
               onError={() => setVideoError(true)}
               onLoadedData={() => setVideoError(false)}
             >
-              <source src={videoUrl} type="video/mp4" />
+              <source src={videoUrl} type={videoSourceType} />
             </video>
           </div>
           {videoError ? <p className={styles.videoError}>No se pudo reproducir el video. Revisa que el MP4 use codec H.264.</p> : null}
@@ -94,7 +95,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
           >
             {activeMedia?.type === "video" ? (
               <video controls autoPlay playsInline preload="metadata">
-                <source src={activeMedia.src} type="video/mp4" />
+                <source src={activeMedia.src} type={videoSourceType} />
               </video>
             ) : (
               <img
