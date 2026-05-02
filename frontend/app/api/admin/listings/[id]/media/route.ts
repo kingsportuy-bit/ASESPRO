@@ -41,9 +41,11 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
   if (mediaType === "video") {
     try {
       const transcoded = await transcodeVideoToWebMp4(file);
-      uploadBody = transcoded.buffer;
-      contentType = transcoded.contentType;
-      extension = transcoded.extension;
+      if (transcoded) {
+        uploadBody = transcoded.buffer;
+        contentType = transcoded.contentType;
+        extension = transcoded.extension;
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Error desconocido al convertir video.";
       return NextResponse.json({ error: `No se pudo procesar el video para web: ${message}` }, { status: 422 });
