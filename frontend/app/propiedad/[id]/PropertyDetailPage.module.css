@@ -1,58 +1,70 @@
 .gallery {
+  border-radius: 22px;
+  background: #f6faf9;
+  border: 1px solid rgba(190, 201, 195, 0.2);
+  padding: 14px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
-  min-height: 0;
+  gap: 12px;
 }
 
-.mainMedia,
-.sideMedia {
-  position: relative;
-  border-radius: 26px;
+.galleryHead {
+  display: grid;
+  gap: 6px;
+}
+
+.galleryHead h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 1.35rem + 1vw, 2.4rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.galleryHead p {
+  margin: 0;
+  color: #4d5955;
+  font-size: 14px;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.photoCard {
+  border-radius: 14px;
   overflow: hidden;
-  aspect-ratio: 9 / 16;
+  background: #e4ebe8;
+  aspect-ratio: 4 / 3;
+  cursor: pointer;
 }
 
-.mainMedia img,
-.sideMedia img {
+.photoCard img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.mainMedia::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(24, 28, 28, 0.04) 42%, rgba(0, 81, 63, 0.82) 100%);
-}
-
-.mainCaption {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  z-index: 1;
-  color: #ffffff;
-}
-
-.mainCaption h1 {
+.galleryCount {
   margin: 0;
-  font-size: clamp(2rem, 1.55rem + 1.5vw, 3.15rem);
-  letter-spacing: -0.03em;
-  line-height: 0.97;
+  color: #4d5955;
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.mainCaption p {
-  margin: 8px 0 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 15px;
-}
-
-.sideGrid {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 12px;
+.moreMediaButton {
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: #00513f;
+  color: #ffffff;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  justify-self: start;
 }
 
 .statsBar {
@@ -181,31 +193,32 @@
   pointer-events: none;
 }
 
-.videoWrap {
-  margin-top: 10px;
-  border-radius: 18px;
+.videoSection {
+  margin-top: 8px;
+  border-radius: 22px;
+  background: #f6faf9;
+  border: 1px solid rgba(190, 201, 195, 0.2);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.videoSectionHead h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #181c1c;
+}
+
+.videoPanel {
+  border-radius: 16px;
   overflow: hidden;
-  background: #ffffff;
+  background: #000;
 }
 
-.videoWrap iframe {
+.videoPanel video {
   width: 100%;
-  aspect-ratio: 9 / 16;
-  border: 0;
+  aspect-ratio: 16 / 9;
   display: block;
-}
-
-.videoBadge {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  z-index: 2;
-  border-radius: 999px;
-  background: rgba(0, 81, 63, 0.92);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
 }
 
 .lightbox {
@@ -219,8 +232,8 @@
 }
 
 .lightboxMedia {
-  width: min(560px, 92vw);
-  aspect-ratio: 9 / 16;
+  width: min(980px, 94vw);
+  aspect-ratio: 16 / 9;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
@@ -228,11 +241,11 @@
 }
 
 .lightboxMedia img,
-.lightboxMedia iframe {
+.lightboxMedia video {
   width: 100%;
   height: 100%;
   border: 0;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .navBtn {
@@ -367,15 +380,8 @@
 }
 
 @media (max-width: 1080px) {
-  .gallery,
   .content {
     grid-template-columns: 1fr;
-  }
-
-  .sideGrid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: none;
-    min-height: 220px;
   }
 
   .aside {
@@ -410,8 +416,8 @@
     height: 9px;
   }
 
-  .gallery {
-    gap: 10px;
+  .photoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .article {

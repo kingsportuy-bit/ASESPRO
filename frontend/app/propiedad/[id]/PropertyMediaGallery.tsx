@@ -12,61 +12,61 @@ type PropertyMediaGalleryProps = {
 };
 
 export function PropertyMediaGallery({ title, location, photos, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
-  const media = useMemo(
-    () => [
-      ...photos.map((src) => ({ type: "photo" as const, src })),
-      ...(videoUrl ? [{ type: "video" as const, src: videoUrl }] : []),
-    ],
+  const galleryMedia = useMemo(
+    () => [...photos.map((src) => ({ type: "photo" as const, src })), ...(videoUrl ? [{ type: "video" as const, src: videoUrl }] : [])],
     [photos, videoUrl],
   );
+  const photoPreview = useMemo(() => photos.slice(0, 4), [photos]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  if (media.length === 0) return <section className={styles.gallery} />;
+  if (galleryMedia.length === 0) return <section className={styles.gallery} />;
 
   return (
     <>
       <section className={styles.gallery}>
-        <article className={styles.mainMedia} onClick={() => setActiveIndex(0)}>
-          <img
-            src={media[0].src}
-            alt={title}
-            onError={(event) => {
-              if (event.currentTarget.src !== fallbackImage) {
-                event.currentTarget.src = fallbackImage;
-              }
-            }}
-          />
-          <div className={styles.mainCaption}>
-            <h1>{title}</h1>
-            <p>{location}</p>
-          </div>
-        </article>
-        <div className={styles.sideGrid}>
-          {media.slice(1, 3).map((item, idx) => (
-            <article key={`${item.type}-${idx}`} className={styles.sideMedia} onClick={() => setActiveIndex(idx + 1)}>
+        <div className={styles.galleryHead}>
+          <h1>{title}</h1>
+          <p>{location}</p>
+        </div>
+        <div className={styles.photoGrid}>
+          {photoPreview.map((src, idx) => (
+            <article key={`${src}-${idx}`} className={styles.photoCard} onClick={() => setActiveIndex(idx)}>
               <img
-                src={item.src}
-                alt=""
+                src={src}
+                alt={`${title} foto ${idx + 1}`}
                 onError={(event) => {
                   if (event.currentTarget.src !== fallbackImage) {
                     event.currentTarget.src = fallbackImage;
                   }
                 }}
               />
-              {item.type === "video" ? <span className={styles.videoBadge}>Video</span> : null}
             </article>
           ))}
         </div>
+        {photos.length > 4 ? <p className={styles.galleryCount}>+{photos.length - 4} fotos adicionales</p> : null}
+        <button type="button" className={styles.moreMediaButton} onClick={() => setActiveIndex(0)}>
+          Ver mas
+        </button>
       </section>
+      {videoUrl ? (
+        <section className={styles.videoSection}>
+          <div className={styles.videoSectionHead}>
+            <h2>Video de la propiedad</h2>
+          </div>
+          <div className={styles.videoPanel}>
+            <video controls preload="metadata" src={videoUrl} />
+          </div>
+        </section>
+      ) : null}
 
       {activeIndex !== null ? (
         <div className={styles.lightbox} onClick={() => setActiveIndex(null)}>
           <div className={styles.lightboxMedia} onClick={(e) => e.stopPropagation()}>
-            {media[activeIndex].type === "video" ? (
-              <iframe src={media[activeIndex].src} title={`Video de ${title}`} allowFullScreen />
+            {galleryMedia[activeIndex].type === "video" ? (
+              <video controls autoPlay playsInline preload="metadata" src={galleryMedia[activeIndex].src} />
             ) : (
               <img
-                src={media[activeIndex].src}
+                src={galleryMedia[activeIndex].src}
                 alt={title}
                 onError={(event) => {
                   if (event.currentTarget.src !== fallbackImage) {
@@ -78,14 +78,14 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
             <button
               type="button"
               className={`${styles.navBtn} ${styles.navBtnPrev}`}
-              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev - 1 + media.length) % media.length))}
+              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev - 1 + galleryMedia.length) % galleryMedia.length))}
             >
               {"<"}
             </button>
             <button
               type="button"
               className={`${styles.navBtn} ${styles.navBtnNext}`}
-              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % media.length))}
+              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % galleryMedia.length))}
             >
               {">"}
             </button>
