@@ -19,6 +19,11 @@ const BUCKET = "asespro-media";
 export const runtime = "nodejs";
 export const maxDuration = 1800;
 
+function shouldBypassVideoTranscode(file: File): boolean {
+  const lowerName = file.name.toLowerCase();
+  return lowerName.endsWith(".mp4") || file.type === "video/mp4";
+}
+
 export async function PATCH(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -124,7 +129,7 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
   let contentType = file.type || undefined;
   let extension = file.name.includes(".") ? file.name.split(".").pop()?.toLowerCase() : "bin";
 
-  if (mediaType === "video") {
+  if (mediaType === "video" && !shouldBypassVideoTranscode(file)) {
     try {
       const transcoded = await transcodeVideoToWebMp4(file);
       if (transcoded) {
