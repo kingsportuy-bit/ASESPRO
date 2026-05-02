@@ -111,7 +111,7 @@ export function ListingWithViewToggle({
                     <div className={styles.cardBody}>
                       <div className={styles.titleRow}>
                         <h2 className={styles.cardTitle}>{property.title}</h2>
-                        <p className={styles.cardPrice}>{formatPrice(property.price)}</p>
+                        <p className={styles.cardPrice}>{formatPrice(property.price, property.priceCurrency)}</p>
                       </div>
                       <p className={styles.cardLocation}>{property.location}</p>
                       <p className={styles.cardMeta}>

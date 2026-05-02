@@ -833,6 +833,25 @@
   min-width: 150px;
 }
 
+.featuredToggle {
+  min-height: 40px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(120, 135, 128, 0.28);
+  padding: 8px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #00513f;
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.featuredToggle input {
+  min-height: auto;
+}
+
 .statusActive,
 .statusMuted {
   border-radius: 999px;

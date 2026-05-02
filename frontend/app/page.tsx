@@ -19,7 +19,8 @@ const HERO_IMAGE = "/HERO_ASESPRO.png";
 
 export default async function HomePage(): Promise<JSX.Element> {
   const properties = await listPublicProperties();
-  const featured = properties.slice(0, 3);
+  const featuredPool = properties.filter((property) => property.isFeatured);
+  const featured = (featuredPool.length > 0 ? featuredPool : properties).slice(0, 3);
   const whatsappUrl = buildWhatsAppUrl(
     process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "59898382388",
     "Hola ASESPRO, quiero consultar por propiedades disponibles. Estoy buscando alquiler o compra en Paso de los Toros, Pueblo Centenario o alrededores.",
@@ -83,7 +84,7 @@ export default async function HomePage(): Promise<JSX.Element> {
       <section className={`${styles.featured} ${styles.sectionFrame}`}>
         <div className={styles.featuredHead}>
           <div>
-            <p className={styles.eyebrow}>Propiedades seleccionadas</p>
+            <p className={styles.featuredEyebrow}>Propiedades destacadas</p>
             <h2>Mira las opciones disponibles</h2>
             <p>Revisa alquileres y ventas cargadas en la web para hacer una preseleccion antes de contactar al agente.</p>
           </div>
@@ -96,11 +97,11 @@ export default async function HomePage(): Promise<JSX.Element> {
           {featured.map((property) => (
             <article key={property.id} className={styles.featuredCard}>
               <div className={styles.featuredMedia}>
-                <img src={getPropertyCoverImage(property.id)} alt="" />
+                <img src={property.photoUrls[0] ?? getPropertyCoverImage(property.id)} alt={property.title} />
                 <span className={styles.badge}>{property.operation}</span>
               </div>
               <div className={styles.featuredInfo}>
-                <p className={styles.featuredPrice}>{formatPrice(property.price)}</p>
+                <p className={styles.featuredPrice}>{formatPrice(property.price, property.priceCurrency)}</p>
                 <h3 className={styles.featuredTitle}>{property.title}</h3>
                 <p className={styles.featuredMeta}>{property.location}</p>
                 <Link href={`/propiedad/${property.id}`} className={styles.detailLink}>

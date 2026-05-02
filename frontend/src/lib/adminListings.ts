@@ -4,6 +4,7 @@ export type AdminListingInput = {
   ownerId?: string;
   propertyId?: string;
   syncPropertyData?: boolean;
+  isFeatured?: boolean;
   title: string;
   description: string;
   propertyType: PropertyType;
@@ -61,6 +62,7 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
     ownerId: typeof source.ownerId === "string" && source.ownerId ? source.ownerId : undefined,
     propertyId: typeof source.propertyId === "string" && source.propertyId ? source.propertyId : undefined,
     syncPropertyData: source.syncPropertyData !== false,
+    isFeatured: source.isFeatured === true,
     title,
     description: typeof source.description === "string" ? source.description.trim() : "",
     propertyType,

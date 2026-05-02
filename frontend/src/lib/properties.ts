@@ -19,6 +19,7 @@ export type PropertyListing = {
   lng: number;
   price?: number;
   priceCurrency?: PropertyCurrency;
+  isFeatured?: boolean;
   bedrooms?: number;
   bathrooms?: number;
   areaM2?: number;

@@ -64,6 +64,7 @@ Indices:
 - `description` (text)
 - `price_amount` (numeric)
 - `price_currency` (text default `USD`)
+- `is_featured` (bool default `false`)
 - `status` (asespro_listing_status)
 - `published_at` (timestamptz)
 - `created_at`, `updated_at`

@@ -11,6 +11,12 @@ type RouteContext = {
   };
 };
 
+function isMissingFeaturedColumn(message: string | undefined): boolean {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return normalized.includes("is_featured") && normalized.includes("column");
+}
+
 export async function PUT(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -86,19 +92,27 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
       }
     }
 
-    const { error: listingError } = await supabase
-      .from("asespro_listings")
-      .update({
-        title: input.title,
-        description: input.description,
-        property_id: input.propertyId ?? existing.property_id,
-        price_amount: priceAmount,
-        price_currency: priceCurrency,
-        status: input.status,
-        published_at: input.status === "activo" ? new Date().toISOString() : null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", params.id);
+    const listingUpdates = {
+      title: input.title,
+      description: input.description,
+      property_id: input.propertyId ?? existing.property_id,
+      price_amount: priceAmount,
+      price_currency: priceCurrency,
+      is_featured: input.isFeatured === true,
+      status: input.status,
+      published_at: input.status === "activo" ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    };
+
+    let listingResponse = await supabase.from("asespro_listings").update(listingUpdates).eq("id", params.id);
+    if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
+      if (input.isFeatured === true) {
+        return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+      }
+      const { is_featured: _dropFeatured, ...fallbackUpdates } = listingUpdates;
+      listingResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id);
+    }
+    const listingError = listingResponse.error;
 
     if (listingError) {
       return NextResponse.json({ error: listingError.message }, { status: 500 });
@@ -137,17 +151,28 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
   }
 
-  const payload = (await request.json()) as { status?: PropertyStatus; operations?: unknown };
+  const payload = (await request.json()) as { status?: PropertyStatus; operations?: unknown; isFeatured?: boolean };
+  const hasStatus = payload.status !== undefined;
   const status = payload.status;
-  if (status !== "activo" && status !== "desactivado") {
+  if (hasStatus && status !== "activo" && status !== "desactivado") {
     return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
   }
 
-  const updates: Record<string, string | null> = {
-    status,
-    published_at: status === "activo" ? new Date().toISOString() : null,
+  const updates: Record<string, string | null | boolean> = {
     updated_at: new Date().toISOString(),
   };
+  if (hasStatus) {
+    const nextStatus = payload.status as PropertyStatus;
+    updates.status = nextStatus;
+    updates.published_at = nextStatus === "activo" ? new Date().toISOString() : null;
+  }
+  if (typeof payload.isFeatured === "boolean") {
+    updates.is_featured = payload.isFeatured;
+  }
+
+  if (!hasStatus && !Array.isArray(payload.operations) && typeof payload.isFeatured !== "boolean") {
+    return NextResponse.json({ error: "No hay cambios para actualizar." }, { status: 400 });
+  }
 
   if (Array.isArray(payload.operations)) {
     const operations = payload.operations.filter((operation): operation is "alquiler" | "venta" => operation === "alquiler" || operation === "venta");
@@ -186,12 +211,17 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     }
   }
 
-  const { data: updated, error } = await supabase
-    .from("asespro_listings")
-    .update(updates)
-    .eq("id", params.id)
-    .select("id,status")
-    .maybeSingle();
+  let updateResponse = await supabase.from("asespro_listings").update(updates).eq("id", params.id).select("id,status").maybeSingle();
+  if (updateResponse.error && isMissingFeaturedColumn(updateResponse.error.message)) {
+    if (typeof payload.isFeatured === "boolean") {
+      return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+    }
+    const { is_featured: _dropFeatured, ...fallbackUpdates } = updates;
+    updateResponse = await supabase.from("asespro_listings").update(fallbackUpdates).eq("id", params.id).select("id,status").maybeSingle();
+  }
+
+  const updated = updateResponse.data;
+  const error = updateResponse.error;
 
   if (error || !updated) {
     return NextResponse.json({ error: error?.message ?? "Publicacion no encontrada." }, { status: error ? 500 : 404 });

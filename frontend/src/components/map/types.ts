@@ -3,6 +3,7 @@ export type Property = {
   lat: number;
   lng: number;
   price?: number;
+  priceCurrency?: string;
 };
 
 export type MapBounds = {

@@ -16,6 +16,17 @@ type NominatimResult = {
   display_name?: string;
 };
 
+const LISTINGS_SELECT_WITH_FEATURED =
+  "id,property_id,title,description,price_amount,price_currency,is_featured,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
+const LISTINGS_SELECT_FALLBACK =
+  "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
+
+function isMissingFeaturedColumn(message: string | undefined): boolean {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return normalized.includes("is_featured") && normalized.includes("column");
+}
+
 function normalizeSearchText(value: string): string {
   return value
     .normalize("NFD")
@@ -91,18 +102,26 @@ export async function GET(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
   }
 
-  const { data, error } = await supabase
+  const featuredQuery = await supabase
     .from("asespro_listings")
-    .select(
-      "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)",
-    )
+    .select(LISTINGS_SELECT_WITH_FEATURED)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (featuredQuery.error) {
+    if (!isMissingFeaturedColumn(featuredQuery.error.message)) {
+      return NextResponse.json({ error: featuredQuery.error.message }, { status: 500 });
+    }
+    const fallbackQuery = await supabase
+      .from("asespro_listings")
+      .select(LISTINGS_SELECT_FALLBACK)
+      .order("created_at", { ascending: false });
+    if (fallbackQuery.error) {
+      return NextResponse.json({ error: fallbackQuery.error.message }, { status: 500 });
+    }
+    return NextResponse.json({ data: fallbackQuery.data });
   }
 
-  return NextResponse.json({ data });
+  return NextResponse.json({ data: featuredQuery.data });
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -201,19 +220,26 @@ export async function POST(request: Request): Promise<NextResponse> {
     const priceAmount = operation === "alquiler" ? input.rentPrice : input.salePrice;
     const priceCurrency = operation === "alquiler" ? input.rentCurrency : input.saleCurrency;
 
-    const { data: listing, error: listingError } = await supabase
-      .from("asespro_listings")
-      .insert({
-        property_id: propertyId,
-        title: input.title,
-        description: input.description,
-        price_amount: priceAmount,
-        price_currency: priceCurrency,
-        status: input.status,
-        published_at: input.status === "activo" ? new Date().toISOString() : null,
-      })
-      .select("id")
-      .single();
+    const listingInsert = {
+      property_id: propertyId,
+      title: input.title,
+      description: input.description,
+      price_amount: priceAmount,
+      price_currency: priceCurrency,
+      is_featured: input.isFeatured === true,
+      status: input.status,
+      published_at: input.status === "activo" ? new Date().toISOString() : null,
+    };
+    let listingResponse = await supabase.from("asespro_listings").insert(listingInsert).select("id").single();
+    if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
+      if (input.isFeatured === true) {
+        return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+      }
+      const { is_featured: _dropFeatured, ...fallbackInsert } = listingInsert;
+      listingResponse = await supabase.from("asespro_listings").insert(fallbackInsert).select("id").single();
+    }
+    const listing = listingResponse.data;
+    const listingError = listingResponse.error;
 
     if (listingError || !listing) {
       return NextResponse.json({ error: listingError?.message ?? "No se pudo crear la publicacion." }, { status: 500 });

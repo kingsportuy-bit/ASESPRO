@@ -21,6 +21,7 @@ Antes de actualizar, confirmar:
 - No hay secretos en Git.
 - El `.env` real ya existe en VPS (`/opt/NOMBRE_PROYECTO/.env`).
 - El `deploy.stack.yml` apunta al servicio y dominio correctos.
+- Si el cambio incluye migraciones SQL, ejecutar antes la migracion en Supabase SQL Editor (ej: `Docs/sql/2026-05-02_add_is_featured_to_listings.sql`).
 
 ---
 

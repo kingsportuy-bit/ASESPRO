@@ -34,6 +34,7 @@ type AdminListing = {
   description: string | null;
   price_amount: number | null;
   price_currency: PropertyCurrency | null;
+  is_featured?: boolean | null;
   status: PropertyStatus;
   created_at?: string;
   asespro_properties: {
@@ -110,6 +111,7 @@ type OverviewPayload = {
 
 type FormState = {
   id: string | null;
+  isFeatured: boolean;
   ownerId: string;
   ownerMode: "existing" | "new";
   newOwnerFullName: string;
@@ -174,6 +176,7 @@ type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
 
 const EMPTY_LISTING_FORM: FormState = {
   id: null,
+  isFeatured: false,
   ownerId: "",
   ownerMode: "existing",
   newOwnerFullName: "",
@@ -610,6 +613,7 @@ export function AdminPanel(): JSX.Element {
     const linkedProperty = properties.find((property) => property.id === listing.property_id);
     setListingForm({
       id: listing.id,
+      isFeatured: listing.is_featured === true,
       ownerId: linkedProperty?.asespro_property_owners?.[0]?.owner_id ?? "",
       ownerMode: "existing",
       newOwnerFullName: "",
@@ -733,6 +737,7 @@ export function AdminPanel(): JSX.Element {
     }
 
     const body = {
+      isFeatured: listingForm.isFeatured,
       ownerId: ownerId || undefined,
       propertyId: listingForm.propertyMode === "existing" ? listingForm.propertyId : undefined,
       syncPropertyData: listingForm.syncPropertyData,
@@ -832,6 +837,7 @@ export function AdminPanel(): JSX.Element {
       body: JSON.stringify({
         status: listingForm.status,
         operations: listingForm.operations,
+        isFeatured: listingForm.isFeatured,
       }),
     });
     const payload = (await response.json()) as { error?: string };
@@ -936,6 +942,26 @@ export function AdminPanel(): JSX.Element {
     const payload = (await response.json()) as { error?: string };
     if (!response.ok) {
       setMessage(payload.error ?? "No se pudo cambiar el estado.");
+    } else {
+      await loadOverview(token);
+    }
+    setBusy(false);
+  }
+
+  async function updateListingFeatured(listing: AdminListing, isFeatured: boolean): Promise<void> {
+    if (!token) return;
+    setBusy(true);
+    const response = await fetch(`/api/admin/listings/${listing.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ isFeatured }),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) {
+      setMessage(payload.error ?? "No se pudo actualizar el destacado.");
     } else {
       await loadOverview(token);
     }
@@ -1279,7 +1305,13 @@ export function AdminPanel(): JSX.Element {
         ) : null}
 
         {activeTab === "publicaciones" ? (
-          <ListingTable listings={filteredListings} busy={busy} onEdit={editListing} onStatusChange={updateListingStatus} />
+          <ListingTable
+            listings={filteredListings}
+            busy={busy}
+            onEdit={editListing}
+            onStatusChange={updateListingStatus}
+            onFeaturedChange={updateListingFeatured}
+          />
         ) : null}
 
         {activeTab === "inmuebles" ? (
@@ -1681,6 +1713,10 @@ function ListingDrawer({
               <label key={operation}><input type="radio" checked={form.operations[0] === operation} onChange={() => onToggleOperation(operation)} /> {operation === "alquiler" ? "Alquiler" : "Venta"}</label>
             ))}
           </div>
+          <label className={styles.checkboxLine}>
+            <input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />
+            Destacar en home
+          </label>
           <div className={styles.formNav}>
             <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
             <button type="submit" className={styles.primaryButton} disabled={busy || availableOperations.length === 0}>{busy ? "Publicando..." : "Crear publicacion"}</button>
@@ -1728,6 +1764,10 @@ function PublicationDrawer({
             <label key={operation}><input type="radio" checked={form.operations[0] === operation} onChange={() => onToggleOperation(operation)} /> {operation === "alquiler" ? "Alquiler" : "Venta"}</label>
           ))}
         </div>
+        <label className={styles.checkboxLine}>
+          <input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />
+          Destacar en home
+        </label>
         <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
       </form>
     </section>
@@ -1937,11 +1977,13 @@ function ListingTable({
   busy,
   onEdit,
   onStatusChange,
+  onFeaturedChange,
 }: {
   listings: AdminListing[];
   busy: boolean;
   onEdit: (listing: AdminListing) => void;
   onStatusChange: (listing: AdminListing, status: PropertyStatus) => Promise<void>;
+  onFeaturedChange: (listing: AdminListing, isFeatured: boolean) => Promise<void>;
 }): JSX.Element {
   return (
     <section className={styles.tablePanel}>
@@ -1969,6 +2011,15 @@ function ListingTable({
                 <option value="activo">Activo</option>
                 <option value="desactivado">Desactivado</option>
               </select>
+              <label className={styles.featuredToggle}>
+                <input
+                  type="checkbox"
+                  checked={listing.is_featured === true}
+                  disabled={busy}
+                  onChange={(event) => void onFeaturedChange(listing, event.target.checked)}
+                />
+                Destacada
+              </label>
               <button type="button" onClick={() => onEdit(listing)}>Editar</button>
             </div>
           </article>

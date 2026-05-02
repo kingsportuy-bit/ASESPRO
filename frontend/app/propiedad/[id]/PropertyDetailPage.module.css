@@ -25,32 +25,55 @@
   font-size: 14px;
 }
 
-.photoGrid {
+.mediaLayout {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 1.65fr minmax(150px, 1fr);
   gap: 10px;
 }
 
-.photoCard {
+.primaryPhotoCard,
+.sidePhotoCard {
+  position: relative;
+  border: 0;
   border-radius: 14px;
   overflow: hidden;
   background: #e4ebe8;
-  aspect-ratio: 4 / 3;
   cursor: pointer;
+  padding: 0;
 }
 
-.photoCard img {
+.primaryPhotoCard {
+  aspect-ratio: 9 / 16;
+}
+
+.sidePhotoStack {
+  display: grid;
+  gap: 10px;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.sidePhotoCard {
+  aspect-ratio: 9 / 16;
+}
+
+.primaryPhotoCard img,
+.sidePhotoCard img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.galleryCount {
-  margin: 0;
-  color: #4d5955;
+.moreBadge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #ffffff;
+  padding: 6px 10px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .moreMediaButton {
@@ -217,8 +240,16 @@
 
 .videoPanel video {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16;
   display: block;
+  object-fit: cover;
+}
+
+.videoError {
+  margin: 0;
+  color: #8d1f1f;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .lightbox {
@@ -232,12 +263,16 @@
 }
 
 .lightboxMedia {
-  width: min(980px, 94vw);
+  width: min(620px, 92vw);
   aspect-ratio: 16 / 9;
   border-radius: 16px;
   overflow: hidden;
   background: #000;
   position: relative;
+}
+
+.lightboxMediaVideo {
+  aspect-ratio: 9 / 16;
 }
 
 .lightboxMedia img,
@@ -416,8 +451,13 @@
     height: 9px;
   }
 
-  .photoGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .mediaLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidePhotoStack {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
   }
 
   .article {

@@ -38,6 +38,7 @@ type SupabaseListingRow = {
   description: string | null;
   price_amount: number | string | null;
   price_currency: string | null;
+  is_featured?: boolean | null;
   status: PropertyStatus | null;
   asespro_properties:
     | SupabasePropertyRow
@@ -54,6 +55,17 @@ type SupabaseListingRow = {
       }>
     | null;
 };
+
+const PUBLIC_LISTINGS_SELECT_WITH_FEATURED =
+  "id,title,description,price_amount,price_currency,is_featured,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
+const PUBLIC_LISTINGS_SELECT_FALLBACK =
+  "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
+
+function isMissingFeaturedColumn(message: string | undefined): boolean {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return normalized.includes("is_featured") && normalized.includes("column");
+}
 
 type SupabaseMediaRow = {
   media_type: "photo" | "video" | null;
@@ -250,6 +262,7 @@ function normalizeProperty(input: unknown): PropertyListing | null {
     lat,
     lng,
     price: typeof source.price === "number" ? source.price : undefined,
+    isFeatured: source.isFeatured === true || source.is_featured === true,
     bedrooms: typeof source.bedrooms === "number" ? source.bedrooms : undefined,
     bathrooms: typeof source.bathrooms === "number" ? source.bathrooms : undefined,
     areaM2: typeof source.areaM2 === "number" ? source.areaM2 : typeof source.area_m2 === "number" ? source.area_m2 : undefined,
@@ -340,6 +353,7 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     bathrooms: property.bathrooms ?? undefined,
     areaM2: parseNumber(property.area_m2),
     status: row.status ?? "desactivado",
+    isFeatured: row.is_featured === true,
     photoUrls,
     videoUrl,
   };
@@ -352,19 +366,29 @@ class SupabasePropertyRepository implements PropertyRepository {
       return [];
     }
 
-    const { data, error } = await supabase
+    const featuredQuery = await supabase
       .from("asespro_listings")
-      .select(
-        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
-      )
+      .select(PUBLIC_LISTINGS_SELECT_WITH_FEATURED)
       .eq("status", "activo")
       .order("created_at", { ascending: false });
+
+    let data = featuredQuery.data as SupabaseListingRow[] | null;
+    let error = featuredQuery.error;
+    if (error && isMissingFeaturedColumn(error.message)) {
+      const fallbackQuery = await supabase
+        .from("asespro_listings")
+        .select(PUBLIC_LISTINGS_SELECT_FALLBACK)
+        .eq("status", "activo")
+        .order("created_at", { ascending: false });
+      data = fallbackQuery.data as SupabaseListingRow[] | null;
+      error = fallbackQuery.error;
+    }
 
     if (error || !data) {
       return [];
     }
 
-    const normalized = (data as SupabaseListingRow[])
+    const normalized = data
       .map((row) => normalizeSupabaseListing(row))
       .filter((property): property is PropertyListing => property !== null);
     const scoped = options.operation
@@ -380,19 +404,28 @@ class SupabasePropertyRepository implements PropertyRepository {
       return null;
     }
 
-    const { data, error } = await supabase
+    const featuredQuery = await supabase
       .from("asespro_listings")
-      .select(
-        "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)",
-      )
+      .select(PUBLIC_LISTINGS_SELECT_WITH_FEATURED)
       .eq("id", id)
       .maybeSingle();
+    let data = featuredQuery.data as SupabaseListingRow | null;
+    let error = featuredQuery.error;
+    if (error && isMissingFeaturedColumn(error.message)) {
+      const fallbackQuery = await supabase
+        .from("asespro_listings")
+        .select(PUBLIC_LISTINGS_SELECT_FALLBACK)
+        .eq("id", id)
+        .maybeSingle();
+      data = fallbackQuery.data as SupabaseListingRow | null;
+      error = fallbackQuery.error;
+    }
 
     if (error || !data) {
       return null;
     }
 
-    return normalizeSupabaseListing(data as SupabaseListingRow);
+    return normalizeSupabaseListing(data);
   }
 }
 
