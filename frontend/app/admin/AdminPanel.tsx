@@ -1046,6 +1046,7 @@ export function AdminPanel(): JSX.Element {
     return new Promise((resolve, reject) => {
       const request = new XMLHttpRequest();
       setMediaUploadProgress({ label, percent: 0 });
+      const isVideoUpload = label.toLowerCase().includes("video");
 
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) {
@@ -1053,6 +1054,11 @@ export function AdminPanel(): JSX.Element {
           return;
         }
         setMediaUploadProgress({ label, percent: Math.min(99, Math.round((event.loaded / event.total) * 100)) });
+      };
+      request.upload.onload = () => {
+        if (isVideoUpload) {
+          setMediaUploadProgress({ label: "Procesando video en servidor...", percent: 99 });
+        }
       };
 
       request.onload = () => {
@@ -1074,6 +1080,8 @@ export function AdminPanel(): JSX.Element {
 
       request.onerror = () => reject(new Error("No se pudo conectar con el servidor durante la carga."));
       request.onabort = () => reject(new Error("La carga fue cancelada."));
+      request.ontimeout = () => reject(new Error("La carga demoro demasiado. Intenta con un video mas liviano o reintenta."));
+      request.timeout = isVideoUpload ? 30 * 60 * 1000 : 10 * 60 * 1000;
       request.open("POST", url);
       request.setRequestHeader("Authorization", `Bearer ${accessToken}`);
       request.send(data);

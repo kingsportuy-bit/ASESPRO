@@ -12,7 +12,7 @@ type RouteContext = {
 
 const BUCKET = "asespro-media";
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 1800;
 
 export async function POST(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
