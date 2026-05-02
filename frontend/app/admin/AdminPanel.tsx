@@ -366,6 +366,7 @@ export function AdminPanel(): JSX.Element {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoLink, setVideoLink] = useState("");
   const [mediaUploadProgress, setMediaUploadProgress] = useState<MediaUploadProgress | null>(null);
   const [query, setQuery] = useState("");
   const [listingFilter, setListingFilter] = useState<ListingFilter>("todos");
@@ -556,7 +557,7 @@ export function AdminPanel(): JSX.Element {
     setWizardStep(step);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoFile(null);
+    setVideoLink("");
     setMediaUploadProgress(null);
     setDrawerMode("listing");
     setActiveTab(tab);
@@ -677,7 +678,7 @@ export function AdminPanel(): JSX.Element {
   function editProperty(property: AdminProperty): void {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoFile(null);
+    setVideoLink("");
     setMediaUploadProgress(null);
     const nextForm = {
       id: property.id,
@@ -698,6 +699,8 @@ export function AdminPanel(): JSX.Element {
     };
     setPropertyForm(nextForm);
     setPropertyFormBaseline(nextForm);
+    const currentVideo = (property.asespro_property_media ?? []).find((item) => item.media_type === "video" && item.public_url)?.public_url ?? "";
+    setVideoLink(currentVideo);
     setDrawerMode("property");
     setActiveTab("inmuebles");
     setMessage("Editando inmueble.");
@@ -798,7 +801,7 @@ export function AdminPanel(): JSX.Element {
     setListingForm(EMPTY_LISTING_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoFile(null);
+    setVideoLink("");
     setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
@@ -900,7 +903,7 @@ export function AdminPanel(): JSX.Element {
     setPropertyFormBaseline(EMPTY_PROPERTY_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoFile(null);
+    setVideoLink("");
     setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
@@ -1138,19 +1141,32 @@ export function AdminPanel(): JSX.Element {
   }
 
   async function uploadSelectedPropertyVideo(): Promise<void> {
-    if (!token || !propertyForm.id || !videoFile) return;
+    if (!token || !propertyForm.id || !videoLink.trim()) return;
     setBusy(true);
     setMessage(null);
     setMediaUploadProgress(null);
 
     try {
-      await uploadPropertyVideo(propertyForm.id);
-      setVideoFile(null);
+      const data = new FormData();
+      data.set("intent", "registerExternalUrl");
+      data.set("mediaType", "video");
+      data.set("replaceGroup", "true");
+      data.set("mediaUrl", videoLink.trim());
+      data.set("isCover", "false");
+      const response = await fetch(`/api/admin/properties/${propertyForm.id}/media`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: data,
+      });
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(payload?.error ?? "No se pudo guardar el link de video.");
+      }
       setMediaUploadProgress(null);
       await loadOverview(token);
-      setMessage("Video cargado y registrado en el inmueble.");
+      setMessage("Link de video guardado en el inmueble.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo cargar el video.");
+      setMessage(error instanceof Error ? error.message : "No se pudo guardar el link de video.");
       setMediaUploadProgress(null);
     } finally {
       setBusy(false);
@@ -1390,7 +1406,7 @@ export function AdminPanel(): JSX.Element {
               photoFiles={photoFiles}
               mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
-              videoFile={videoFile}
+              videoLink={videoLink}
               currentMedia={properties.find((property) => property.id === propertyForm.id)?.asespro_property_media ?? []}
               hasPendingChanges={propertyHasPendingChanges}
               onClose={() => setDrawerMode(null)}
@@ -1402,12 +1418,9 @@ export function AdminPanel(): JSX.Element {
                 setMediaUploadProgress(null);
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
-              onVideoChange={(file) => {
-                setVideoFile(file);
-                setMediaUploadProgress(null);
-              }}
+              onVideoLinkChange={setVideoLink}
               onUploadPhotos={() => void uploadSelectedPropertyPhotos()}
-              onUploadVideo={() => void uploadSelectedPropertyVideo()}
+              onAttachVideoLink={() => void uploadSelectedPropertyVideo()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
               onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
             />
@@ -1961,7 +1974,7 @@ function PropertyDrawer({
   photoFiles,
   mediaUploadProgress,
   coverPhotoIndex,
-  videoFile,
+  videoLink,
   currentMedia,
   hasPendingChanges,
   onClose,
@@ -1969,9 +1982,9 @@ function PropertyDrawer({
   onChange,
   onPhotosChange,
   onCoverPhotoChange,
-  onVideoChange,
+  onVideoLinkChange,
   onUploadPhotos,
-  onUploadVideo,
+  onAttachVideoLink,
   onDeleteMedia,
   onReorderMedia,
 }: {
@@ -1980,7 +1993,7 @@ function PropertyDrawer({
   photoFiles: File[];
   mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
-  videoFile: File | null;
+  videoLink: string;
   currentMedia: AdminMedia[];
   hasPendingChanges: boolean;
   onClose: () => void;
@@ -1988,9 +2001,9 @@ function PropertyDrawer({
   onChange: (form: PropertyFormState) => void;
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
-  onVideoChange: (file: File | null) => void;
+  onVideoLinkChange: (value: string) => void;
   onUploadPhotos: () => void;
-  onUploadVideo: () => void;
+  onAttachVideoLink: () => void;
   onDeleteMedia: (mediaId: string) => void;
   onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
 }): JSX.Element {
@@ -2058,7 +2071,7 @@ function PropertyDrawer({
         </div>
         <div className={styles.twoCols}>
           <label>Nuevas imagenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
-          <label>Nuevo video<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
+          <label>Link de video<input type="url" placeholder="https://..." value={videoLink} onChange={(event) => onVideoLinkChange(event.target.value)} /></label>
         </div>
         {photoFiles.length > 0 ? (
           <>
@@ -2076,14 +2089,14 @@ function PropertyDrawer({
             </div>
           </>
         ) : null}
-        {videoFile ? (
+        {videoLink.trim() ? (
           <div className={styles.pendingVideoBox}>
             <div>
-              <strong>Video seleccionado</strong>
-              <span>{videoFile.name}</span>
+              <strong>Link de video listo</strong>
+              <span>{videoLink}</span>
             </div>
-            <button type="button" className={styles.primaryButton} disabled={busy} onClick={onUploadVideo}>
-              {busy ? "Cargando..." : "Cargar video"}
+            <button type="button" className={styles.primaryButton} disabled={busy} onClick={onAttachVideoLink}>
+              {busy ? "Guardando..." : "Guardar link de video"}
             </button>
           </div>
         ) : null}

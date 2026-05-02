@@ -110,6 +110,7 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
   const isCover = formData.get("isCover") === "true";
   const replaceGroup = formData.get("replaceGroup") === "true";
   const existingStoragePath = formData.get("storagePath");
+  const externalMediaUrl = formData.get("mediaUrl");
 
   if (mediaType !== "photo" && mediaType !== "video") {
     return NextResponse.json({ error: "Archivo o tipo de media invalido." }, { status: 400 });
@@ -136,6 +137,38 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
     if (deleteError) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
+  }
+
+  if (intent === "registerExternalUrl") {
+    if (typeof externalMediaUrl !== "string" || externalMediaUrl.trim().length === 0) {
+      return NextResponse.json({ error: "No se recibio un link de video valido." }, { status: 400 });
+    }
+    const mediaUrl = externalMediaUrl.trim();
+    if (!/^https?:\/\//i.test(mediaUrl)) {
+      return NextResponse.json({ error: "El link de video debe comenzar con http o https." }, { status: 400 });
+    }
+    const { count } = await supabase
+      .from("asespro_property_media")
+      .select("id", { count: "exact", head: true })
+      .eq("property_id", params.id);
+
+    const { data: media, error: mediaError } = await supabase
+      .from("asespro_property_media")
+      .insert({
+        property_id: params.id,
+        media_type: mediaType,
+        storage_path: null,
+        public_url: mediaUrl,
+        sort_order: count ?? 0,
+        is_cover: mediaType === "photo" && isCover,
+      })
+      .select("id,media_type,public_url,storage_path,sort_order,is_cover")
+      .maybeSingle();
+
+    if (mediaError || !media) {
+      return NextResponse.json({ error: mediaError?.message ?? "No se pudo registrar el link de video." }, { status: 500 });
+    }
+    return NextResponse.json({ media });
   }
 
   if (intent === "registerUploaded") {
