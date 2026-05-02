@@ -76,7 +76,6 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
               controls
               playsInline
               preload="metadata"
-              poster={primaryPhoto}
               onError={() => setVideoError(true)}
               onLoadedData={() => setVideoError(false)}
             >
@@ -94,7 +93,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
             onClick={(e) => e.stopPropagation()}
           >
             {activeMedia?.type === "video" ? (
-              <video controls autoPlay playsInline preload="metadata" poster={primaryPhoto}>
+              <video controls autoPlay playsInline preload="metadata">
                 <source src={activeMedia.src} type="video/mp4" />
               </video>
             ) : (
