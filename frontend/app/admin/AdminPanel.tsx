@@ -1112,8 +1112,10 @@ export function AdminPanel(): JSX.Element {
       const request = new XMLHttpRequest();
       request.open("PUT", endpoint, true);
       request.timeout = 1000 * 60 * 30;
-      request.setRequestHeader("Content-Type", file.type || "video/mp4");
       request.setRequestHeader("x-upsert", "true");
+      const body = new FormData();
+      body.append("cacheControl", "3600");
+      body.append("", file);
 
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) return;
@@ -1131,7 +1133,7 @@ export function AdminPanel(): JSX.Element {
 
       request.onerror = () => reject(new Error("Error de red al subir el video a Storage."));
       request.ontimeout = () => reject(new Error("La carga del video excedio el tiempo limite."));
-      request.send(file);
+      request.send(body);
     });
   }
 
