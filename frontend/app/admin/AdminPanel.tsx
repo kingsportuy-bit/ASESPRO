@@ -1060,14 +1060,29 @@ export function AdminPanel(): JSX.Element {
       throw new Error(signedPayload?.error ?? "No se pudo iniciar la carga de video.");
     }
 
-    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 1 });
-    const uploadResult = await supabase.storage
-      .from("asespro-media")
-      .uploadToSignedUrl(signedPayload.path, signedPayload.token, videoFile, {
-        contentType: videoFile.type || "video/mp4",
-      });
-    if (uploadResult.error) {
-      throw new Error(uploadResult.error.message);
+    let simulatedPercent = 1;
+    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: simulatedPercent });
+    const progressTimer = window.setInterval(() => {
+      simulatedPercent = Math.min(95, simulatedPercent + (simulatedPercent < 60 ? 3 : 1));
+      setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: simulatedPercent });
+    }, 800);
+
+    let uploadErrorMessage: string | null = null;
+    try {
+      const uploadResult = await supabase.storage
+        .from("asespro-media")
+        .uploadToSignedUrl(signedPayload.path, signedPayload.token, videoFile, {
+          contentType: videoFile.type || "video/mp4",
+        });
+      if (uploadResult.error) {
+        uploadErrorMessage = uploadResult.error.message;
+      }
+    } finally {
+      window.clearInterval(progressTimer);
+    }
+
+    if (uploadErrorMessage) {
+      throw new Error(uploadErrorMessage);
     }
 
     setMediaUploadProgress({ label: "Registrando video en el inmueble...", percent: 99 });
