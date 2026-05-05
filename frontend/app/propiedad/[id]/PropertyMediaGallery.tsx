@@ -11,17 +11,65 @@ type PropertyMediaGalleryProps = {
   fallbackImage: string;
 };
 
+function getEmbeddedVideoUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (parsed.pathname.startsWith("/embed/")) return url;
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+
+    if (host === "youtu.be") {
+      const id = parsed.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+
+    if (host === "vimeo.com") {
+      const id = parsed.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : null;
+    }
+
+    if (host === "player.vimeo.com" || parsed.pathname.includes("/embed/")) {
+      return url;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function isSupportedPublicVideoUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  if (getEmbeddedVideoUrl(url)) return true;
+
+  try {
+    const parsed = new URL(url);
+    const pathname = parsed.pathname.toLowerCase();
+    return pathname.endsWith(".mp4") || pathname.endsWith(".m3u8");
+  } catch {
+    return false;
+  }
+}
+
 export function PropertyMediaGallery({ title, location, photos, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
+  const safeVideoUrl = isSupportedPublicVideoUrl(videoUrl) ? videoUrl : null;
+  const embeddedVideoUrl = getEmbeddedVideoUrl(safeVideoUrl);
   const galleryMedia = useMemo(
-    () => [...photos.map((src) => ({ type: "photo" as const, src })), ...(videoUrl ? [{ type: "video" as const, src: videoUrl }] : [])],
-    [photos, videoUrl],
+    () => [...photos.map((src) => ({ type: "photo" as const, src })), ...(safeVideoUrl ? [{ type: "video" as const, src: safeVideoUrl }] : [])],
+    [photos, safeVideoUrl],
   );
   const primaryPhoto = photos[0] ?? fallbackImage;
   const sidePhotos = useMemo(() => photos.slice(1, 4), [photos]);
   const extraPhotosCount = Math.max(photos.length - 4, 0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [videoError, setVideoError] = useState(false);
-  const videoSourceType = videoUrl?.toLowerCase().includes(".m3u8") ? "application/x-mpegURL" : "video/mp4";
+  const videoSourceType = safeVideoUrl?.toLowerCase().includes(".m3u8") ? "application/x-mpegURL" : "video/mp4";
+  const videoIndex = safeVideoUrl ? galleryMedia.length - 1 : null;
   const activeMedia = activeIndex !== null ? galleryMedia[activeIndex] : null;
 
   if (galleryMedia.length === 0) return <section className={styles.gallery} />;
@@ -63,40 +111,39 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
             ))}
           </div>
         </div>
-        <button type="button" className={styles.moreMediaButton} onClick={() => setActiveIndex(0)}>
-          Ver mas
-        </button>
+        <div className={styles.galleryActions}>
+          <button type="button" className={styles.moreMediaButton} onClick={() => setActiveIndex(0)}>
+            Ver fotos
+          </button>
+          {videoIndex !== null ? (
+            <button type="button" className={styles.videoMediaButton} onClick={() => setActiveIndex(videoIndex)}>
+              Ver video de la propiedad
+            </button>
+          ) : null}
+        </div>
       </section>
-      {videoUrl ? (
-        <section className={styles.videoSection}>
-          <div className={styles.videoSectionHead}>
-            <h2>Video de la propiedad</h2>
-          </div>
-          <div className={styles.videoPanel}>
-            <video
-              controls
-              playsInline
-              preload="metadata"
-              onError={() => setVideoError(true)}
-              onLoadedData={() => setVideoError(false)}
-            >
-              <source src={videoUrl} type={videoSourceType} />
-            </video>
-          </div>
-          {videoError ? <p className={styles.videoError}>No se pudo reproducir el video. Revisa que el MP4 use codec H.264.</p> : null}
-        </section>
-      ) : null}
 
       {activeIndex !== null ? (
         <div className={styles.lightbox} onClick={() => setActiveIndex(null)}>
           <div
-            className={`${styles.lightboxMedia} ${activeMedia?.type === "video" ? styles.lightboxMediaVideo : ""}`}
+            className={`${styles.lightboxMedia} ${activeMedia?.type === "video" ? styles.lightboxMediaVideo : ""} ${
+              activeMedia?.type === "video" && embeddedVideoUrl ? styles.lightboxMediaEmbedded : ""
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {activeMedia?.type === "video" ? (
-              <video controls autoPlay playsInline preload="metadata">
-                <source src={activeMedia.src} type={videoSourceType} />
-              </video>
+              embeddedVideoUrl ? (
+                <iframe
+                  src={embeddedVideoUrl}
+                  title={`Video de ${title}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video controls autoPlay playsInline preload="metadata">
+                  <source src={activeMedia.src} type={videoSourceType} />
+                </video>
+              )
             ) : (
               <img
                 src={activeMedia?.src ?? fallbackImage}

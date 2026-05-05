@@ -13,6 +13,18 @@
   inset: 0;
 }
 
+.wrapper :global(.asespro-property-tooltip) {
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.wrapper :global(.asespro-property-tooltip::before) {
+  display: none;
+}
+
 .errorState {
   display: grid;
   place-items: center;

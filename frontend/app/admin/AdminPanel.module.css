@@ -552,6 +552,45 @@
   min-height: auto;
 }
 
+.amenityPicker {
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.amenityPicker strong {
+  color: #00513f;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.amenityPicker div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.amenityPicker label {
+  min-height: 40px;
+  border-radius: 10px;
+  background: #f5f8f6;
+  padding: 8px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #17201d;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.amenityPicker input {
+  min-height: auto;
+}
+
 .fileManager {
   border-radius: 14px;
   background: #ffffff;

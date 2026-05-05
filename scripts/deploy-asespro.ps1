@@ -16,6 +16,7 @@ $VpsProjectPath = "/opt/asespro"
 $ImageName = "asespro-web:latest"
 $StackName = "asespro"
 $ServiceName = "asespro_asespro-web"
+$SshPath = if (Test-Path "C:\Windows\System32\OpenSSH\ssh.exe") { "C:\Windows\System32\OpenSSH\ssh.exe" } else { "ssh" }
 
 function Invoke-Step {
   param(
@@ -106,7 +107,7 @@ docker service logs --tail 100 $ServiceName
 }
 
 Invoke-Step "Deploying on VPS" {
-  $remoteScript | ssh $VpsHost "bash -s"
+  $remoteScript | & $SshPath -F NUL $VpsHost "bash -s"
 }
 
 Invoke-Step "Smoke test" {

@@ -1,4 +1,6 @@
-import type { PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "./properties";
+import type { PropertyAmenityKey, PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "./properties";
+
+const AMENITY_KEYS: PropertyAmenityKey[] = ["garage", "patio", "laundry", "living", "dining", "kitchen", "balcony", "security", "pool"];
 
 export type AdminListingInput = {
   ownerId?: string;
@@ -20,13 +22,14 @@ export type AdminListingInput = {
   forRent: boolean;
   rentPrice?: number | null;
   rentCurrency: PropertyCurrency;
+  amenities: Record<PropertyAmenityKey, boolean>;
   operations: PropertyOperation[];
   status: PropertyStatus;
 };
 
 export function normalizeAdminListingInput(input: unknown): AdminListingInput {
   if (!input || typeof input !== "object") {
-    throw new Error("Datos invalidos.");
+    throw new Error("Datos inválidos.");
   }
 
   const source = input as Record<string, unknown>;
@@ -34,7 +37,7 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
     ? source.operations.filter((operation): operation is PropertyOperation => operation === "alquiler" || operation === "venta")
     : [];
   if (operations.length === 0) {
-    throw new Error("Selecciona al menos una operacion.");
+    throw new Error("Selecciona al menos una operación.");
   }
 
   const title = typeof source.title === "string" ? source.title.trim() : "";
@@ -42,7 +45,7 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
   const latitude = toOptionalNumber(source.latitude);
   const longitude = toOptionalNumber(source.longitude);
   if (!title || !locationText) {
-    throw new Error("Titulo y direccion son obligatorios.");
+    throw new Error("Título y dirección son obligatorios.");
   }
 
   const propertyType =
@@ -57,6 +60,11 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
   const rentCurrency = typeof source.rentCurrency === "string" && source.rentCurrency.trim() ? source.rentCurrency.trim().toUpperCase() : "UYU";
   const forSale = source.forSale === true;
   const forRent = source.forRent === true;
+  const amenitiesSource = source.amenities && typeof source.amenities === "object" ? (source.amenities as Record<string, unknown>) : {};
+  const amenities = AMENITY_KEYS.reduce<Record<PropertyAmenityKey, boolean>>((current, key) => {
+    current[key] = amenitiesSource[key] === true || source[key] === true;
+    return current;
+  }, {} as Record<PropertyAmenityKey, boolean>);
 
   return {
     ownerId: typeof source.ownerId === "string" && source.ownerId ? source.ownerId : undefined,
@@ -78,6 +86,7 @@ export function normalizeAdminListingInput(input: unknown): AdminListingInput {
     forRent,
     rentPrice: toOptionalNumber(source.rentPrice),
     rentCurrency,
+    amenities,
     operations,
     status,
   };

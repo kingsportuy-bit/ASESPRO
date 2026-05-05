@@ -17,7 +17,7 @@ type NominatimResult = {
 };
 
 const LISTINGS_SELECT_WITH_FEATURED =
-  "id,property_id,title,description,price_amount,price_currency,is_featured,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
+  "id,property_id,title,description,price_amount,price_currency,is_featured,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
 const LISTINGS_SELECT_FALLBACK =
   "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
 
@@ -29,6 +29,20 @@ function isMissingFeaturedColumn(message: string | undefined): boolean {
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getAmenityUpdates(amenities: ReturnType<typeof normalizeAdminListingInput>["amenities"]): Record<string, boolean> {
+  return {
+    has_garage: amenities.garage === true,
+    has_patio: amenities.patio === true,
+    has_laundry: amenities.laundry === true,
+    has_living: amenities.living === true,
+    has_dining: amenities.dining === true,
+    has_kitchen: amenities.kitchen === true,
+    has_balcony: amenities.balcony === true,
+    has_security: amenities.security === true,
+    has_pool: amenities.pool === true,
+  };
 }
 
 function normalizeSearchText(value: string): string {
@@ -166,6 +180,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           for_rent: input.forRent,
           rent_price: input.rentPrice,
           rent_currency: input.rentCurrency,
+          ...getAmenityUpdates(input.amenities),
           is_active: true,
         })
         .select("id")
@@ -195,6 +210,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           for_rent: input.forRent,
           rent_price: input.rentPrice,
           rent_currency: input.rentCurrency,
+          ...getAmenityUpdates(input.amenities),
           updated_at: new Date().toISOString(),
         })
         .eq("id", propertyId);
@@ -240,7 +256,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         await wait(1200);
         listingResponse = await supabase.from("asespro_listings").insert(listingInsert).select("id").single();
         if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
-          return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+          return NextResponse.json({ error: "Falta migración de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
         }
       } else {
         const { is_featured: _dropFeatured, ...fallbackInsert } = listingInsert;
@@ -251,7 +267,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const listingError = listingResponse.error;
 
     if (listingError || !listing) {
-      return NextResponse.json({ error: listingError?.message ?? "No se pudo crear la publicacion." }, { status: 500 });
+      return NextResponse.json({ error: listingError?.message ?? "No se pudo crear la publicación." }, { status: 500 });
     }
 
     const { error: operationsError } = await supabase.from("asespro_listing_operations").insert(
@@ -301,6 +317,6 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json({ id: listing.id, propertyId }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Datos invalidos." }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Datos inválidos." }, { status: 400 });
   }
 }

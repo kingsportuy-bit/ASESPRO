@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 import { formatOperationLabel, formatPrice, type PropertyListing } from "@/lib/properties";
+import { PropertyFacts } from "./PropertyFacts";
 
 import styles from "./PropertyShowcaseGrid.module.css";
 
@@ -41,11 +42,7 @@ export function PropertyShowcaseGrid({ title, hint, chipLabel, properties }: Pro
               <h3 className={styles.title}>{property.title}</h3>
               <p className={styles.meta}>{property.location}</p>
 
-              <div className={styles.kpiRow}>
-                <span className={styles.kpi}>Dorm: {property.bedrooms ?? "N/D"}</span>
-                <span className={styles.kpi}>Banos: {property.bathrooms ?? "N/D"}</span>
-                <span className={styles.kpi}>Area: {property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-              </div>
+              <PropertyFacts property={property} />
 
               <Link href={`/propiedad/${property.id}`} className={styles.detailLink}>
                 Ver detalles

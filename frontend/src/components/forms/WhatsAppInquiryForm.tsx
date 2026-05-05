@@ -45,7 +45,7 @@ export function WhatsAppInquiryForm({
     const trimmedPhone = phone.trim();
 
     if (!trimmedName || !trimmedPhone) {
-      setError("Completa nombre y telefono para continuar.");
+      setError("Completa nombre y teléfono para continuar.");
       setStatusMessage(null);
       return;
     }
@@ -60,7 +60,7 @@ export function WhatsAppInquiryForm({
     });
     const url = buildWhatsAppUrl(whatsappPhone, text);
     window.open(url, "_blank", "noopener,noreferrer");
-    setStatusMessage("Se abrio WhatsApp en una nueva pestana con el mensaje listo para enviar.");
+    setStatusMessage("Se abrió WhatsApp en una nueva pestaña con el mensaje listo para enviar.");
   };
 
   return (
@@ -85,13 +85,13 @@ export function WhatsAppInquiryForm({
         </label>
 
         <label htmlFor={phoneFieldId} className={styles.field}>
-          Telefono
+          Teléfono
           <input
             id={phoneFieldId}
             type="tel"
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
-            placeholder="Tu telefono"
+            placeholder="Tu teléfono"
             autoComplete="tel"
             required
             aria-invalid={error ? "true" : "false"}
@@ -122,7 +122,7 @@ export function WhatsAppInquiryForm({
             id={messageFieldId}
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            placeholder="Contanos que estas buscando"
+            placeholder="Contanos qué estás buscando"
             aria-describedby={statusMessage ? statusId : undefined}
           />
         </label>

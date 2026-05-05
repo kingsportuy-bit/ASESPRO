@@ -6,6 +6,18 @@ export type PropertyType = "casa" | "apartamento" | "terreno";
 export type PropertyOperation = "alquiler" | "venta";
 export type PropertyStatus = "activo" | "desactivado" | "alquilado" | "vendido";
 export type PropertyCurrency = string;
+export type PropertyAmenityKey =
+  | "garage"
+  | "patio"
+  | "laundry"
+  | "living"
+  | "dining"
+  | "kitchen"
+  | "balcony"
+  | "security"
+  | "pool";
+
+export type PropertyAmenities = Partial<Record<PropertyAmenityKey, boolean>>;
 
 export type PropertyListing = {
   id: string;
@@ -23,6 +35,7 @@ export type PropertyListing = {
   bedrooms?: number;
   bathrooms?: number;
   areaM2?: number;
+  amenities?: PropertyAmenities;
   status: PropertyStatus;
   photoUrls: string[];
   videoUrl?: string;
@@ -78,6 +91,6 @@ export function formatPrice(price?: number, currency: PropertyCurrency = "USD"):
 }
 
 export function buildPropertyWhatsAppUrl(property: PropertyListing, phone: string): string {
-  const message = `Hola ASESPRO, quiero consultar por la propiedad ${property.id.toUpperCase()}: "${property.title}" en ${property.location} (${formatPrice(property.price, property.priceCurrency)}). Me interesa recibir mas informacion y coordinar una visita.`;
+  const message = `Hola ASESPRO, quiero consultar por la propiedad ${property.id.toUpperCase()}: "${property.title}" en ${property.location} (${formatPrice(property.price, property.priceCurrency)}). Me interesa recibir más información y coordinar una visita.`;
   return buildWhatsAppUrl(phone, message);
 }

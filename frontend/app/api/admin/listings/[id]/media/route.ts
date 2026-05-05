@@ -11,6 +11,7 @@ type RouteContext = {
 };
 
 const BUCKET = "asespro-media";
+const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024;
 export const runtime = "nodejs";
 export const maxDuration = 1800;
 
@@ -37,6 +38,14 @@ export async function POST(request: Request, { params }: RouteContext): Promise<
 
   if (!(file instanceof File) || (mediaType !== "photo" && mediaType !== "video")) {
     return NextResponse.json({ error: "Archivo o tipo de media invalido." }, { status: 400 });
+  }
+  if (mediaType === "video") {
+    if (file.size > MAX_VIDEO_SIZE_BYTES) {
+      return NextResponse.json({ error: "El video debe pesar como maximo 500 MB." }, { status: 400 });
+    }
+    if (!file.name.toLowerCase().endsWith(".mp4") || (file.type && file.type !== "video/mp4")) {
+      return NextResponse.json({ error: "El video debe ser MP4 compatible para web (H.264/AAC)." }, { status: 400 });
+    }
   }
 
   let uploadBody: File | Buffer = file;

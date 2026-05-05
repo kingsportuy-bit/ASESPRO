@@ -11,7 +11,7 @@ const DEFAULT_WHATSAPP_PHONE = "59898382388";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Contacta a ASESPRO por alquileres, ventas, terrenos o servicios de limpieza. Atencion en Paso de los Toros, Pueblo Centenario, Montevideo y Maldonado.",
+    "Contacta a ASESPRO por alquileres, ventas, terrenos o servicios de limpieza. Atención en Paso de los Toros, Pueblo Centenario, Montevideo y Maldonado.",
 };
 
 export default function ContactoPage(): JSX.Element {
@@ -30,7 +30,7 @@ export default function ContactoPage(): JSX.Element {
               Contacta a <span className={styles.accent}>ASESPRO.</span>
             </h1>
             <p>
-              Contanos que estas buscando y te orientamos. Podemos ayudarte con alquileres, ventas, terrenos o
+              Contanos qué estás buscando y te orientamos. Podemos ayudarte con alquileres, ventas, terrenos o
               presupuestos de limpieza.
             </p>
           </article>
@@ -44,7 +44,7 @@ export default function ContactoPage(): JSX.Element {
           <WhatsAppInquiryForm
             whatsappPhone={whatsappPhone}
             title="Enviar consulta"
-            hint="Completa tus datos y el tipo de consulta. Te responderemos para avanzar con la informacion que necesitas."
+            hint="Completa tus datos y el tipo de consulta. Te responderemos para avanzar con la información que necesitas."
             submitLabel="Enviar consulta"
           />
 
@@ -52,7 +52,7 @@ export default function ContactoPage(): JSX.Element {
             <article className={styles.contactCard}>
               <span className={styles.icon}>TEL</span>
               <div>
-                <p className={styles.cardLabel}>Telefono</p>
+                <p className={styles.cardLabel}>Teléfono</p>
                 <strong>Llamanos o escribinos</strong>
                 <p>+598 98 382 388</p>
                 <p>Lun - Sab, 9:00 - 19:00</p>
@@ -82,8 +82,8 @@ export default function ContactoPage(): JSX.Element {
               <h2>Nuestra sede</h2>
               <img src={getPropertyCoverImage("prop-2")} alt="" />
               <div className={styles.mapCardBody}>
-                <strong>Florencio Sanchez 722</strong>
-                <p>Paso de los Toros, Tacuarembo.</p>
+                <strong>Florencio Sánchez 722</strong>
+                <p>Paso de los Toros, Tacuarembó.</p>
               </div>
             </article>
           </aside>

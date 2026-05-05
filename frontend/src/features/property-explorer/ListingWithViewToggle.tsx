@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useMemo } from "react";
 import { Map } from "@/components/map";
-import { PropertyExplorer } from "@/features/property-explorer/PropertyExplorer";
+import { PropertyFacts } from "@/components/properties/PropertyFacts";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 import { formatPrice, type PropertyListing } from "@/lib/properties";
 
@@ -23,10 +24,7 @@ export function ListingWithViewToggle({
   properties,
   mapTitle,
   mapDescription,
-  operationHint,
 }: ListingWithViewToggleProps): JSX.Element {
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
-
   const cards = useMemo(() => properties.filter((property) => property.status === "activo"), [properties]);
 
   const getDisplayPhotos = (property: PropertyListing): string[] => {
@@ -49,35 +47,22 @@ export function ListingWithViewToggle({
             <div className={styles.viewSwitch}>
               <button
                 type="button"
-                className={`${styles.viewBtn} ${viewMode === "grid" ? styles.viewBtnActive : ""}`}
-                onClick={() => setViewMode("grid")}
+                className={`${styles.viewBtn} ${styles.viewBtnActive}`}
               >
                 Cuadricula
               </button>
-              <button
-                type="button"
-                className={`${styles.viewBtn} ${viewMode === "map" ? styles.viewBtnActive : ""}`}
-                onClick={() => setViewMode("map")}
-              >
+              <Link href="/mapa" className={styles.viewBtn}>
                 Mapa
-              </button>
+              </Link>
             </div>
           </div>
         </section>
 
-        {viewMode === "map" ? (
-          <PropertyExplorer
-            properties={properties}
-            title="Vista de mapa con filtros"
-            hint={operationHint}
-            showOperationFilter={false}
-          />
-        ) : (
-          <>
+        <>
             <section className={styles.grid}>
               {cards.map((property) => (
                 <article className={styles.card} key={property.id}>
-                  <a href={`/propiedad/${property.id}`} target="_blank" rel="noreferrer" className={styles.cardHitArea}>
+                  <Link href={`/propiedad/${property.id}`} className={styles.cardHitArea}>
                     <div className={styles.cardMedia}>
                       <div className={styles.mediaSlider} aria-hidden="true">
                         {getDisplayPhotos(property).map((photo, photoIndex, photoList) => (
@@ -114,17 +99,22 @@ export function ListingWithViewToggle({
                         <p className={styles.cardPrice}>{formatPrice(property.price, property.priceCurrency)}</p>
                       </div>
                       <p className={styles.cardLocation}>{property.location}</p>
-                      <p className={styles.cardMeta}>
-                        <span><i className={`${styles.metaIcon} ${styles.metaBed}`} />{property.bedrooms ?? "--"} dorm</span>
-                        <span><i className={`${styles.metaIcon} ${styles.metaBath}`} />{property.bathrooms ?? "--"} banos</span>
-                        <span><i className={`${styles.metaIcon} ${styles.metaArea}`} />{property.areaM2 ? `${property.areaM2} m2` : "N/D"}</span>
-                        <span><i className={`${styles.metaIcon} ${styles.metaStatus}`} />{property.status}</span>
-                      </p>
+                      <PropertyFacts property={property} />
                     </div>
-                  </a>
+                  </Link>
                 </article>
               ))}
             </section>
+
+            {cards.length === 0 ? (
+              <section className={styles.emptyState}>
+                <h2>No hay publicaciones activas en este momento</h2>
+                <p>El equipo puede cargar nuevas propiedades desde el panel. Mientras tanto, la consulta por WhatsApp sigue disponible.</p>
+                <Link href="/contacto" className={styles.emptyAction}>
+                  Consultar disponibilidad
+                </Link>
+              </section>
+            ) : null}
 
             <section className={styles.mapSection}>
               <div className={styles.mapHead}>
@@ -140,8 +130,7 @@ export function ListingWithViewToggle({
                 </a>
               </div>
             </section>
-          </>
-        )}
+        </>
       </div>
     </main>
   );

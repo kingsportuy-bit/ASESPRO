@@ -79,7 +79,7 @@ function runFfmpeg(inputPath: string, outputPath: string): Promise<void> {
         resolve();
         return;
       }
-      reject(new Error(`ffmpeg finalizo con error (${code ?? "sin codigo"}): ${stderr || "sin detalle"}`));
+      reject(new Error(`ffmpeg finalizó con error (${code ?? "sin código"}): ${stderr || "sin detalle"}`));
     });
   });
 }
@@ -118,7 +118,7 @@ function runFfprobe(inputPath: string): Promise<{ videoCodec: string | null; aud
     ffprobe.on("close", (code) => {
       clearTimeout(timer);
       if (code !== 0) {
-        reject(new Error(`ffprobe finalizo con error (${code ?? "sin codigo"}): ${stderr || "sin detalle"}`));
+        reject(new Error(`ffprobe finalizó con error (${code ?? "sin código"}): ${stderr || "sin detalle"}`));
         return;
       }
 
@@ -129,7 +129,7 @@ function runFfprobe(inputPath: string): Promise<{ videoCodec: string | null; aud
         const audioCodec = streams.find((stream) => stream.codec_type === "audio")?.codec_name ?? null;
         resolve({ videoCodec, audioCodec });
       } catch (error) {
-        reject(new Error(`No se pudo leer metadata de video: ${error instanceof Error ? error.message : "json invalido"}`));
+        reject(new Error(`No se pudo leer metadata de video: ${error instanceof Error ? error.message : "json inválido"}`));
       }
     });
   });
@@ -157,7 +157,7 @@ export async function transcodeVideoToWebMp4(file: File): Promise<TranscodeResul
     await runFfmpeg(inputPath, outputPath);
     const buffer = await fs.readFile(outputPath);
     if (buffer.length === 0) {
-      throw new Error("ffmpeg genero un archivo vacio.");
+      throw new Error("ffmpeg generó un archivo vacío.");
     }
     return {
       buffer,

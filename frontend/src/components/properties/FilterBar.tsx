@@ -49,7 +49,7 @@ export function FilterBar({
       </label>
 
       <label>
-        Precio maximo (USD)
+        Precio maximo
         <input
           type="number"
           min={0}

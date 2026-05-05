@@ -1,0 +1,63 @@
+.facts {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fact {
+  min-width: 0;
+  border-radius: 12px;
+  background: #f0f4f3;
+  color: #00513f;
+  padding: 9px 7px;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.fact svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.fact strong {
+  color: #181c1c;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.fact small {
+  color: #444746;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.factsCompact {
+  margin-top: 8px;
+  gap: 5px;
+}
+
+.factsCompact .fact {
+  border-radius: 9px;
+  padding: 6px 4px;
+}
+
+.factsCompact .fact svg {
+  width: 18px;
+  height: 18px;
+}
+
+.factsCompact .fact strong {
+  font-size: 10px;
+}
+
+.factsCompact .fact small {
+  font-size: 7px;
+}

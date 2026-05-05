@@ -15,10 +15,10 @@ export default async function VentaPage(): Promise<JSX.Element> {
   return (
     <ListingWithViewToggle
       title="Propiedades en venta en Paso de los Toros y Pueblo Centenario"
-      description="Encuentra casas, apartamentos y terrenos en venta, con informacion clara y asesoramiento para avanzar con una decision segura."
+      description="Encuentra casas, apartamentos y terrenos en venta, con información clara y asesoramiento para avanzar con una decisión segura."
       properties={properties}
-      mapTitle="Explora ventas por ubicacion"
-      mapDescription="Revisa las propiedades en el mapa para evaluar zona, entorno y cercania a puntos de interes."
+      mapTitle="Explora ventas por ubicación"
+      mapDescription="Revisa las propiedades en el mapa para evaluar zona, entorno y cercanía a puntos de interés."
       operationHint="Filtra por tipo, precio y zona para comparar oportunidades de compra."
     />
   );

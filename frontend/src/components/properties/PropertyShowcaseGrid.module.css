@@ -114,21 +114,6 @@
   font-size: 13px;
 }
 
-.kpiRow {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(190, 201, 195, 0.15);
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.kpi {
-  color: #444746;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 .detailLink {
   margin-top: 12px;
   display: inline-flex;

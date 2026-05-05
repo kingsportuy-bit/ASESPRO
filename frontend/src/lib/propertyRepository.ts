@@ -2,8 +2,10 @@ import { unstable_noStore as noStore } from "next/cache";
 
 import {
   getDefaultCurrencyForOperation,
+  getProperties,
   propertyMatchesOperation,
   type PropertyCurrency,
+  type PropertyAmenities,
   type PropertyListing,
   type PropertyOperation,
   type PropertyStatus,
@@ -57,7 +59,7 @@ type SupabaseListingRow = {
 };
 
 const PUBLIC_LISTINGS_SELECT_WITH_FEATURED =
-  "id,title,description,price_amount,price_currency,is_featured,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
+  "id,title,description,price_amount,price_currency,is_featured,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
 const PUBLIC_LISTINGS_SELECT_FALLBACK =
   "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
 
@@ -65,6 +67,12 @@ function isMissingFeaturedColumn(message: string | undefined): boolean {
   if (!message) return false;
   const normalized = message.toLowerCase();
   return normalized.includes("is_featured") && normalized.includes("column");
+}
+
+function isMissingOptionalColumn(message: string | undefined): boolean {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return isMissingFeaturedColumn(message) || (normalized.includes("has_") && normalized.includes("column"));
 }
 
 type SupabaseMediaRow = {
@@ -86,6 +94,15 @@ type SupabasePropertyRow = {
         bathrooms: number | null;
         area_m2: number | string | null;
         is_active: boolean | null;
+        has_garage?: boolean | null;
+        has_patio?: boolean | null;
+        has_laundry?: boolean | null;
+        has_living?: boolean | null;
+        has_dining?: boolean | null;
+        has_kitchen?: boolean | null;
+        has_balcony?: boolean | null;
+        has_security?: boolean | null;
+        has_pool?: boolean | null;
         asespro_property_media?: SupabaseMediaRow[] | null;
 };
 
@@ -266,6 +283,7 @@ function normalizeProperty(input: unknown): PropertyListing | null {
     bedrooms: typeof source.bedrooms === "number" ? source.bedrooms : undefined,
     bathrooms: typeof source.bathrooms === "number" ? source.bathrooms : undefined,
     areaM2: typeof source.areaM2 === "number" ? source.areaM2 : typeof source.area_m2 === "number" ? source.area_m2 : undefined,
+    amenities: normalizeAmenities(source),
     status:
       source.status === "activo" || source.status === "desactivado" || source.status === "alquilado" || source.status === "vendido"
         ? source.status
@@ -286,6 +304,20 @@ function normalizePropertyType(value: string | null | undefined): PropertyType {
   }
 
   return "casa";
+}
+
+function normalizeAmenities(source: Record<string, unknown>): PropertyAmenities {
+  return {
+    garage: source.garage === true || source.has_garage === true,
+    patio: source.patio === true || source.has_patio === true,
+    laundry: source.laundry === true || source.has_laundry === true,
+    living: source.living === true || source.has_living === true,
+    dining: source.dining === true || source.has_dining === true,
+    kitchen: source.kitchen === true || source.has_kitchen === true,
+    balcony: source.balcony === true || source.has_balcony === true,
+    security: source.security === true || source.has_security === true,
+    pool: source.pool === true || source.has_pool === true,
+  };
 }
 
 function normalizeCurrency(value: string | null | undefined, operation: PropertyOperation): PropertyCurrency {
@@ -352,6 +384,7 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     bedrooms: property.bedrooms ?? undefined,
     bathrooms: property.bathrooms ?? undefined,
     areaM2: parseNumber(property.area_m2),
+    amenities: normalizeAmenities(property as unknown as Record<string, unknown>),
     status: row.status ?? "desactivado",
     isFeatured: row.is_featured === true,
     photoUrls,
@@ -374,7 +407,7 @@ class SupabasePropertyRepository implements PropertyRepository {
 
     let data = featuredQuery.data as SupabaseListingRow[] | null;
     let error = featuredQuery.error;
-    if (error && isMissingFeaturedColumn(error.message)) {
+    if (error && isMissingOptionalColumn(error.message)) {
       const fallbackQuery = await supabase
         .from("asespro_listings")
         .select(PUBLIC_LISTINGS_SELECT_FALLBACK)
@@ -411,7 +444,7 @@ class SupabasePropertyRepository implements PropertyRepository {
       .maybeSingle();
     let data = featuredQuery.data as SupabaseListingRow | null;
     let error = featuredQuery.error;
-    if (error && isMissingFeaturedColumn(error.message)) {
+    if (error && isMissingOptionalColumn(error.message)) {
       const fallbackQuery = await supabase
         .from("asespro_listings")
         .select(PUBLIC_LISTINGS_SELECT_FALLBACK)
@@ -480,8 +513,28 @@ class ApiPropertyRepository implements PropertyRepository {
   }
 }
 
+class MockPropertyRepository implements PropertyRepository {
+  async list(options: ListOptions = {}): Promise<PropertyListing[]> {
+    const properties = getProperties();
+    const scoped = options.operation
+      ? properties.filter((property) => propertyMatchesOperation(property, options.operation as PropertyOperation))
+      : properties;
+
+    return toPublicActiveList(scoped, options.operation);
+  }
+
+  async getById(id: string): Promise<PropertyListing | null> {
+    const property = getProperties().find((item) => item.id === id && item.status === "activo") ?? null;
+    return property;
+  }
+}
+
 function createPropertyRepository(): PropertyRepository {
   const source = process.env.PROPERTY_DATA_SOURCE ?? "supabase";
+  if (source === "mock") {
+    return new MockPropertyRepository();
+  }
+
   if (source === "supabase") {
     return new SupabasePropertyRepository();
   }

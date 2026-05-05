@@ -9,9 +9,9 @@ type InquiryPayload = {
 
 const INQUIRY_LABEL: Record<InquiryType, string> = {
   general: "Consulta general",
-  alquiler: "Interes en alquiler",
-  venta: "Interes en compra/venta",
-  terreno: "Interes en terreno",
+  alquiler: "Interés en alquiler",
+  venta: "Interés en compra/venta",
+  terreno: "Interés en terreno",
   limpieza: "Servicio de limpieza",
 };
 
@@ -31,7 +31,7 @@ export function buildInquiryMessage({ name, phone, inquiryType, message }: Inqui
     "",
     `Tipo: ${INQUIRY_LABEL[inquiryType]}`,
     `Nombre: ${name.trim()}`,
-    `Telefono de contacto: ${phone.trim()}`,
+    `Teléfono de contacto: ${phone.trim()}`,
   ];
 
   if (messageBody) {

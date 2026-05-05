@@ -44,3 +44,117 @@
   border-right-color: rgba(0, 107, 84, 0.95);
   border-bottom-color: rgba(0, 107, 84, 0.95);
 }
+
+.previewCard {
+  width: 218px;
+  display: block;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #181c1c;
+  box-shadow: 0 14px 34px rgba(24, 28, 28, 0.2);
+  cursor: pointer;
+}
+
+.previewGallery {
+  position: relative;
+  width: 100%;
+  height: 116px;
+  overflow: hidden;
+  background: #dfe3e2;
+}
+
+.previewImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 116px;
+  display: block;
+  object-fit: cover;
+  opacity: 0;
+  background: #dfe3e2;
+  transition: opacity 0.16s ease;
+}
+
+.previewImageActive {
+  opacity: 1;
+}
+
+.previewControls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  pointer-events: none;
+}
+
+.previewControl {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #181c1c;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 6px 14px rgba(24, 28, 28, 0.18);
+  pointer-events: auto;
+}
+
+.previewControl:hover {
+  background: #ffffff;
+  color: #00513f;
+}
+
+.previewBody {
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px 12px;
+}
+
+.previewTitle {
+  margin: 0;
+  color: #181c1c;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.previewLocation {
+  margin: 0;
+  color: #3d4a3e;
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.previewPrice {
+  color: #181c1c;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.previewMeta {
+  margin: 0;
+  color: #444746;
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

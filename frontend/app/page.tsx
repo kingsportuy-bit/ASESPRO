@@ -155,7 +155,7 @@ export default async function HomePage(): Promise<JSX.Element> {
       </section>
 
       <section className={`${styles.mapTeaser} ${styles.sectionFrame}`}>
-        <h2>Explora propiedades por ubicacion</h2>
+            <h2>Explora propiedades por ubicación</h2>
         <p>Ubica rapidamente las opciones disponibles en Paso de los Toros, Pueblo Centenario y alrededores.</p>
         <div className={styles.mapShell}>
           <Map properties={properties} initialCenter={{ lat: -32.822, lng: -56.528 }} initialZoom={13} minZoom={13} maxZoom={18} height={320} />

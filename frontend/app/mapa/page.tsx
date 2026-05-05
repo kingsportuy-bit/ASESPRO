@@ -19,14 +19,15 @@ export default async function MapaPage({ searchParams }: MapaPageProps): Promise
   const highlightedPropertyId = searchParams?.highlight;
 
   return (
-    <main>
-      <div className="page-shell">
+    <main data-map-page="true">
+      <div className="map-page-shell">
         <PropertyExplorer
           properties={properties}
-          title="Explora propiedades por ubicacion"
+          title="Explora propiedades por ubicación"
           hint="Usa filtros y revisa las opciones disponibles en Paso de los Toros, Pueblo Centenario y alrededores."
           showOperationFilter={true}
           highlightedPropertyId={highlightedPropertyId}
+          fullHeight={true}
         />
       </div>
     </main>

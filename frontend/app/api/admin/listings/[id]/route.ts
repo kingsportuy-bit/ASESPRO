@@ -21,6 +21,20 @@ function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function getAmenityUpdates(amenities: ReturnType<typeof normalizeAdminListingInput>["amenities"]): Record<string, boolean> {
+  return {
+    has_garage: amenities.garage === true,
+    has_patio: amenities.patio === true,
+    has_laundry: amenities.laundry === true,
+    has_living: amenities.living === true,
+    has_dining: amenities.dining === true,
+    has_kitchen: amenities.kitchen === true,
+    has_balcony: amenities.balcony === true,
+    has_security: amenities.security === true,
+    has_pool: amenities.pool === true,
+  };
+}
+
 export async function PUT(request: Request, { params }: RouteContext): Promise<NextResponse> {
   const auth = await requireAdminUser(request);
   if (!auth.ok) {
@@ -41,7 +55,7 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
       .single();
 
     if (existingError || !existing) {
-      return NextResponse.json({ error: existingError?.message ?? "Publicacion no encontrada." }, { status: 404 });
+      return NextResponse.json({ error: existingError?.message ?? "Publicación no encontrada." }, { status: 404 });
     }
 
     if (input.syncPropertyData) {
@@ -63,6 +77,7 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
           for_rent: input.forRent,
           rent_price: input.rentPrice,
           rent_currency: input.rentCurrency,
+          ...getAmenityUpdates(input.amenities),
           updated_at: new Date().toISOString(),
         })
         .eq("id", input.propertyId ?? existing.property_id);
@@ -114,7 +129,7 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
         await wait(1200);
         listingResponse = await supabase.from("asespro_listings").update(listingUpdates).eq("id", params.id);
         if (listingResponse.error && isMissingFeaturedColumn(listingResponse.error.message)) {
-          return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+          return NextResponse.json({ error: "Falta migración de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
         }
       } else {
         const { is_featured: _dropFeatured, ...fallbackUpdates } = listingUpdates;
@@ -145,7 +160,7 @@ export async function PUT(request: Request, { params }: RouteContext): Promise<N
 
     return NextResponse.json({ id: params.id });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Datos invalidos." }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Datos inválidos." }, { status: 400 });
   }
 }
 
@@ -164,7 +179,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   const hasStatus = payload.status !== undefined;
   const status = payload.status;
   if (hasStatus && status !== "activo" && status !== "desactivado") {
-    return NextResponse.json({ error: "Estado invalido." }, { status: 400 });
+    return NextResponse.json({ error: "Estado inválido." }, { status: 400 });
   }
 
   const updates: Record<string, string | null | boolean> = {
@@ -186,7 +201,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   if (Array.isArray(payload.operations)) {
     const operations = payload.operations.filter((operation): operation is "alquiler" | "venta" => operation === "alquiler" || operation === "venta");
     if (operations.length === 0) {
-      return NextResponse.json({ error: "Selecciona una operacion valida." }, { status: 400 });
+      return NextResponse.json({ error: "Selecciona una operación válida." }, { status: 400 });
     }
 
     const { data: listing, error: listingReadError } = await supabase
@@ -196,7 +211,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
       .maybeSingle();
 
     if (listingReadError || !listing) {
-      return NextResponse.json({ error: listingReadError?.message ?? "Publicacion no encontrada." }, { status: 404 });
+      return NextResponse.json({ error: listingReadError?.message ?? "Publicación no encontrada." }, { status: 404 });
     }
 
     const property = Array.isArray(listing.asespro_properties) ? listing.asespro_properties[0] : listing.asespro_properties;
@@ -226,7 +241,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
       await wait(1200);
       updateResponse = await supabase.from("asespro_listings").update(updates).eq("id", params.id).select("id,status").maybeSingle();
       if (updateResponse.error && isMissingFeaturedColumn(updateResponse.error.message)) {
-        return NextResponse.json({ error: "Falta migracion de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
+        return NextResponse.json({ error: "Falta migración de base de datos para destacados. Ejecuta Docs/sql/2026-05-02_add_is_featured_to_listings.sql." }, { status: 409 });
       }
     } else {
       const { is_featured: _dropFeatured, ...fallbackUpdates } = updates;
@@ -238,7 +253,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   const error = updateResponse.error;
 
   if (error || !updated) {
-    return NextResponse.json({ error: error?.message ?? "Publicacion no encontrada." }, { status: error ? 500 : 404 });
+    return NextResponse.json({ error: error?.message ?? "Publicación no encontrada." }, { status: error ? 500 : 404 });
   }
 
   return NextResponse.json({ id: updated.id, status: updated.status });

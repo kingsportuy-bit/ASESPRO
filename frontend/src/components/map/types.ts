@@ -2,8 +2,15 @@ export type Property = {
   id: string;
   lat: number;
   lng: number;
+  title?: string;
+  location?: string;
+  type?: string;
   price?: number;
   priceCurrency?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  areaM2?: number;
+  photoUrls?: string[];
 };
 
 export type MapBounds = {

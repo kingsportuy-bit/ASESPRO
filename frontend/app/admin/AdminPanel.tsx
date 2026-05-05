@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "@/lib/properties";
+import type { PropertyAmenityKey, PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "@/lib/properties";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
 import styles from "./AdminPanel.module.css";
@@ -24,6 +24,12 @@ type MediaUploadProgress = {
 
 type MediaUploadResponse = {
   media?: AdminMedia;
+  error?: string;
+};
+
+type ChunkedUploadInitResponse = {
+  uploadId?: string;
+  chunkSize?: number;
   error?: string;
 };
 
@@ -53,11 +59,26 @@ type AdminListing = {
     for_rent?: boolean | null;
     rent_price?: number | null;
     rent_currency?: PropertyCurrency | null;
+    has_garage?: boolean | null;
+    has_patio?: boolean | null;
+    has_laundry?: boolean | null;
+    has_living?: boolean | null;
+    has_dining?: boolean | null;
+    has_kitchen?: boolean | null;
+    has_balcony?: boolean | null;
+    has_security?: boolean | null;
+    has_pool?: boolean | null;
     asespro_property_media?: AdminMedia[];
   } | null;
   asespro_listing_operations: Array<{ operation: PropertyOperation }>;
   asespro_listing_media: AdminMedia[];
 };
+
+const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024;
+const MAX_VIDEO_SIZE_LABEL = "500 MB";
+const RESUMABLE_VIDEO_CHUNK_BYTES = 6 * 1024 * 1024;
+const REQUIRED_VIDEO_MIME = "video/mp4";
+const REQUIRED_VIDEO_CODECS = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
 
 type PropertyOperationalStatus = "disponible" | "alquilado" | "vendido";
 
@@ -81,6 +102,15 @@ type AdminProperty = {
   for_rent?: boolean | null;
   rent_price?: number | null;
   rent_currency?: PropertyCurrency | null;
+  has_garage?: boolean | null;
+  has_patio?: boolean | null;
+  has_laundry?: boolean | null;
+  has_living?: boolean | null;
+  has_dining?: boolean | null;
+  has_kitchen?: boolean | null;
+  has_balcony?: boolean | null;
+  has_security?: boolean | null;
+  has_pool?: boolean | null;
   asespro_property_owners?: Array<{ owner_id: string }>;
   asespro_property_media?: AdminMedia[];
 };
@@ -139,6 +169,7 @@ type FormState = {
   forRent: boolean;
   rentPrice: string;
   rentCurrency: PropertyCurrency;
+  amenities: Record<PropertyAmenityKey, boolean>;
   operations: PropertyOperation[];
   status: PropertyStatus;
 };
@@ -167,12 +198,37 @@ type PropertyFormState = {
   forRent: boolean;
   rentPrice: string;
   rentCurrency: PropertyCurrency;
+  amenities: Record<PropertyAmenityKey, boolean>;
 };
 
 type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
 type DrawerMode = "listing" | "owner" | "property" | "publication" | null;
 type ListingFilter = "todos" | PropertyStatus;
 type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
+
+const EMPTY_AMENITIES: Record<PropertyAmenityKey, boolean> = {
+  garage: false,
+  patio: false,
+  laundry: false,
+  living: false,
+  dining: false,
+  kitchen: false,
+  balcony: false,
+  security: false,
+  pool: false,
+};
+
+const PROPERTY_AMENITIES: Array<{ key: PropertyAmenityKey; dbKey: keyof AdminProperty; label: string }> = [
+  { key: "garage", dbKey: "has_garage", label: "Garaje" },
+  { key: "patio", dbKey: "has_patio", label: "Patio / jardín" },
+  { key: "laundry", dbKey: "has_laundry", label: "Lavadero" },
+  { key: "living", dbKey: "has_living", label: "Living / estar" },
+  { key: "dining", dbKey: "has_dining", label: "Comedor" },
+  { key: "kitchen", dbKey: "has_kitchen", label: "Cocina" },
+  { key: "balcony", dbKey: "has_balcony", label: "Balcón" },
+  { key: "security", dbKey: "has_security", label: "Seguridad" },
+  { key: "pool", dbKey: "has_pool", label: "Pileta" },
+];
 
 const EMPTY_LISTING_FORM: FormState = {
   id: null,
@@ -204,6 +260,7 @@ const EMPTY_LISTING_FORM: FormState = {
   forRent: false,
   rentPrice: "",
   rentCurrency: "UYU",
+  amenities: { ...EMPTY_AMENITIES },
   operations: ["alquiler"],
   status: "activo",
 };
@@ -232,6 +289,7 @@ const EMPTY_PROPERTY_FORM: PropertyFormState = {
   forRent: false,
   rentPrice: "",
   rentCurrency: "UYU",
+  amenities: { ...EMPTY_AMENITIES },
 };
 
 const NAV_ITEMS: Array<{ id: PanelTab; label: string; hint: string }> = [
@@ -246,7 +304,7 @@ const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: 
   resumen: {
     eyebrow: "Vista general",
     title: "Dashboard",
-    description: "Lectura rapida de la salud de la web, stock, propietarios y alertas de publicacion.",
+    description: "Lectura rápida de la salud de la web, stock, propietarios y alertas de publicación.",
   },
   publicaciones: {
     eyebrow: "Web publica",
@@ -256,15 +314,15 @@ const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: 
   inmuebles: {
     eyebrow: "Inventario interno",
     title: "Inmuebles",
-    description: "Ficha madre: direccion, datos tecnicos, propietario, imagenes y video.",
+    description: "Ficha madre: dirección, datos técnicos, propietario, imágenes y video.",
   },
   propietarios: {
-    eyebrow: "Relacion comercial",
+    eyebrow: "Relación comercial",
     title: "Propietarios",
-    description: "Administra fichas de contacto, notas y datos utiles de cada propietario.",
+    description: "Administra fichas de contacto, notas y datos útiles de cada propietario.",
   },
   alquileres: {
-    eyebrow: "Gestion mensual",
+    eyebrow: "Gestión mensual",
     title: "Alquileres activos",
     description: "Seguimiento de contratos vigentes, montos y fechas clave.",
   },
@@ -321,6 +379,24 @@ function buildAddress(form: FormState): string {
   return [streetLine, form.city, form.department, form.country].filter(Boolean).join(", ");
 }
 
+function getAmenityFormValues(property?: AdminProperty | AdminListing["asespro_properties"] | null): Record<PropertyAmenityKey, boolean> {
+  const source = (property ?? {}) as Record<string, unknown>;
+  return PROPERTY_AMENITIES.reduce<Record<PropertyAmenityKey, boolean>>(
+    (current, item) => ({
+      ...current,
+      [item.key]: source[item.dbKey] === true,
+    }),
+    { ...EMPTY_AMENITIES },
+  );
+}
+
+function getAmenityPayload(amenities: Record<PropertyAmenityKey, boolean>): Record<string, boolean> {
+  return PROPERTY_AMENITIES.reduce<Record<string, boolean>>((current, item) => {
+    current[item.key] = amenities[item.key] === true;
+    return current;
+  }, {});
+}
+
 const PANEL_TABS: PanelTab[] = ["resumen", "inmuebles", "propietarios", "publicaciones", "alquileres"];
 
 function getAvailableOperations(form: Pick<FormState, "forRent" | "forSale">): PropertyOperation[] {
@@ -366,7 +442,8 @@ export function AdminPanel(): JSX.Element {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoLink, setVideoLink] = useState("");
+  const [fileInputResetKey, setFileInputResetKey] = useState(0);
+  const [videoUploadFeedback, setVideoUploadFeedback] = useState<string | null>(null);
   const [mediaUploadProgress, setMediaUploadProgress] = useState<MediaUploadProgress | null>(null);
   const [query, setQuery] = useState("");
   const [listingFilter, setListingFilter] = useState<ListingFilter>("todos");
@@ -417,7 +494,7 @@ export function AdminPanel(): JSX.Element {
         setSupabasePublicUrl(config.url ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
         setSupabase(client);
       })
-      .catch(() => setMessage("No se pudo cargar la configuracion de Supabase."));
+      .catch(() => setMessage("No se pudo cargar la configuración de Supabase."));
   }, []);
 
   useEffect(() => {
@@ -476,7 +553,7 @@ export function AdminPanel(): JSX.Element {
   async function login(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!supabase) {
-      setMessage("Supabase publico no esta configurado.");
+      setMessage("Supabase público no está configurado.");
       return;
     }
 
@@ -485,7 +562,7 @@ export function AdminPanel(): JSX.Element {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error || !data.session) {
-      setMessage(error?.message ?? "No se pudo iniciar sesion.");
+      setMessage(error?.message ?? "No se pudo iniciar sesión.");
       return;
     }
     setToken(data.session.access_token);
@@ -557,7 +634,7 @@ export function AdminPanel(): JSX.Element {
     setWizardStep(step);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoLink("");
+    setVideoUploadFeedback(null);
     setMediaUploadProgress(null);
     setDrawerMode("listing");
     setActiveTab(tab);
@@ -617,6 +694,7 @@ export function AdminPanel(): JSX.Element {
         forRent: property.for_rent === true,
         rentPrice: property.rent_price?.toString() ?? "",
         rentCurrency: property.rent_currency ?? "UYU",
+        amenities: getAmenityFormValues(property),
       }),
     );
   }
@@ -654,12 +732,13 @@ export function AdminPanel(): JSX.Element {
       forRent: listing.asespro_properties?.for_rent === true || operations.includes("alquiler"),
       rentPrice: listing.asespro_properties?.rent_price?.toString() ?? (operations.includes("alquiler") ? listing.price_amount?.toString() ?? "" : ""),
       rentCurrency: listing.asespro_properties?.rent_currency ?? (operations.includes("alquiler") ? listing.price_currency ?? "UYU" : "UYU"),
+      amenities: getAmenityFormValues(listing.asespro_properties),
       operations: operations.length > 0 ? operations : ["alquiler"],
       status: listing.status,
     });
     setDrawerMode("publication");
     setActiveTab("publicaciones");
-    setMessage("Editando publicacion existente.");
+    setMessage("Editando publicación existente.");
   }
 
   function editOwner(owner: AdminOwner): void {
@@ -678,7 +757,7 @@ export function AdminPanel(): JSX.Element {
   function editProperty(property: AdminProperty): void {
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoLink("");
+    setVideoUploadFeedback(null);
     setMediaUploadProgress(null);
     const nextForm = {
       id: property.id,
@@ -696,11 +775,10 @@ export function AdminPanel(): JSX.Element {
       forRent: property.for_rent === true,
       rentPrice: property.rent_price?.toString() ?? "",
       rentCurrency: property.rent_currency ?? "UYU",
+      amenities: getAmenityFormValues(property),
     };
     setPropertyForm(nextForm);
     setPropertyFormBaseline(nextForm);
-    const currentVideo = (property.asespro_property_media ?? []).find((item) => item.media_type === "video" && item.public_url)?.public_url ?? "";
-    setVideoLink(currentVideo);
     setDrawerMode("property");
     setActiveTab("inmuebles");
     setMessage("Editando inmueble.");
@@ -771,6 +849,7 @@ export function AdminPanel(): JSX.Element {
       forRent: listingForm.forRent,
       rentPrice: listingForm.rentPrice,
       rentCurrency: listingForm.rentCurrency,
+      amenities: getAmenityPayload(listingForm.amenities),
       operations: listingForm.operations,
       status: listingForm.status,
     };
@@ -795,18 +874,20 @@ export function AdminPanel(): JSX.Element {
     } catch (error) {
       setBusy(false);
       setMediaUploadProgress(null);
-      setMessage(error instanceof Error ? error.message : "La publicacion se guardo, pero fallo la carga de media.");
+      setMessage(error instanceof Error ? error.message : "La publicación se guardó, pero falló la carga de media.");
       return;
     }
     setListingForm(EMPTY_LISTING_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoLink("");
+    setVideoFile(null);
+    setVideoUploadFeedback(null);
+    setFileInputResetKey((key) => key + 1);
     setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
-    setMessage("Publicacion guardada.");
+    setMessage("Publicación guardada.");
   }
 
   async function saveOwner(event: React.FormEvent<HTMLFormElement>): Promise<void> {
@@ -858,7 +939,7 @@ export function AdminPanel(): JSX.Element {
     const payload = (await response.json()) as { error?: string };
     if (!response.ok) {
       setBusy(false);
-      setMessage(payload.error ?? "No se pudo guardar la publicacion.");
+      setMessage(payload.error ?? "No se pudo guardar la publicación.");
       return;
     }
 
@@ -866,7 +947,7 @@ export function AdminPanel(): JSX.Element {
     setDrawerMode(null);
     await loadOverview(token);
     setBusy(false);
-    setMessage("Publicacion actualizada.");
+    setMessage("Publicación actualizada.");
   }
 
   async function saveProperty(event: React.FormEvent<HTMLFormElement>): Promise<void> {
@@ -903,7 +984,6 @@ export function AdminPanel(): JSX.Element {
     setPropertyFormBaseline(EMPTY_PROPERTY_FORM);
     setPhotoFiles([]);
     setCoverPhotoIndex(0);
-    setVideoLink("");
     setMediaUploadProgress(null);
     setDrawerMode(null);
     await loadOverview(token);
@@ -1047,129 +1127,350 @@ export function AdminPanel(): JSX.Element {
     }
   }
 
-  async function uploadPropertyVideo(propertyId: string): Promise<void> {
-    if (!token || !propertyId || !videoFile || !supabase || !supabasePublicUrl) return;
-    const startData = new FormData();
-    startData.set("intent", "signedUpload");
-    startData.set("mediaType", "video");
-    startData.set("fileName", videoFile.name);
-    startData.set("replaceGroup", "true");
-
-    const signedResponse = await fetch(`/api/admin/properties/${propertyId}/media`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: startData,
-    });
-    const signedPayload = (await signedResponse.json().catch(() => null)) as { error?: string; path?: string; token?: string } | null;
-    if (!signedResponse.ok || !signedPayload?.path || !signedPayload?.token) {
-      throw new Error(signedPayload?.error ?? "No se pudo iniciar la carga de video.");
-    }
-
-    await uploadSignedVideoWithProgress({
-      baseUrl: supabasePublicUrl,
-      bucket: "asespro-media",
-      path: signedPayload.path,
-      token: signedPayload.token,
-      file: videoFile,
-      onProgress: (percent) => setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent }),
-    });
-
-    setMediaUploadProgress({ label: "Registrando video en el inmueble...", percent: 99 });
-    const registerData = new FormData();
-    registerData.set("intent", "registerUploaded");
-    registerData.set("mediaType", "video");
-    registerData.set("replaceGroup", "true");
-    registerData.set("storagePath", signedPayload.path);
-    registerData.set("isCover", "false");
-
-    const registerResponse = await fetch(`/api/admin/properties/${propertyId}/media`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: registerData,
-    });
-    const registerPayload = (await registerResponse.json().catch(() => null)) as MediaUploadResponse | null;
-    if (!registerResponse.ok || registerPayload?.media?.media_type !== "video") {
-      throw new Error(registerPayload?.error ?? `El video ${videoFile.name} no se pudo registrar en la ficha.`);
-    }
-    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 100 });
+  function applyUploadedPropertyVideo(propertyId: string, media: AdminMedia): void {
+    const replaceVideo = (items: AdminMedia[] | undefined): AdminMedia[] => [
+      ...(items ?? []).filter((item) => item.media_type !== "video"),
+      media,
+    ];
+    setProperties((current) =>
+      current.map((property) =>
+        property.id === propertyId
+          ? { ...property, asespro_property_media: replaceVideo(property.asespro_property_media) }
+          : property,
+      ),
+    );
+    setListings((current) =>
+      current.map((listing) =>
+        listing.property_id === propertyId && listing.asespro_properties
+          ? {
+              ...listing,
+              asespro_properties: {
+                ...listing.asespro_properties,
+                asespro_property_media: replaceVideo(listing.asespro_properties.asespro_property_media),
+              },
+            }
+          : listing,
+      ),
+    );
   }
 
-  function uploadSignedVideoWithProgress({
-    baseUrl,
-    bucket,
-    path,
-    token: signedToken,
-    file,
-    onProgress,
+  async function uploadPropertyVideo(propertyId: string): Promise<AdminMedia | null> {
+    if (!token || !propertyId || !videoFile) return null;
+    await validateVideoForUpload(videoFile);
+    const payload = await uploadChunkedPropertyVideo(propertyId, videoFile, token);
+    if (payload.media?.media_type !== "video") {
+      throw new Error(payload.error ?? `El video ${videoFile.name} no se pudo registrar en la ficha.`);
+    }
+    applyUploadedPropertyVideo(propertyId, payload.media);
+    setMediaUploadProgress({ label: `Subiendo video ${videoFile.name}`, percent: 100 });
+    setMessage("Video cargado y registrado correctamente.");
+    return payload.media;
+  }
+
+  function validateVideoForUpload(file: File): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const lowerName = file.name.toLowerCase();
+      if (!lowerName.endsWith(".mp4") || (file.type && file.type !== REQUIRED_VIDEO_MIME)) {
+        reject(new Error("El video debe ser un archivo MP4. Formato esperado: 9:16 en MP4 H.264/AAC."));
+        return;
+      }
+
+      if (file.size > MAX_VIDEO_SIZE_BYTES) {
+        reject(new Error(`El video supera el limite de ${MAX_VIDEO_SIZE_LABEL}.`));
+        return;
+      }
+
+      const probe = document.createElement("video");
+      const canPlayRequiredMp4 = probe.canPlayType(REQUIRED_VIDEO_CODECS);
+      if (!canPlayRequiredMp4) {
+        reject(new Error("Este navegador no puede validar/reproducir MP4 H.264/AAC. Prueba desde Chrome o Edge actualizado."));
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      const cleanup = () => {
+        probe.removeAttribute("src");
+        URL.revokeObjectURL(objectUrl);
+      };
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error("No se pudo validar el video. Verifica que sea MP4 H.264/AAC y vuelve a intentar."));
+      }, 15000);
+
+      probe.preload = "metadata";
+      probe.muted = true;
+      probe.playsInline = true;
+      probe.onloadedmetadata = () => {
+        window.clearTimeout(timeout);
+        const ratio = probe.videoWidth > 0 && probe.videoHeight > 0 ? probe.videoWidth / probe.videoHeight : 0;
+        cleanup();
+
+        if (!probe.videoWidth || !probe.videoHeight) {
+          reject(new Error("No se pudieron leer las dimensiones del video."));
+          return;
+        }
+
+        if (ratio < 0.48 || ratio > 0.64) {
+          reject(new Error(`El video debe estar en formato vertical 9:16. Detectado: ${probe.videoWidth}x${probe.videoHeight}.`));
+          return;
+        }
+
+        resolve();
+      };
+      probe.onerror = () => {
+        window.clearTimeout(timeout);
+        cleanup();
+        reject(new Error("El video no es compatible para web. Usa MP4 con video H.264 y audio AAC."));
+      };
+      probe.src = objectUrl;
+    });
+  }
+
+  async function uploadChunkedPropertyVideo(propertyId: string, file: File, accessToken: string): Promise<MediaUploadResponse> {
+    const endpoint = `/api/admin/properties/${propertyId}/media`;
+    const initData = new FormData();
+    initData.set("intent", "chunkedUploadInit");
+    initData.set("mediaType", "video");
+    initData.set("fileName", file.name);
+    initData.set("fileSize", String(file.size));
+    initData.set("contentType", file.type || REQUIRED_VIDEO_MIME);
+
+    setMediaUploadProgress({ label: "Preparando carga de video...", percent: 1 });
+    const initResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: initData,
+    });
+    const initText = await initResponse.text();
+    const initPayload = ((): ChunkedUploadInitResponse | null => {
+      try {
+        return initText ? (JSON.parse(initText) as ChunkedUploadInitResponse) : null;
+      } catch {
+        return null;
+      }
+    })();
+    if (!initResponse.ok || !initPayload?.uploadId) {
+      throw new Error(initPayload?.error ?? `No se pudo preparar la carga del video (HTTP ${initResponse.status}).`);
+    }
+
+    const chunkSize = initPayload.chunkSize && initPayload.chunkSize > 0 ? initPayload.chunkSize : RESUMABLE_VIDEO_CHUNK_BYTES;
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    for (let index = 0; index < totalChunks; index += 1) {
+      const start = index * chunkSize;
+      const end = Math.min(file.size, start + chunkSize);
+      await uploadVideoChunk({
+        endpoint,
+        accessToken,
+        uploadId: initPayload.uploadId,
+        chunk: file.slice(start, end),
+        chunkIndex: index,
+        totalChunks,
+        fileName: file.name,
+        fileSize: file.size,
+        contentType: file.type || REQUIRED_VIDEO_MIME,
+      });
+    }
+
+    setMediaUploadProgress({ label: "Registrando video en la ficha...", percent: 99 });
+    const completeData = new FormData();
+    completeData.set("intent", "chunkedUploadComplete");
+    completeData.set("mediaType", "video");
+    completeData.set("uploadId", initPayload.uploadId);
+    completeData.set("fileName", file.name);
+    completeData.set("fileSize", String(file.size));
+    completeData.set("contentType", file.type || REQUIRED_VIDEO_MIME);
+    completeData.set("totalChunks", String(totalChunks));
+    completeData.set("replaceGroup", "true");
+
+    const completeResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: completeData,
+    });
+    const completeText = await completeResponse.text();
+    const completePayload = ((): MediaUploadResponse | null => {
+      try {
+        return completeText ? (JSON.parse(completeText) as MediaUploadResponse) : null;
+      } catch {
+        return null;
+      }
+    })();
+    if (!completeResponse.ok || completePayload?.media?.media_type !== "video") {
+      throw new Error(completePayload?.error ?? `El video no se pudo finalizar (HTTP ${completeResponse.status}).`);
+    }
+    return completePayload;
+  }
+
+  function uploadVideoChunk({
+    endpoint,
+    accessToken,
+    uploadId,
+    chunk,
+    chunkIndex,
+    totalChunks,
+    fileName,
+    fileSize,
+    contentType,
   }: {
-    baseUrl: string;
-    bucket: string;
-    path: string;
-    token: string;
-    file: File;
-    onProgress: (percent: number) => void;
+    endpoint: string;
+    accessToken: string;
+    uploadId: string;
+    chunk: Blob;
+    chunkIndex: number;
+    totalChunks: number;
+    fileName: string;
+    fileSize: number;
+    contentType: string;
   }): Promise<void> {
     return new Promise((resolve, reject) => {
-      const encodedPath = path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
-      const endpoint = `${baseUrl.replace(/\/$/, "")}/storage/v1/object/upload/sign/${bucket}/${encodedPath}?token=${encodeURIComponent(signedToken)}`;
-      const request = new XMLHttpRequest();
-      request.open("PUT", endpoint, true);
-      request.timeout = 1000 * 60 * 30;
-      request.setRequestHeader("x-upsert", "true");
       const body = new FormData();
-      body.append("cacheControl", "3600");
-      body.append("", file);
+      body.set("intent", "chunkedUploadPart");
+      body.set("mediaType", "video");
+      body.set("uploadId", uploadId);
+      body.set("chunkIndex", String(chunkIndex));
+      body.set("totalChunks", String(totalChunks));
+      body.set("fileName", fileName);
+      body.set("fileSize", String(fileSize));
+      body.set("contentType", contentType);
+      body.set("chunk", chunk, `${fileName}.part-${chunkIndex}`);
 
+      const request = new XMLHttpRequest();
+      request.open("POST", endpoint, true);
+      request.timeout = 1000 * 60 * 10;
+      request.setRequestHeader("Authorization", `Bearer ${accessToken}`);
       request.upload.onprogress = (event) => {
         if (!event.lengthComputable) return;
-        const percent = Math.max(1, Math.min(95, Math.round((event.loaded / event.total) * 95)));
-        onProgress(percent);
+        const loaded = chunkIndex + event.loaded / event.total;
+        const percent = Math.max(1, Math.min(97, Math.round((loaded / totalChunks) * 97)));
+        setMediaUploadProgress({ label: `Subiendo video ${chunkIndex + 1} de ${totalChunks}`, percent });
       };
-
       request.onload = () => {
         if (request.status >= 200 && request.status < 300) {
           resolve();
           return;
         }
-        reject(new Error(request.responseText || `No se pudo subir el video (${request.status}).`));
+        let errorMessage = `No se pudo subir la parte ${chunkIndex + 1} del video (${request.status}).`;
+        try {
+          const payload = JSON.parse(request.responseText) as { error?: string };
+          if (payload.error) errorMessage = payload.error;
+        } catch {
+          if (request.responseText) errorMessage = request.responseText;
+        }
+        reject(new Error(errorMessage));
       };
-
-      request.onerror = () => reject(new Error("Error de red al subir el video a Storage."));
-      request.ontimeout = () => reject(new Error("La carga del video excedio el tiempo limite."));
+      request.onerror = () => reject(new Error(`Error de red al subir la parte ${chunkIndex + 1} del video.`));
+      request.ontimeout = () => reject(new Error(`La parte ${chunkIndex + 1} del video excedio el tiempo limite.`));
       request.send(body);
     });
   }
 
-  async function uploadSelectedPropertyVideo(): Promise<void> {
-    if (!token || !propertyForm.id || !videoLink.trim()) return;
-    setBusy(true);
-    setMessage(null);
-    setMediaUploadProgress(null);
+  function getSupabaseResumableEndpoint(): string {
+    if (!supabasePublicUrl) {
+      throw new Error("No se pudo resolver el endpoint de Storage para subir el video.");
+    }
 
+    const trimmed = supabasePublicUrl.replace(/\/+$/, "");
     try {
-      const data = new FormData();
-      data.set("intent", "registerExternalUrl");
-      data.set("mediaType", "video");
-      data.set("replaceGroup", "true");
-      data.set("mediaUrl", videoLink.trim());
-      data.set("isCover", "false");
-      const response = await fetch(`/api/admin/properties/${propertyForm.id}/media`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-      if (!response.ok) {
-        throw new Error(payload?.error ?? "No se pudo guardar el link de video.");
+      const url = new URL(trimmed);
+      if (url.hostname.endsWith(".supabase.co")) {
+        url.hostname = url.hostname.replace(/\.supabase\.co$/, ".storage.supabase.co");
       }
-      setMediaUploadProgress(null);
-      await loadOverview(token);
-      setMessage("Link de video guardado en el inmueble.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo guardar el link de video.");
-      setMediaUploadProgress(null);
-    } finally {
-      setBusy(false);
+      url.pathname = "/storage/v1/upload/resumable";
+      return url.toString();
+    } catch {
+      return `${trimmed}/storage/v1/upload/resumable`;
+    }
+  }
+
+  function encodeTusMetadataValue(value: string): string {
+    try {
+      return btoa(unescape(encodeURIComponent(value)));
+    } catch {
+      return btoa(value);
+    }
+  }
+
+  function buildTusMetadata(storagePath: string): string {
+    return [
+      `bucketName ${encodeTusMetadataValue("asespro-media")}`,
+      `objectName ${encodeTusMetadataValue(storagePath)}`,
+      `contentType ${encodeTusMetadataValue(REQUIRED_VIDEO_MIME)}`,
+      `cacheControl ${encodeTusMetadataValue("3600")}`,
+    ].join(",");
+  }
+
+  async function uploadPropertyVideoResumable({
+    file,
+    accessToken,
+    storagePath,
+    signedToken,
+  }: {
+    file: File;
+    accessToken: string;
+    storagePath: string;
+    signedToken: string;
+  }): Promise<void> {
+    const endpoint = getSupabaseResumableEndpoint();
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+    const authToken = anonKey || accessToken;
+    const firstChunk = file.slice(0, Math.min(file.size, RESUMABLE_VIDEO_CHUNK_BYTES));
+    const createHeaders = new Headers({
+      authorization: `Bearer ${authToken}`,
+      "x-upsert": "true",
+      "x-signature": signedToken,
+      "tus-resumable": "1.0.0",
+      "upload-length": String(file.size),
+      "upload-metadata": buildTusMetadata(storagePath),
+      "content-type": "application/offset+octet-stream",
+    });
+    if (anonKey) createHeaders.set("apikey", anonKey);
+
+    const createResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: createHeaders,
+      body: firstChunk,
+    });
+    if (!createResponse.ok) {
+      const detail = await createResponse.text();
+      throw new Error(`No se pudo iniciar la carga resumable (${createResponse.status}). ${detail || "Sin detalle."}`);
+    }
+
+    const locationHeader = createResponse.headers.get("location") ?? createResponse.headers.get("Location");
+    if (!locationHeader) {
+      throw new Error("Storage no devolvio una URL de carga resumable.");
+    }
+    const uploadUrl = new URL(locationHeader, endpoint).toString();
+
+    const initialOffset = Number(createResponse.headers.get("upload-offset") ?? createResponse.headers.get("Upload-Offset"));
+    let offset = Number.isFinite(initialOffset) && initialOffset > 0 ? initialOffset : firstChunk.size;
+    const initialPercent = file.size > 0 ? Math.max(1, Math.min(97, Math.round((offset / file.size) * 97))) : 1;
+    setMediaUploadProgress({ label: "Subiendo video...", percent: initialPercent });
+
+    while (offset < file.size) {
+      const chunk = file.slice(offset, Math.min(file.size, offset + RESUMABLE_VIDEO_CHUNK_BYTES));
+      const patchHeaders = new Headers({
+        authorization: `Bearer ${authToken}`,
+        "x-signature": signedToken,
+        "tus-resumable": "1.0.0",
+        "upload-offset": String(offset),
+        "content-type": "application/offset+octet-stream",
+      });
+      if (anonKey) patchHeaders.set("apikey", anonKey);
+
+      const patchResponse = await fetch(uploadUrl, {
+        method: "PATCH",
+        headers: patchHeaders,
+        body: chunk,
+      });
+      if (!patchResponse.ok) {
+        const detail = await patchResponse.text();
+        throw new Error(`Storage rechazó una parte del video (${patchResponse.status}). ${detail || "Sin detalle."}`);
+      }
+
+      const headerOffset = Number(patchResponse.headers.get("upload-offset") ?? patchResponse.headers.get("Upload-Offset"));
+      offset = Number.isFinite(headerOffset) && headerOffset > offset ? headerOffset : offset + chunk.size;
+      const percent = file.size > 0 ? Math.max(1, Math.min(97, Math.round((offset / file.size) * 97))) : 1;
+      setMediaUploadProgress({ label: "Subiendo video...", percent });
     }
   }
 
@@ -1185,10 +1486,37 @@ export function AdminPanel(): JSX.Element {
       setCoverPhotoIndex(0);
       setMediaUploadProgress(null);
       await loadOverview(token);
-      setMessage("Imagenes cargadas y agregadas al inmueble.");
+      setMessage("Imágenes cargadas y agregadas al inmueble.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudieron cargar las imagenes.");
+      setMessage(error instanceof Error ? error.message : "No se pudieron cargar las imágenes.");
       setMediaUploadProgress(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function uploadSelectedPropertyVideoFile(): Promise<void> {
+    if (!token || !propertyForm.id || !videoFile) return;
+    setBusy(true);
+    setMessage(null);
+    setVideoUploadFeedback("Subiendo video...");
+    setMediaUploadProgress(null);
+
+    try {
+      await uploadPropertyVideo(propertyForm.id);
+      setVideoFile(null);
+      setVideoUploadFeedback("Video cargado y registrado correctamente.");
+      setFileInputResetKey((key) => key + 1);
+      setMediaUploadProgress(null);
+      await loadOverview(token);
+      setMessage("Video cargado y registrado correctamente.");
+    } catch (error) {
+      const detail = error instanceof Error && error.message.trim().length > 0 ? error.message : "No se pudo cargar el video.";
+      setMessage(detail);
+      setVideoUploadFeedback(`Error al cargar video: ${detail}`);
+      setVideoFile(null);
+      setMediaUploadProgress({ label: `Error al cargar video: ${detail}`, percent: 1 });
+      setFileInputResetKey((key) => key + 1);
     } finally {
       setBusy(false);
     }
@@ -1232,7 +1560,7 @@ export function AdminPanel(): JSX.Element {
 
       request.onerror = () => reject(new Error("No se pudo conectar con el servidor durante la carga."));
       request.onabort = () => reject(new Error("La carga fue cancelada."));
-      request.ontimeout = () => reject(new Error("La carga demoro demasiado. Intenta con un video mas liviano o reintenta."));
+      request.ontimeout = () => reject(new Error("La carga demoró demasiado. Intenta con un video más liviano o reintenta."));
       request.timeout = isVideoUpload ? 30 * 60 * 1000 : 10 * 60 * 1000;
       request.open("POST", url);
       request.setRequestHeader("Authorization", `Bearer ${accessToken}`);
@@ -1257,7 +1585,7 @@ export function AdminPanel(): JSX.Element {
               <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
             </label>
             <label>
-              Contrasena
+              Contraseña
               <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
             </label>
             {message ? <p className={styles.alert}>{message}</p> : null}
@@ -1284,7 +1612,7 @@ export function AdminPanel(): JSX.Element {
       <button
         type="button"
         className={`${styles.mobileScrim} ${mobileMenuOpen ? styles.mobileScrimOpen : ""}`}
-        aria-label="Cerrar menu"
+        aria-label="Cerrar menú"
         onClick={() => setMobileMenuOpen(false)}
       />
       <aside className={`${styles.sidebar} ${mobileMenuOpen ? styles.sidebarOpen : ""}`}>
@@ -1294,7 +1622,7 @@ export function AdminPanel(): JSX.Element {
             <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b" alt="ASESPRO" className={styles.logoMobile} />
           </div>
           <div className={styles.accountCard}>
-            <span>Sesion activa</span>
+            <span>Sesión activa</span>
             <strong>{sessionEmail || "Admin"}</strong>
           </div>
         </div>
@@ -1320,7 +1648,7 @@ export function AdminPanel(): JSX.Element {
           <button
             type="button"
             className={styles.hamburgerButton}
-            aria-label={mobileMenuOpen ? "Cerrar menu" : "Abrir menu"}
+            aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen((open) => !open)}
           >
@@ -1365,6 +1693,7 @@ export function AdminPanel(): JSX.Element {
               photoFiles={photoFiles}
               mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
+              fileInputResetKey={fileInputResetKey}
               onPhotosChange={(files) => {
                 setPhotoFiles(files);
                 setCoverPhotoIndex(0);
@@ -1372,8 +1701,24 @@ export function AdminPanel(): JSX.Element {
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
               onVideoChange={(file) => {
-                setVideoFile(file);
                 setMediaUploadProgress(null);
+                setMessage(null);
+                setVideoUploadFeedback(null);
+                if (!file) {
+                  setVideoFile(null);
+                  return;
+                }
+                void validateVideoForUpload(file)
+                  .then(() => {
+                    setVideoFile(file);
+                    setVideoUploadFeedback(`Video listo para subir: ${file.name} (${Math.round(file.size / 1024 / 1024)} MB).`);
+                    setMessage(`Video listo para subir: ${file.name} (${Math.round(file.size / 1024 / 1024)} MB).`);
+                  })
+                  .catch((error) => {
+                    setVideoFile(null);
+                    setVideoUploadFeedback(error instanceof Error ? error.message : "El video seleccionado no es compatible.");
+                    setMessage(error instanceof Error ? error.message : "El video seleccionado no es compatible.");
+                  });
               }}
             />
           </Modal>
@@ -1404,9 +1749,11 @@ export function AdminPanel(): JSX.Element {
               form={propertyForm}
               busy={busy}
               photoFiles={photoFiles}
+              videoFile={videoFile}
               mediaUploadProgress={mediaUploadProgress}
               coverPhotoIndex={coverPhotoIndex}
-              videoLink={videoLink}
+              fileInputResetKey={fileInputResetKey}
+              videoUploadFeedback={videoUploadFeedback}
               currentMedia={properties.find((property) => property.id === propertyForm.id)?.asespro_property_media ?? []}
               hasPendingChanges={propertyHasPendingChanges}
               onClose={() => setDrawerMode(null)}
@@ -1418,9 +1765,28 @@ export function AdminPanel(): JSX.Element {
                 setMediaUploadProgress(null);
               }}
               onCoverPhotoChange={setCoverPhotoIndex}
-              onVideoLinkChange={setVideoLink}
+              onVideoFileChange={(file) => {
+                setMediaUploadProgress(null);
+                setMessage(null);
+                setVideoUploadFeedback(null);
+                if (!file) {
+                  setVideoFile(null);
+                  return;
+                }
+                void validateVideoForUpload(file)
+                  .then(() => {
+                    setVideoFile(file);
+                    setVideoUploadFeedback(`Video listo para subir: ${file.name} (${Math.round(file.size / 1024 / 1024)} MB).`);
+                    setMessage(`Video listo para subir: ${file.name} (${Math.round(file.size / 1024 / 1024)} MB).`);
+                  })
+                  .catch((error) => {
+                    setVideoFile(null);
+                    setVideoUploadFeedback(error instanceof Error ? error.message : "El video seleccionado no es compatible.");
+                    setMessage(error instanceof Error ? error.message : "El video seleccionado no es compatible.");
+                  });
+              }}
               onUploadPhotos={() => void uploadSelectedPropertyPhotos()}
-              onAttachVideoLink={() => void uploadSelectedPropertyVideo()}
+              onUploadVideo={() => void uploadSelectedPropertyVideoFile()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
               onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
             />
@@ -1559,7 +1925,7 @@ function TabActions({
           Actualizar datos
         </button>
         <button type="button" className={styles.primaryButton} onClick={onNewListing}>
-          Crear publicacion
+          Crear publicación
         </button>
       </div>
     );
@@ -1639,12 +2005,12 @@ function Dashboard({
       <article className={styles.workCard}>
         <div className={styles.sectionHead}>
           <div>
-            <h3>Trabajo rapido</h3>
-            <p>Acciones frecuentes para mantener la web al dia.</p>
+            <h3>Trabajo rápido</h3>
+            <p>Acciones frecuentes para mantener la web al día.</p>
           </div>
         </div>
         <div className={styles.quickActions}>
-          <button type="button" onClick={onNewListing}>Crear publicacion</button>
+          <button type="button" onClick={onNewListing}>Crear publicación</button>
           <button type="button" onClick={onNewOwner}>Agregar propietario</button>
           <button type="button" onClick={() => onSelectTab("inmuebles")}>Revisar stock</button>
         </div>
@@ -1685,12 +2051,38 @@ function Dashboard({
                 <span>{listingHasMediaIssue(listing) ? "Falta foto/video" : "Falta precio"}</span>
               </div>
             ))}
-          {listings.length === 0 ? <p className={styles.empty}>Todavia no hay publicaciones. Crea la primera para activar la web.</p> : null}
-          {listings.length > 0 && mediaIssues.length === 0 ? <p className={styles.empty}>No hay alertas criticas de media.</p> : null}
+          {listings.length === 0 ? <p className={styles.empty}>Todavía no hay publicaciones. Crea la primera para activar la web.</p> : null}
+          {listings.length > 0 && mediaIssues.length === 0 ? <p className={styles.empty}>No hay alertas críticas de media.</p> : null}
         </div>
       </article>
       </section>
     </>
+  );
+}
+
+function AmenityPicker({
+  amenities,
+  onChange,
+}: {
+  amenities: Record<PropertyAmenityKey, boolean>;
+  onChange: (amenities: Record<PropertyAmenityKey, boolean>) => void;
+}): JSX.Element {
+  return (
+    <div className={styles.amenityPicker}>
+      <strong>Datos visibles en la ficha</strong>
+      <div>
+        {PROPERTY_AMENITIES.map((item) => (
+          <label key={item.key}>
+            <input
+              type="checkbox"
+              checked={amenities[item.key]}
+              onChange={(event) => onChange({ ...amenities, [item.key]: event.target.checked })}
+            />
+            {item.label}
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -1709,6 +2101,7 @@ function ListingDrawer({
   photoFiles,
   mediaUploadProgress,
   coverPhotoIndex,
+  fileInputResetKey,
   onPhotosChange,
   onCoverPhotoChange,
   onVideoChange,
@@ -1727,6 +2120,7 @@ function ListingDrawer({
   photoFiles: File[];
   mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
+  fileInputResetKey: number;
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
   onVideoChange: (file: File | null) => void;
@@ -1736,20 +2130,20 @@ function ListingDrawer({
   const availableOperations = getAvailableOperations(form);
 
   return (
-    <section className={styles.drawer} aria-label="Formulario de publicacion">
+    <section className={styles.drawer} aria-label="Formulario de publicación">
       <div className={styles.drawerHead}>
         <div>
-          <h3>{form.id ? "Editar publicacion" : "Alta de inmueble y publicacion"}</h3>
-          <p>El inmueble guarda la ficha y la media. La publicacion solo define como sale a la web.</p>
+          <h3>{form.id ? "Editar publicación" : "Alta de inmueble y publicación"}</h3>
+          <p>El inmueble guarda la ficha y la media. La publicación solo define cómo sale a la web.</p>
         </div>
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
       </div>
 
-      <div className={styles.stepper} aria-label="Pasos de creacion">
+      <div className={styles.stepper} aria-label="Pasos de creación">
         {[
           ["propietario", "1. Propietario"],
           ["inmueble", "2. Inmueble"],
-          ["publicacion", "3. Publicacion"],
+          ["publicacion", "3. Publicación"],
         ].map(([id, label]) => (
           <button key={id} type="button" className={step === id ? styles.stepActive : ""} onClick={() => onStepChange(id as ListingWizardStep)}>
             {label}
@@ -1776,7 +2170,7 @@ function ListingDrawer({
               <>
                 <div className={styles.twoCols}>
                   <label>Nombre completo<input value={form.newOwnerFullName} onChange={(event) => onChange({ ...form, newOwnerFullName: event.target.value })} required /></label>
-                  <label>Telefono<input value={form.newOwnerPhone} onChange={(event) => onChange({ ...form, newOwnerPhone: event.target.value })} /></label>
+                  <label>Teléfono<input value={form.newOwnerPhone} onChange={(event) => onChange({ ...form, newOwnerPhone: event.target.value })} /></label>
                 </div>
                 <label>Email<input type="email" value={form.newOwnerEmail} onChange={(event) => onChange({ ...form, newOwnerEmail: event.target.value })} /></label>
                 <label>Notas internas<textarea value={form.newOwnerNotes} onChange={(event) => onChange({ ...form, newOwnerNotes: event.target.value })} /></label>
@@ -1799,19 +2193,19 @@ function ListingDrawer({
               <label>Inmueble
                 <select value={form.propertyId} onChange={(event) => onSelectProperty(event.target.value)} required>
                   <option value="">Seleccionar inmueble</option>
-                  {properties.map((property) => <option key={property.id} value={property.id}>{property.title} - {property.location_text ?? "sin ubicacion"}</option>)}
+                  {properties.map((property) => <option key={property.id} value={property.id}>{property.title} - {property.location_text ?? "sin ubicación"}</option>)}
                 </select>
               </label>
             ) : null}
             <div className={styles.twoCols}>
               <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
-              <label>Pais<input value={form.country} readOnly /></label>
+              <label>País<input value={form.country} readOnly /></label>
             </div>
             {form.propertyMode === "new" ? (
               <>
                 <div className={styles.twoCols}>
                   <label>Calle<input value={form.street} onChange={(event) => onChange({ ...form, street: event.target.value })} required /></label>
-                  <label>Numero<input value={form.streetNumber} onChange={(event) => onChange({ ...form, streetNumber: event.target.value })} required /></label>
+                  <label>Número<input value={form.streetNumber} onChange={(event) => onChange({ ...form, streetNumber: event.target.value })} required /></label>
                 </div>
                 <div className={styles.twoCols}>
                   <label>Ciudad<select value={form.city} onChange={(event) => {
@@ -1822,13 +2216,14 @@ function ListingDrawer({
                 </div>
               </>
             ) : (
-              <label>Direccion<input value={form.locationText} readOnly /></label>
+              <label>Dirección<input value={form.locationText} readOnly /></label>
             )}
             <div className={styles.threeCols}>
               <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
-              <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
+              <label>Baños<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
               <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
             </div>
+            <AmenityPicker amenities={form.amenities} onChange={(amenities) => onChange({ ...form, amenities })} />
             <div className={styles.operations}>
               <label><input type="checkbox" checked={form.forRent} onChange={(event) => onChange(ensureOperationForProperty({ ...form, forRent: event.target.checked }))} /> Disponible para alquiler</label>
               <label><input type="checkbox" checked={form.forSale} onChange={(event) => onChange(ensureOperationForProperty({ ...form, forSale: event.target.checked }))} /> Disponible para venta</label>
@@ -1845,10 +2240,10 @@ function ListingDrawer({
                 <label>Moneda venta<input list="admin-currencies" value={form.saleCurrency} onChange={(event) => onChange({ ...form, saleCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /></label>
               </div>
             ) : null}
-            <label>Descripcion / ficha general<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+            <label>Descripción / ficha general<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
             <div className={styles.twoCols}>
-              <label>Imagenes del inmueble<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
-              <label>Video del inmueble<input type="file" accept="video/*" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
+              <label>Imágenes del inmueble<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
+              <label>Video del inmueble<input key={`listing-video-${fileInputResetKey}`} type="file" accept="video/mp4,.mp4" onChange={(event) => onVideoChange(event.target.files?.[0] ?? null)} /></label>
             </div>
             {photoFiles.length > 0 ? (
               <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
@@ -1858,15 +2253,15 @@ function ListingDrawer({
             {mediaUploadProgress ? <UploadProgress progress={mediaUploadProgress} /> : null}
             <div className={styles.formNav}>
               <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("propietario")}>Volver</button>
-              <button type="button" className={styles.primaryButton} disabled={!canContinueProperty} onClick={() => onStepChange("publicacion")}>Continuar a publicacion</button>
+              <button type="button" className={styles.primaryButton} disabled={!canContinueProperty} onClick={() => onStepChange("publicacion")}>Continuar a publicación</button>
             </div>
           </div>
         ) : null}
 
         {step === "publicacion" ? (
           <div className={styles.formSection}>
-          <h4>Publicacion</h4>
-          {availableOperations.length === 0 ? <p className={styles.empty}>Activa venta o alquiler en el inmueble para poder crear una publicacion.</p> : null}
+          <h4>Publicación</h4>
+          {availableOperations.length === 0 ? <p className={styles.empty}>Activa venta o alquiler en el inmueble para poder crear una publicación.</p> : null}
           <div className={styles.operations}>
             {availableOperations.map((operation) => (
               <label key={operation}><input type="radio" checked={form.operations[0] === operation} onChange={() => onToggleOperation(operation)} /> {operation === "alquiler" ? "Alquiler" : "Venta"}</label>
@@ -1878,7 +2273,7 @@ function ListingDrawer({
           </label>
           <div className={styles.formNav}>
             <button type="button" className={styles.secondaryLightButton} onClick={() => onStepChange("inmueble")}>Volver</button>
-            <button type="submit" className={styles.primaryButton} disabled={busy || availableOperations.length === 0}>{busy ? "Publicando..." : "Crear publicacion"}</button>
+            <button type="submit" className={styles.primaryButton} disabled={busy || availableOperations.length === 0}>{busy ? "Publicando..." : "Crear publicación"}</button>
           </div>
         </div>
         ) : null}
@@ -1905,10 +2300,10 @@ function PublicationDrawer({
 }): JSX.Element {
   const availableOperations = getPublicationOperations(form);
   return (
-    <section className={styles.drawer} aria-label="Ficha de publicacion">
+    <section className={styles.drawer} aria-label="Ficha de publicación">
       <div className={styles.drawerHead}>
         <div>
-          <h3>Editar publicacion</h3>
+          <h3>Editar publicación</h3>
           <p>Ficha comercial visible en la web. La ficha del inmueble se edita desde Inmuebles.</p>
         </div>
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
@@ -1927,7 +2322,7 @@ function PublicationDrawer({
           <input type="checkbox" checked={form.isFeatured} onChange={(event) => onChange({ ...form, isFeatured: event.target.checked })} />
           Destacar en home
         </label>
-        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicacion"}</button>
+        <button type="submit" className={styles.primaryButton} disabled={busy}>{busy ? "Guardando..." : "Guardar publicación"}</button>
       </form>
     </section>
   );
@@ -1951,14 +2346,14 @@ function OwnerDrawer({
       <div className={styles.drawerHead}>
         <div>
           <h3>{form.id ? "Editar propietario" : "Nuevo propietario"}</h3>
-          <p>Ficha interna para contacto, seguimiento y vinculacion con inmuebles.</p>
+          <p>Ficha interna para contacto, seguimiento y vinculación con inmuebles.</p>
         </div>
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
       </div>
       <form className={styles.formPanel} onSubmit={onSubmit}>
         <div className={styles.twoCols}>
           <label>Nombre completo<input value={form.fullName} onChange={(event) => onChange({ ...form, fullName: event.target.value })} required /></label>
-          <label>Telefono<input value={form.phone} onChange={(event) => onChange({ ...form, phone: event.target.value })} /></label>
+          <label>Teléfono<input value={form.phone} onChange={(event) => onChange({ ...form, phone: event.target.value })} /></label>
         </div>
         <label>Email<input type="email" value={form.email} onChange={(event) => onChange({ ...form, email: event.target.value })} /></label>
         <label>Notas<textarea value={form.notes} onChange={(event) => onChange({ ...form, notes: event.target.value })} /></label>
@@ -1972,9 +2367,11 @@ function PropertyDrawer({
   form,
   busy,
   photoFiles,
+  videoFile,
   mediaUploadProgress,
   coverPhotoIndex,
-  videoLink,
+  fileInputResetKey,
+  videoUploadFeedback,
   currentMedia,
   hasPendingChanges,
   onClose,
@@ -1982,18 +2379,20 @@ function PropertyDrawer({
   onChange,
   onPhotosChange,
   onCoverPhotoChange,
-  onVideoLinkChange,
+  onVideoFileChange,
   onUploadPhotos,
-  onAttachVideoLink,
+  onUploadVideo,
   onDeleteMedia,
   onReorderMedia,
 }: {
   form: PropertyFormState;
   busy: boolean;
   photoFiles: File[];
+  videoFile: File | null;
   mediaUploadProgress: MediaUploadProgress | null;
   coverPhotoIndex: number;
-  videoLink: string;
+  fileInputResetKey: number;
+  videoUploadFeedback: string | null;
   currentMedia: AdminMedia[];
   hasPendingChanges: boolean;
   onClose: () => void;
@@ -2001,9 +2400,9 @@ function PropertyDrawer({
   onChange: (form: PropertyFormState) => void;
   onPhotosChange: (files: File[]) => void;
   onCoverPhotoChange: (index: number) => void;
-  onVideoLinkChange: (value: string) => void;
+  onVideoFileChange: (file: File | null) => void;
   onUploadPhotos: () => void;
-  onAttachVideoLink: () => void;
+  onUploadVideo: () => void;
   onDeleteMedia: (mediaId: string) => void;
   onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
 }): JSX.Element {
@@ -2020,24 +2419,25 @@ function PropertyDrawer({
       <div className={styles.drawerHead}>
         <div>
           <h3>Editar inmueble</h3>
-          <p>Ficha interna del inmueble. El estado de publicacion se maneja en Publicaciones.</p>
+          <p>Ficha interna del inmueble. El estado de publicación se maneja en Publicaciones.</p>
         </div>
         <button type="button" className={styles.closeButton} aria-label="Cerrar" onClick={onClose}>x</button>
       </div>
       <form className={styles.formPanel} onSubmit={onSubmit}>
         <div className={styles.twoCols}>
-          <label>Titulo<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
+          <label>Título<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} required /></label>
           <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyOperationalStatus })}><option value="disponible">Disponible</option><option value="alquilado">Alquilado</option><option value="vendido">Vendido</option></select></label>
         </div>
         <div className={styles.twoCols}>
           <label>Tipo<select value={form.propertyType} onChange={(event) => onChange({ ...form, propertyType: event.target.value as PropertyType })}><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="terreno">Terreno</option></select></label>
-          <label>Direccion<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
+          <label>Dirección<input value={form.locationText} onChange={(event) => onChange({ ...form, locationText: event.target.value })} required /></label>
         </div>
         <div className={styles.threeCols}>
           <label>Dormitorios<input value={form.bedrooms} onChange={(event) => onChange({ ...form, bedrooms: event.target.value })} /></label>
-          <label>Banos<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
+          <label>Baños<input value={form.bathrooms} onChange={(event) => onChange({ ...form, bathrooms: event.target.value })} /></label>
           <label>m2<input value={form.areaM2} onChange={(event) => onChange({ ...form, areaM2: event.target.value })} /></label>
         </div>
+        <AmenityPicker amenities={form.amenities} onChange={(amenities) => onChange({ ...form, amenities })} />
         <div className={styles.operations}>
           <label><input type="checkbox" checked={form.forRent} onChange={(event) => onChange({ ...form, forRent: event.target.checked })} /> Disponible para alquiler</label>
           <label><input type="checkbox" checked={form.forSale} onChange={(event) => onChange({ ...form, forSale: event.target.checked })} /> Disponible para venta</label>
@@ -2054,7 +2454,7 @@ function PropertyDrawer({
             <label>Moneda venta<input list="admin-currencies" value={form.saleCurrency} onChange={(event) => onChange({ ...form, saleCurrency: event.target.value.toUpperCase() as PropertyCurrency })} /></label>
           </div>
         ) : null}
-        <label>Descripcion<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+        <label>Descripción<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
         <div className={styles.fileManager}>
           <div className={styles.fileManagerHead}>
             <strong>Archivos de la propiedad</strong>
@@ -2066,13 +2466,14 @@ function PropertyDrawer({
               <MediaSection title="Videos" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("video", orderedItems)} />
             </div>
           ) : (
-            <p className={styles.empty}>Este inmueble todavia no tiene archivos cargados.</p>
+            <p className={styles.empty}>Este inmueble todavía no tiene archivos cargados.</p>
           )}
         </div>
         <div className={styles.twoCols}>
-          <label>Nuevas imagenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
-          <label>Link de video<input type="url" placeholder="https://..." value={videoLink} onChange={(event) => onVideoLinkChange(event.target.value)} /></label>
+          <label>Nuevas imágenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
+          <label>Video MP4 vertical<input key={`property-video-${fileInputResetKey}`} type="file" accept="video/mp4,.mp4" onChange={(event) => onVideoFileChange(event.target.files?.[0] ?? null)} /></label>
         </div>
+        <p className={styles.empty}>Video permitido: MP4 vertical 9:16, H.264/AAC, hasta 500 MB.</p>
         {photoFiles.length > 0 ? (
           <>
             <label>Imagen principal<select value={coverPhotoIndex} onChange={(event) => onCoverPhotoChange(Number(event.target.value))}>
@@ -2080,26 +2481,27 @@ function PropertyDrawer({
             </select></label>
             <div className={styles.pendingVideoBox}>
               <div>
-                <strong>Imagenes seleccionadas</strong>
+                <strong>Imágenes seleccionadas</strong>
                 <span>{photoFiles.length} archivos listos para cargar</span>
               </div>
               <button type="button" className={styles.primaryButton} disabled={busy} onClick={onUploadPhotos}>
-                {busy ? "Cargando..." : "Cargar imagenes"}
+                {busy ? "Cargando..." : "Cargar imágenes"}
               </button>
             </div>
           </>
         ) : null}
-        {videoLink.trim() ? (
+        {videoFile ? (
           <div className={styles.pendingVideoBox}>
             <div>
-              <strong>Link de video listo</strong>
-              <span>{videoLink}</span>
+              <strong>Video seleccionado</strong>
+              <span>{videoFile.name} - {Math.round(videoFile.size / 1024 / 1024)} MB</span>
             </div>
-            <button type="button" className={styles.primaryButton} disabled={busy} onClick={onAttachVideoLink}>
-              {busy ? "Guardando..." : "Guardar link de video"}
+            <button type="button" className={styles.primaryButton} disabled={busy} onClick={onUploadVideo}>
+              {busy ? "Cargando..." : "Subir video"}
             </button>
           </div>
         ) : null}
+        {videoUploadFeedback ? <p className={styles.empty}>{videoUploadFeedback}</p> : null}
         {mediaUploadProgress ? <UploadProgress progress={mediaUploadProgress} /> : null}
         <div className={styles.formFooterActions}>
           <button type="button" className={styles.secondaryLightButton} disabled={busy} onClick={onClose}>Cerrar</button>
@@ -2191,7 +2593,7 @@ function ListingTable({
       <div className={styles.sectionHead}>
         <div>
           <h3>Publicaciones</h3>
-          <p>Controla que entra a la web, que queda pausado y que ya se cerro.</p>
+          <p>Controla qué entra a la web, qué queda pausado y qué ya se cerró.</p>
         </div>
         <span>{listings.length}</span>
       </div>
@@ -2204,7 +2606,7 @@ function ListingTable({
             <MediaPreview media={media} />
             <div className={styles.rowMain}>
               <strong>{listing.title}</strong>
-              <p>{listing.asespro_properties?.location_text ?? "Sin ubicacion"} - {operationLabel(listing.asespro_listing_operations)} - {formatMoney(listing.price_amount, listing.price_currency)}</p>
+              <p>{listing.asespro_properties?.location_text ?? "Sin ubicación"} - {operationLabel(listing.asespro_listing_operations)} - {formatMoney(listing.price_amount, listing.price_currency)}</p>
               <small>{photos} fotos - {hasVideo ? "con video" : "sin video"} - {listing.status}</small>
             </div>
             <div className={styles.rowActions}>
@@ -2247,7 +2649,7 @@ function PropertyTable({
       <div className={styles.sectionHead}>
         <div>
           <h3>Inmuebles</h3>
-          <p>Inventario fisico. El estado operativo no activa ni desactiva publicaciones.</p>
+          <p>Inventario físico. El estado operativo no activa ni desactiva publicaciones.</p>
         </div>
         <span>{properties.length}</span>
       </div>
@@ -2259,8 +2661,8 @@ function PropertyTable({
             <MediaPreview media={media} />
             <div className={styles.rowMain}>
               <strong>{property.title}</strong>
-              <p>{property.location_text ?? "Sin ubicacion"} - {property.property_type}</p>
-              <small>{property.bedrooms ?? "N/D"} dorm - {property.bathrooms ?? "N/D"} banos - {property.area_m2 ?? "N/D"} m2</small>
+              <p>{property.location_text ?? "Sin ubicación"} - {property.property_type}</p>
+              <small>{property.bedrooms ?? "N/D"} dorm - {property.bathrooms ?? "N/D"} baños - {property.area_m2 ?? "N/D"} m2</small>
             </div>
             <div className={styles.rowActions}>
               <span className={property.status === "disponible" ? styles.statusActive : styles.statusMuted}>{property.status}</span>
@@ -2271,7 +2673,7 @@ function PropertyTable({
           </article>
         );
       })}
-      {properties.length === 0 ? <p className={styles.empty}>Todavia no hay inmuebles cargados.</p> : null}
+      {properties.length === 0 ? <p className={styles.empty}>Todavía no hay inmuebles cargados.</p> : null}
     </section>
   );
 }
@@ -2292,7 +2694,7 @@ function OwnerTable({ owners, properties, onEdit }: { owners: AdminOwner[]; prop
           <article key={owner.id} className={styles.rowCard}>
             <div className={styles.rowMain}>
               <strong>{owner.full_name}</strong>
-              <p>{owner.phone ?? "Sin telefono"} - {owner.email ?? "Sin email"}</p>
+              <p>{owner.phone ?? "Sin teléfono"} - {owner.email ?? "Sin email"}</p>
               <small>{linkedProperties.length > 0 ? linkedProperties.map((property) => property.title).join(" | ") : "Sin inmuebles vinculados"}</small>
             </div>
             <div className={styles.rowActions}>
@@ -2302,7 +2704,7 @@ function OwnerTable({ owners, properties, onEdit }: { owners: AdminOwner[]; prop
           </article>
         );
       })}
-      {owners.length === 0 ? <p className={styles.empty}>Todavia no hay propietarios cargados.</p> : null}
+      {owners.length === 0 ? <p className={styles.empty}>Todavía no hay propietarios cargados.</p> : null}
     </section>
   );
 }

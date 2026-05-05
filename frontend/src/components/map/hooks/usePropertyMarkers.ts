@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import type { DivIcon, Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
+import type { DivIcon, Map as LeafletMap, Marker as LeafletMarker, Tooltip as LeafletTooltip } from "leaflet";
 
-import { renderPropertyMarkerHtml } from "../PropertyMarker";
+import { renderPropertyMarkerHtml, renderPropertyPreviewHtml } from "../PropertyMarker";
 import type { Property } from "../types";
 
 type UsePropertyMarkersParams = {
@@ -14,6 +14,16 @@ type UsePropertyMarkersParams = {
 type MarkerEntry = {
   marker: LeafletMarker;
   clickHandler: () => void;
+  mouseOverHandler: () => void;
+  mouseOutHandler: () => void;
+};
+
+type ActivePreview = {
+  propertyId: string;
+  tooltip: LeafletTooltip;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onClick: (event: MouseEvent) => void;
 };
 
 const ASESPRO_OFFICE = {
@@ -24,6 +34,9 @@ const ASESPRO_OFFICE = {
 
 const DEFAULT_ICON_SIZE: [number, number] = [68, 38];
 const DEFAULT_ICON_ANCHOR: [number, number] = [34, 38];
+const PREVIEW_CLOSE_DELAY_MS = 225;
+const PREVIEW_WIDTH_PX = 218;
+const PREVIEW_EDGE_PADDING_PX = 36;
 
 function createPropertyIcon(leaflet: typeof import("leaflet"), property: Property, highlighted = false): DivIcon {
   return leaflet.divIcon({
@@ -48,6 +61,8 @@ export function usePropertyMarkers({
 }: UsePropertyMarkersParams): void {
   const markerRegistryRef = useRef<Map<string, MarkerEntry>>(new Map());
   const officeMarkerRef = useRef<LeafletMarker | null>(null);
+  const activePreviewRef = useRef<ActivePreview | null>(null);
+  const closePreviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const propertiesByIdRef = useRef<Map<string, Property>>(new Map());
   const onMarkerClickRef = useRef(onMarkerClick);
 
@@ -76,6 +91,112 @@ export function usePropertyMarkers({
       const registry = markerRegistryRef.current;
       const visibleIds = new Set<string>();
 
+      const clearPreviewTimer = () => {
+        if (!closePreviewTimerRef.current) {
+          return;
+        }
+
+        clearTimeout(closePreviewTimerRef.current);
+        closePreviewTimerRef.current = null;
+      };
+
+      const closeActivePreview = () => {
+        clearPreviewTimer();
+        const active = activePreviewRef.current;
+        if (!active) {
+          return;
+        }
+
+        const element = active.tooltip.getElement();
+        element?.removeEventListener("mouseenter", active.onMouseEnter);
+        element?.removeEventListener("mouseleave", active.onMouseLeave);
+        element?.removeEventListener("click", active.onClick);
+        active.tooltip.remove();
+        activePreviewRef.current = null;
+      };
+
+      const scheduleCloseActivePreview = () => {
+        clearPreviewTimer();
+        closePreviewTimerRef.current = setTimeout(() => {
+          closeActivePreview();
+        }, PREVIEW_CLOSE_DELAY_MS);
+      };
+
+      const openPropertyPreview = (property: Property) => {
+        clearPreviewTimer();
+        if (activePreviewRef.current?.propertyId === property.id) {
+          return;
+        }
+
+        closeActivePreview();
+        const markerPoint = map.latLngToContainerPoint([property.lat, property.lng]);
+        const mapSize = map.getSize();
+        const opensLeft = markerPoint.x > mapSize.x - PREVIEW_WIDTH_PX - PREVIEW_EDGE_PADDING_PX;
+        const tooltip = leaflet
+          .tooltip({
+            className: "asespro-property-tooltip",
+            direction: opensLeft ? "left" : "right",
+            interactive: true,
+            opacity: 1,
+            permanent: true,
+            offset: opensLeft ? [-30, -74] : [30, -74],
+          })
+          .setLatLng([property.lat, property.lng])
+          .setContent(renderPropertyPreviewHtml(property))
+          .addTo(map);
+
+        const onMouseEnter = () => clearPreviewTimer();
+        const onMouseLeave = () => scheduleCloseActivePreview();
+        const onClick = (event: MouseEvent) => {
+          const target = event.target instanceof Element ? event.target : null;
+          const control = target?.closest("[data-preview-direction]");
+          if (control instanceof HTMLElement) {
+            event.preventDefault();
+            event.stopPropagation();
+            const gallery = control.closest("[data-preview-gallery]");
+            const images = gallery ? Array.from(gallery.querySelectorAll<HTMLElement>("[data-preview-image]")) : [];
+            if (!gallery || images.length === 0) {
+              return;
+            }
+
+            const currentIndex = Number(gallery.getAttribute("data-active-index") ?? "0");
+            const direction = control.getAttribute("data-preview-direction");
+            const nextIndex =
+              direction === "prev"
+                ? (currentIndex - 1 + images.length) % images.length
+                : (currentIndex + 1) % images.length;
+
+            gallery.setAttribute("data-active-index", String(nextIndex));
+            images.forEach((image, index) => {
+              image.style.opacity = index === nextIndex ? "1" : "0";
+            });
+            return;
+          }
+
+          const card = target?.closest("[data-property-preview-card]");
+          if (card instanceof HTMLElement) {
+            const url = card.dataset.propertyUrl;
+            if (url) {
+              window.open(url, "_blank", "noopener,noreferrer");
+            }
+          }
+        };
+        activePreviewRef.current = {
+          propertyId: property.id,
+          tooltip,
+          onMouseEnter,
+          onMouseLeave,
+          onClick,
+        };
+
+        window.setTimeout(() => {
+          const element = tooltip.getElement();
+          element?.addEventListener("mouseenter", onMouseEnter);
+          element?.addEventListener("mouseleave", onMouseLeave);
+          element?.addEventListener("click", onClick);
+        }, 0);
+      };
+
       for (const property of properties) {
         if (!Number.isFinite(property.lat) || !Number.isFinite(property.lng)) {
           continue;
@@ -103,12 +224,25 @@ export function usePropertyMarkers({
             onMarkerClickRef.current?.(currentProperty);
           }
         };
+        const mouseOverHandler = () => {
+          const currentProperty = propertiesByIdRef.current.get(property.id);
+          if (currentProperty) {
+            openPropertyPreview(currentProperty);
+          }
+        };
+        const mouseOutHandler = () => {
+          scheduleCloseActivePreview();
+        };
 
         marker.on("click", clickHandler);
+        marker.on("mouseover", mouseOverHandler);
+        marker.on("mouseout", mouseOutHandler);
 
         registry.set(property.id, {
           marker,
           clickHandler,
+          mouseOverHandler,
+          mouseOutHandler,
         });
       }
 
@@ -118,6 +252,11 @@ export function usePropertyMarkers({
         }
 
         entry.marker.off("click", entry.clickHandler);
+        entry.marker.off("mouseover", entry.mouseOverHandler);
+        entry.marker.off("mouseout", entry.mouseOutHandler);
+        if (activePreviewRef.current?.propertyId === propertyId) {
+          closeActivePreview();
+        }
         entry.marker.remove();
         registry.delete(propertyId);
       }
@@ -144,9 +283,17 @@ export function usePropertyMarkers({
     return () => {
       for (const entry of markerRegistryRef.current.values()) {
         entry.marker.off("click", entry.clickHandler);
+        entry.marker.off("mouseover", entry.mouseOverHandler);
+        entry.marker.off("mouseout", entry.mouseOutHandler);
         entry.marker.remove();
       }
 
+      if (closePreviewTimerRef.current) {
+        clearTimeout(closePreviewTimerRef.current);
+        closePreviewTimerRef.current = null;
+      }
+      activePreviewRef.current?.tooltip.remove();
+      activePreviewRef.current = null;
       markerRegistryRef.current.clear();
       officeMarkerRef.current?.remove();
       officeMarkerRef.current = null;

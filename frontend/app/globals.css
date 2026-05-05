@@ -85,6 +85,18 @@ h3 {
   margin-bottom: 0;
 }
 
+#main-content:has([data-map-page="true"]) {
+  display: flex;
+  flex-direction: column;
+}
+
+#main-content:has([data-map-page="true"]) main {
+  flex: 1;
+  min-height: calc(100dvh - 60px);
+  margin-bottom: 0;
+  gap: 0;
+}
+
 main {
   width: 100%;
   margin: 0 0 34px;
@@ -101,6 +113,13 @@ main {
   padding-top: 14px;
   display: grid;
   gap: 24px;
+}
+
+.map-page-shell {
+  width: 100%;
+  height: calc(100dvh - 60px);
+  min-height: 520px;
+  display: grid;
 }
 
 .hero-inner {

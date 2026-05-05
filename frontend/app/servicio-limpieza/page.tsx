@@ -25,7 +25,7 @@ export default function ServicioLimpiezaPage(): JSX.Element {
             </h1>
             <p>
               Realizamos limpiezas para hogares, oficinas, locales comerciales y empresas en Paso de los Toros,
-              Montevideo y Maldonado. Cada presupuesto se arma segun el espacio, la frecuencia y el tipo de servicio
+              Montevideo y Maldonado. Cada presupuesto se arma según el espacio, la frecuencia y el tipo de servicio
               necesario.
             </p>
             <div className={styles.heroActions}>
@@ -52,8 +52,8 @@ export default function ServicioLimpiezaPage(): JSX.Element {
             <div>
               <h2>Servicios de limpieza a medida</h2>
               <p>
-                Coordinamos el trabajo segun el tipo de cliente y las condiciones del lugar. Para cotizar correctamente,
-                necesitamos que nos cuentes que espacio hay que limpiar y que resultado esperas.
+                Coordinamos el trabajo según el tipo de cliente y las condiciones del lugar. Para cotizar correctamente,
+                necesitamos que nos cuentes qué espacio hay que limpiar y qué resultado esperas.
               </p>
             </div>
             <Link href="/contacto" className={styles.inlineLink}>
@@ -63,21 +63,21 @@ export default function ServicioLimpiezaPage(): JSX.Element {
           <div className={styles.serviceGrid}>
             <article className={styles.serviceCard}>
               <h3>Limpieza para hogares</h3>
-              <p>Limpieza general o profunda para casas y apartamentos, ideal para mantenimiento, mudanzas o preparacion de espacios.</p>
+              <p>Limpieza general o profunda para casas y apartamentos, ideal para mantenimiento, mudanzas o preparación de espacios.</p>
             </article>
             <article className={`${styles.serviceCard} ${styles.serviceCardAccent}`}>
               <h3>Limpieza para oficinas y empresas</h3>
-              <p>Servicio para oficinas, comercios, locales y espacios de trabajo que necesitan higiene constante y buena presentacion.</p>
+              <p>Servicio para oficinas, comercios, locales y espacios de trabajo que necesitan higiene constante y buena presentación.</p>
             </article>
             <article className={styles.serviceCard}>
               <h3>Limpieza puntual o recurrente</h3>
-              <p>Podemos coordinar trabajos por unica vez o servicios periodicos, segun la necesidad del cliente.</p>
+              <p>Podemos coordinar trabajos por única vez o servicios periódicos, según la necesidad del cliente.</p>
             </article>
             <article className={styles.serviceMedia}>
               <img src={CLEANING_OFFICE_IMAGE} alt="" />
               <div>
                 <h3>Limpieza de espacios comerciales</h3>
-                <p>Atencion para locales, consultorios, areas comunes y otros espacios que requieren orden, limpieza y continuidad.</p>
+                <p>Atención para locales, consultorios, áreas comunes y otros espacios que requieren orden, limpieza y continuidad.</p>
               </div>
             </article>
           </div>
@@ -91,7 +91,7 @@ export default function ServicioLimpiezaPage(): JSX.Element {
             </article>
             <article className={styles.mosaicStat}>
               <strong>A medida</strong>
-              <p>Presupuesto segun espacio y necesidad</p>
+              <p>Presupuesto según espacio y necesidad</p>
             </article>
             <img src={CLEANING_OFFICE_IMAGE} alt="" className={styles.mosaicSecondary} />
           </div>
@@ -100,15 +100,15 @@ export default function ServicioLimpiezaPage(): JSX.Element {
             <ul>
               <li>
                 <strong>Presupuesto personalizado</strong>
-                <p>Cotizamos segun metros, tipo de espacio, frecuencia y nivel de limpieza requerido.</p>
+                <p>Cotizamos según metros, tipo de espacio, frecuencia y nivel de limpieza requerido.</p>
               </li>
               <li>
                 <strong>Para particulares y empresas</strong>
                 <p>Atendemos hogares, oficinas, comercios y organizaciones.</p>
               </li>
               <li>
-                <strong>Coordinacion clara</strong>
-                <p>Te pedimos la informacion necesaria por formulario para responder con una propuesta ajustada.</p>
+                <strong>Coordinación clara</strong>
+                <p>Te pedimos la información necesaria por formulario para responder con una propuesta ajustada.</p>
               </li>
             </ul>
           </div>
@@ -116,7 +116,7 @@ export default function ServicioLimpiezaPage(): JSX.Element {
 
         <section className={styles.cta}>
           <p className={styles.ctaTag}>Presupuesto personalizado</p>
-          <h2>Solicita una cotizacion para tu limpieza</h2>
+          <h2>Solicita una cotización para tu limpieza</h2>
           <p>Completa el formulario con tus datos, ciudad, tipo de espacio y detalle del servicio que necesitas.</p>
           <Link href="/contacto" className={styles.ctaButton}>
             Ir al formulario

@@ -94,6 +94,7 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     forRent?: boolean;
     rentPrice?: string | number | null;
     rentCurrency?: string;
+    amenities?: Record<string, boolean>;
   };
   const updates: Record<string, boolean | number | string | null> = {
     updated_at: new Date().toISOString(),
@@ -151,8 +152,20 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   if (salePrice !== undefined) updates.sale_price = salePrice;
   if (rentPrice !== undefined) updates.rent_price = rentPrice;
 
+  if (payload.amenities && typeof payload.amenities === "object") {
+    updates.has_garage = payload.amenities.garage === true;
+    updates.has_patio = payload.amenities.patio === true;
+    updates.has_laundry = payload.amenities.laundry === true;
+    updates.has_living = payload.amenities.living === true;
+    updates.has_dining = payload.amenities.dining === true;
+    updates.has_kitchen = payload.amenities.kitchen === true;
+    updates.has_balcony = payload.amenities.balcony === true;
+    updates.has_security = payload.amenities.security === true;
+    updates.has_pool = payload.amenities.pool === true;
+  }
+
   if (Object.keys(updates).length === 1) {
-    return NextResponse.json({ error: "No hay cambios validos." }, { status: 400 });
+    return NextResponse.json({ error: "No hay cambios válidos." }, { status: 400 });
   }
 
   const { data: updatedProperty, error } = await supabase.from("asespro_properties").update(updates).eq("id", params.id).select("id").maybeSingle();

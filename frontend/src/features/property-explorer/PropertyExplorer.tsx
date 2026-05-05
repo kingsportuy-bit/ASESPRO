@@ -16,6 +16,7 @@ type PropertyExplorerProps = {
   highlightedPropertyId?: string;
   initialOperation?: PropertyOperation | "all";
   showOperationFilter?: boolean;
+  fullHeight?: boolean;
 };
 
 export function PropertyExplorer({
@@ -25,6 +26,7 @@ export function PropertyExplorer({
   highlightedPropertyId,
   initialOperation = "all",
   showOperationFilter = true,
+  fullHeight = false,
 }: PropertyExplorerProps): JSX.Element {
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(properties[0]?.id ?? null);
@@ -70,7 +72,7 @@ export function PropertyExplorer({
   }, [properties, selectedId]);
 
   return (
-    <section className={styles.layout}>
+    <section className={`${styles.layout} ${fullHeight ? styles.layoutFullHeight : ""}`}>
       <aside className={styles.panel}>
         <header className={styles.panelHeader}>
           <h2 className={styles.panelTitle}>{title}</h2>
@@ -124,7 +126,7 @@ export function PropertyExplorer({
           initialZoom={13}
           minZoom={13}
           maxZoom={18}
-          height={560}
+          height={fullHeight ? "100%" : 560}
         />
       </div>
     </section>

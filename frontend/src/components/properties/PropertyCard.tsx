@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { formatOperationLabel, formatPrice, type PropertyListing } from "@/lib/properties";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
+import { PropertyFacts } from "./PropertyFacts";
 
 import styles from "./PropertyCard.module.css";
 
@@ -13,7 +14,7 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property, selected = false, onSelect }: PropertyCardProps): JSX.Element {
   const interactionLabel = `Abrir ${property.title} en ${property.location}`;
-  const coverImage = getPropertyCoverImage(property.id);
+  const coverImage = property.photoUrls.find((photo) => photo.trim().length > 0) ?? getPropertyCoverImage(property.id);
 
   return (
     <article className={`${styles.card} ${selected ? styles.cardSelected : ""}`} role="listitem">
@@ -25,17 +26,25 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
       >
         <div className={styles.content}>
           <div className={styles.thumbWrap}>
-            <img src={coverImage} alt="" className={styles.thumb} loading="lazy" />
+            <img
+              src={coverImage}
+              alt=""
+              className={styles.thumb}
+              loading="lazy"
+              onError={(event) => {
+                const fallback = getPropertyCoverImage(property.id);
+                if (event.currentTarget.src !== fallback) {
+                  event.currentTarget.src = fallback;
+                }
+              }}
+            />
             <span className={styles.operationBadge}>{formatOperationLabel(property)}</span>
           </div>
 
           <div className={styles.info}>
             <p className={styles.cardTitle}>{property.title}</p>
             <p className={styles.cardMeta}>{property.location}</p>
-            <div className={styles.pillRow}>
-              <span className={styles.pill}>{property.type}</span>
-              <span className={styles.pill}>{property.status}</span>
-            </div>
+            <PropertyFacts property={property} compact />
             <p className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</p>
           </div>
         </div>

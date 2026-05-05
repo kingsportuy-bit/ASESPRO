@@ -5,8 +5,8 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
     id: "asespro-alq-001",
     title: "Casa con patio en Paso de los Toros",
     description:
-      "Casa en alquiler con 3 dormitorios, living amplio y patio con parrillero. Una opcion lista para ingresar en Paso de los Toros.",
-    location: "Paso de los Toros, Tacuarembo",
+      "Casa en alquiler con 3 dormitorios, living amplio y patio con parrillero. Una opción lista para ingresar en Paso de los Toros.",
+    location: "Paso de los Toros, Tacuarembó",
     type: "casa",
     operation: "alquiler",
     operations: ["alquiler"],
@@ -17,6 +17,15 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
     bedrooms: 3,
     bathrooms: 2,
     areaM2: 126,
+    amenities: {
+      garage: true,
+      patio: true,
+      laundry: true,
+      living: true,
+      dining: true,
+      kitchen: true,
+      security: true,
+    },
     status: "activo",
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     photoUrls: [
@@ -27,10 +36,10 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
   },
   {
     id: "asespro-ven-001",
-    title: "Apartamento centrico en Paso de los Toros",
+    title: "Apartamento céntrico en Paso de los Toros",
     description:
-      "Apartamento en venta de 2 dormitorios, cocina integrada y balcon al frente, ubicado a minutos del centro.",
-    location: "Paso de los Toros, Tacuarembo",
+      "Apartamento en venta de 2 dormitorios, cocina integrada y balcón al frente, ubicado a minutos del centro.",
+    location: "Paso de los Toros, Tacuarembó",
     type: "apartamento",
     operation: "venta",
     operations: ["venta"],
@@ -41,6 +50,13 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
     bedrooms: 2,
     bathrooms: 1,
     areaM2: 81,
+    amenities: {
+      kitchen: true,
+      balcony: true,
+      living: true,
+      dining: true,
+      security: true,
+    },
     status: "activo",
     videoUrl: "https://www.youtube.com/embed/ysz5S6PUM-U",
     photoUrls: [
