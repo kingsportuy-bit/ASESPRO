@@ -604,16 +604,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .fileManagerHead strong {
   color: #181c1c;
 }
 
+.fileManagerHead p {
+  margin: 4px 0 0;
+  color: #5b6662;
+  font-size: 13px;
+}
+
 .fileManagerHead span {
   color: #5b6662;
   font-size: 12px;
   font-weight: 850;
+}
+
+.fileManagerActions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fileManagerActions button {
+  min-height: 38px;
 }
 
 .fileGrid {

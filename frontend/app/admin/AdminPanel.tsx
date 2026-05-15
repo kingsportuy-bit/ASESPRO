@@ -866,12 +866,51 @@ export function AdminPanel(): JSX.Element {
     setMessage("Orden de archivos actualizado.");
   }
 
-  async function updatePropertyMedia(propertyId: string, mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>): Promise<void> {
-    if (!token || !propertyId || !item.id) return;
-    const currentProperty = properties.find((property) => property.id === propertyId);
-    const currentItems = (currentProperty?.asespro_property_media ?? []).filter((media) => media.media_type === mediaType);
-    const merged = currentItems.map((media) => (media.id === item.id ? { ...media, ...updates } : media));
-    await reorderPropertyMedia(propertyId, mediaType, merged);
+  async function savePropertyMediaDraft(propertyId: string, mediaItems: AdminMedia[]): Promise<void> {
+    if (!token || !propertyId) return;
+    const photoItems = mediaItems.filter((item) => item.media_type === "photo");
+    const videoItems = mediaItems.filter((item) => item.media_type === "video");
+    const groups: Array<{ mediaType: "photo" | "video"; items: AdminMedia[] }> = [
+      { mediaType: "photo" as const, items: photoItems },
+      { mediaType: "video" as const, items: videoItems },
+    ].filter((group): group is { mediaType: "photo" | "video"; items: AdminMedia[] } => group.items.length > 0);
+    if (groups.length === 0) return;
+
+    setBusy(true);
+    setMessage(null);
+    for (const group of groups) {
+      const response = await fetch(`/api/admin/properties/${propertyId}/media`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          mediaType: group.mediaType,
+          items: group.items.map((item, index) => ({
+            id: item.id,
+            sortOrder: index,
+            isCover: group.mediaType === "photo" ? index === 0 : false,
+            isVisible: item.is_visible !== false,
+            focalX: item.focal_x ?? 50,
+            focalY: item.focal_y ?? 50,
+            altText: item.alt_text ?? "",
+            caption: item.caption ?? "",
+            qualityStatus: item.quality_status ?? "pendiente",
+          })),
+        }),
+      });
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        setBusy(false);
+        setMessage(payload?.error ?? "No se pudo guardar la multimedia.");
+        return;
+      }
+    }
+
+    await loadOverview(token);
+    setBusy(false);
+    setMessage("Multimedia guardada.");
   }
 
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
@@ -1617,8 +1656,7 @@ export function AdminPanel(): JSX.Element {
               onUploadPhotos={() => void uploadSelectedPropertyPhotos()}
               onUploadVideo={() => void uploadSelectedPropertyVideoFile()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
-              onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
-              onUpdateMedia={(mediaType, item, updates) => void updatePropertyMedia(propertyForm.id, mediaType, item, updates)}
+              onSaveMedia={(items) => void savePropertyMediaDraft(propertyForm.id, items)}
             />
           </Modal>
         ) : null}
@@ -2251,8 +2289,7 @@ function PropertyDrawer({
   onUploadPhotos,
   onUploadVideo,
   onDeleteMedia,
-  onReorderMedia,
-  onUpdateMedia,
+  onSaveMedia,
 }: {
   form: PropertyFormState;
   busy: boolean;
@@ -2273,16 +2310,42 @@ function PropertyDrawer({
   onUploadPhotos: () => void;
   onUploadVideo: () => void;
   onDeleteMedia: (mediaId: string) => void;
-  onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
-  onUpdateMedia: (mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>) => void;
+  onSaveMedia: (items: AdminMedia[]) => void;
 }): JSX.Element {
-  const sortedMedia = [...currentMedia].sort((a, b) => {
+  const [mediaDraft, setMediaDraft] = useState<AdminMedia[]>([]);
+
+  useEffect(() => {
+    setMediaDraft([...currentMedia].sort(sortMedia));
+  }, [currentMedia]);
+
+  const sortedMedia = [...mediaDraft].sort(sortMedia);
+  const mediaHasPendingChanges = JSON.stringify(sortedMedia) !== JSON.stringify([...currentMedia].sort(sortMedia));
+  const photoMedia = sortedMedia.filter((item) => item.media_type === "photo");
+  const videoMedia = sortedMedia.filter((item) => item.media_type === "video");
+
+  function sortMedia(a: AdminMedia, b: AdminMedia): number {
     if (a.is_cover && !b.is_cover) return -1;
     if (!a.is_cover && b.is_cover) return 1;
     return (a.sort_order ?? 0) - (b.sort_order ?? 0);
-  });
-  const photoMedia = sortedMedia.filter((item) => item.media_type === "photo");
-  const videoMedia = sortedMedia.filter((item) => item.media_type === "video");
+  }
+
+  function updateMediaDraft(mediaType: "photo" | "video", items: AdminMedia[]): void {
+    setMediaDraft((current) => {
+      const normalizedItems = items.map((item, index) => ({
+        ...item,
+        sort_order: index,
+        is_cover: mediaType === "photo" ? index === 0 : false,
+      }));
+      return [...current.filter((item) => item.media_type !== mediaType), ...normalizedItems].sort(sortMedia);
+    });
+  }
+
+  function updateMediaItem(mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>): void {
+    updateMediaDraft(
+      mediaType,
+      (mediaType === "photo" ? photoMedia : videoMedia).map((candidate) => (candidate.id === item.id ? { ...candidate, ...updates } : candidate)),
+    );
+  }
 
   return (
     <section className={styles.drawer} aria-label="Formulario de inmueble">
@@ -2327,13 +2390,21 @@ function PropertyDrawer({
         <label>Descripción<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
         <div className={styles.fileManager}>
           <div className={styles.fileManagerHead}>
-            <strong>Archivos de la propiedad</strong>
-            <span>{sortedMedia.length} archivos</span>
+            <div>
+              <strong>Editor multimedia</strong>
+              <p>Reordena, elegi portada, ajusta foco y guarda todo junto.</p>
+            </div>
+            <div className={styles.fileManagerActions}>
+              <span>{sortedMedia.length} archivos</span>
+              <button type="button" className={mediaHasPendingChanges ? styles.primaryButton : styles.disabledSaveButton} disabled={busy || !mediaHasPendingChanges} onClick={() => onSaveMedia(sortedMedia)}>
+                {busy ? "Guardando..." : "Guardar multimedia"}
+              </button>
+            </div>
           </div>
           {sortedMedia.length > 0 ? (
             <div className={styles.fileSections}>
-              <MediaSection title="Fotos" mediaType="photo" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("photo", orderedItems)} onUpdateMedia={onUpdateMedia} />
-              <MediaSection title="Videos" mediaType="video" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("video", orderedItems)} onUpdateMedia={onUpdateMedia} />
+              <MediaSection title="Fotos" mediaType="photo" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => updateMediaDraft("photo", orderedItems)} onUpdateMedia={updateMediaItem} />
+              <MediaSection title="Videos" mediaType="video" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => updateMediaDraft("video", orderedItems)} onUpdateMedia={updateMediaItem} />
             </div>
           ) : (
             <p className={styles.empty}>Este inmueble todavía no tiene archivos cargados.</p>
