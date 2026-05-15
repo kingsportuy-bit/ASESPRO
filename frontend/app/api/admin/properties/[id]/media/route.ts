@@ -14,7 +14,17 @@ type RouteContext = {
 };
 type ReorderPayload = {
   mediaType?: "photo" | "video";
-  items?: Array<{ id?: string; sortOrder?: number; isCover?: boolean }>;
+  items?: Array<{
+    id?: string;
+    sortOrder?: number;
+    isCover?: boolean;
+    isVisible?: boolean;
+    focalX?: number;
+    focalY?: number;
+    altText?: string;
+    caption?: string;
+    qualityStatus?: string;
+  }>;
 };
 
 const BUCKET = "asespro-media";
@@ -341,10 +351,16 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   for (let index = 0; index < items.length; index += 1) {
     const item = items[index];
     const sortOrder = Number.isFinite(item.sortOrder as number) ? Number(item.sortOrder) : index;
-    const updates: Record<string, number | boolean> = { sort_order: sortOrder };
+    const updates: Record<string, number | boolean | string | null> = { sort_order: sortOrder };
     if (mediaType === "photo") {
       updates.is_cover = item.isCover === true;
+      if (typeof item.focalX === "number" && Number.isFinite(item.focalX)) updates.focal_x = Math.min(100, Math.max(0, item.focalX));
+      if (typeof item.focalY === "number" && Number.isFinite(item.focalY)) updates.focal_y = Math.min(100, Math.max(0, item.focalY));
     }
+    if (typeof item.isVisible === "boolean") updates.is_visible = item.isVisible;
+    if (typeof item.altText === "string") updates.alt_text = item.altText.trim() || null;
+    if (typeof item.caption === "string") updates.caption = item.caption.trim() || null;
+    if (typeof item.qualityStatus === "string" && item.qualityStatus.trim()) updates.quality_status = item.qualityStatus.trim();
     const { error } = await supabase
       .from("asespro_property_media")
       .update(updates)

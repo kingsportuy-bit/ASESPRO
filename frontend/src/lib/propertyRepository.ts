@@ -41,6 +41,11 @@ type SupabaseListingRow = {
   price_amount: number | string | null;
   price_currency: string | null;
   is_featured?: boolean | null;
+  public_summary?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  publish_status?: string | null;
+  visibility?: string | null;
   status: PropertyStatus | null;
   asespro_properties:
     | SupabasePropertyRow
@@ -54,12 +59,17 @@ type SupabaseListingRow = {
         storage_path: string | null;
         sort_order: number | null;
         is_cover: boolean | null;
+        focal_x?: number | string | null;
+        focal_y?: number | string | null;
+        alt_text?: string | null;
+        caption?: string | null;
+        is_visible?: boolean | null;
       }>
     | null;
 };
 
 const PUBLIC_LISTINGS_SELECT_WITH_FEATURED =
-  "id,title,description,price_amount,price_currency,is_featured,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
+  "id,title,description,price_amount,price_currency,is_featured,public_summary,seo_title,seo_description,publish_status,visibility,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover,focal_x,focal_y,alt_text,caption,is_visible)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover,focal_x,focal_y,alt_text,caption,is_visible)";
 const PUBLIC_LISTINGS_SELECT_FALLBACK =
   "id,title,description,price_amount,price_currency,status,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,is_active,asespro_property_media(media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(media_type,public_url,storage_path,sort_order,is_cover)";
 
@@ -81,6 +91,11 @@ type SupabaseMediaRow = {
   storage_path: string | null;
   sort_order: number | null;
   is_cover: boolean | null;
+  focal_x?: number | string | null;
+  focal_y?: number | string | null;
+  alt_text?: string | null;
+  caption?: string | null;
+  is_visible?: boolean | null;
 };
 
 type SupabasePropertyRow = {
@@ -342,6 +357,12 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
   if (!property || property.is_active === false) {
     return null;
   }
+  if (row.publish_status && row.publish_status !== "publicado") {
+    return null;
+  }
+  if (row.visibility && row.visibility !== "web") {
+    return null;
+  }
 
   const fallbackCoordinates = defaultCoordinatesForLocation(property.location_text);
   const lat = parseCoordinateValue(property.latitude) ?? fallbackCoordinates?.lat ?? null;
@@ -355,7 +376,7 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     .filter((operation): operation is PropertyOperation => operation === "alquiler" || operation === "venta");
   const primaryOperation = operations[0] ?? "venta";
   const sourceMedia = property.asespro_property_media?.length ? property.asespro_property_media : row.asespro_listing_media ?? [];
-  const media = [...sourceMedia].sort((a, b) => {
+  const media = [...sourceMedia].filter((item) => item.is_visible !== false).sort((a, b) => {
     if (a.is_cover && !b.is_cover) return -1;
     if (!a.is_cover && b.is_cover) return 1;
     return (a.sort_order ?? 0) - (b.sort_order ?? 0);
@@ -364,6 +385,20 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     .filter((item) => item.media_type === "photo")
     .map((item) => item.public_url ?? item.storage_path ?? "")
     .filter((url) => url.length > 0);
+  const normalizedMedia = media
+    .map((item) => {
+      const url = item.public_url ?? item.storage_path ?? "";
+      if (!url || (item.media_type !== "photo" && item.media_type !== "video")) return null;
+      return {
+        type: item.media_type,
+        url,
+        focalX: parseNumber(item.focal_x) ?? 50,
+        focalY: parseNumber(item.focal_y) ?? 50,
+        altText: item.alt_text ?? undefined,
+        caption: item.caption ?? undefined,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
   const videoUrl =
     media.find((item) => item.media_type === "video")?.public_url ??
     media.find((item) => item.media_type === "video")?.storage_path ??
@@ -388,6 +423,10 @@ function normalizeSupabaseListing(row: SupabaseListingRow): PropertyListing | nu
     status: row.status ?? "desactivado",
     isFeatured: row.is_featured === true,
     photoUrls,
+    media: normalizedMedia,
+    publicSummary: row.public_summary ?? undefined,
+    seoTitle: row.seo_title ?? undefined,
+    seoDescription: row.seo_description ?? undefined,
     videoUrl,
   };
 }

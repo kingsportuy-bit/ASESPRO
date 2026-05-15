@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { PropertyMediaItem } from "@/lib/properties";
 import styles from "./PropertyDetailPage.module.css";
 
 type PropertyMediaGalleryProps = {
   title: string;
   location: string;
   photos: string[];
+  media?: PropertyMediaItem[];
   videoUrl?: string | null;
   fallbackImage: string;
 };
@@ -57,16 +59,21 @@ function isSupportedPublicVideoUrl(url: string | null | undefined): boolean {
   }
 }
 
-export function PropertyMediaGallery({ title, location, photos, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
+export function PropertyMediaGallery({ title, location, photos, media, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
   const safeVideoUrl = isSupportedPublicVideoUrl(videoUrl) ? videoUrl : null;
   const embeddedVideoUrl = getEmbeddedVideoUrl(safeVideoUrl);
-  const galleryMedia = useMemo(
-    () => [...photos.map((src) => ({ type: "photo" as const, src })), ...(safeVideoUrl ? [{ type: "video" as const, src: safeVideoUrl }] : [])],
-    [photos, safeVideoUrl],
+  const photoMedia = useMemo<PropertyMediaItem[]>(
+    () => (media?.filter((item) => item.type === "photo" && item.url.trim().length > 0) ?? photos.map((src) => ({ type: "photo" as const, url: src }))),
+    [media, photos],
   );
-  const primaryPhoto = photos[0] ?? fallbackImage;
-  const sidePhotos = useMemo(() => photos.slice(1, 4), [photos]);
-  const extraPhotosCount = Math.max(photos.length - 4, 0);
+  const galleryMedia = useMemo(
+    () => [...photoMedia.map((item) => ({ ...item, src: item.url })), ...(safeVideoUrl ? [{ type: "video" as const, src: safeVideoUrl, url: safeVideoUrl }] : [])],
+    [photoMedia, safeVideoUrl],
+  );
+  const primaryPhoto = photoMedia[0];
+  const primaryPhotoUrl = primaryPhoto?.url ?? fallbackImage;
+  const sidePhotos = useMemo(() => photoMedia.slice(1, 4), [photoMedia]);
+  const extraPhotosCount = Math.max(photoMedia.length - 4, 0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const videoSourceType = safeVideoUrl?.toLowerCase().includes(".m3u8") ? "application/x-mpegURL" : "video/mp4";
   const videoIndex = safeVideoUrl ? galleryMedia.length - 1 : null;
@@ -84,8 +91,9 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
         <div className={styles.mediaLayout}>
           <button type="button" className={styles.primaryPhotoCard} onClick={() => setActiveIndex(0)}>
             <img
-              src={primaryPhoto}
-              alt={`${title} foto principal`}
+            src={primaryPhotoUrl}
+            alt={`${title} foto principal`}
+            style={{ objectPosition: `${primaryPhoto?.focalX ?? 50}% ${primaryPhoto?.focalY ?? 50}%` }}
               onError={(event) => {
                 if (event.currentTarget.src !== fallbackImage) {
                   event.currentTarget.src = fallbackImage;
@@ -95,11 +103,12 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
             {extraPhotosCount > 0 && sidePhotos.length === 0 ? <span className={styles.moreBadge}>+{extraPhotosCount} fotos</span> : null}
           </button>
           <div className={styles.sidePhotoStack}>
-            {sidePhotos.map((src, idx) => (
-              <button key={`${src}-${idx + 1}`} type="button" className={styles.sidePhotoCard} onClick={() => setActiveIndex(idx + 1)}>
+            {sidePhotos.map((item, idx) => (
+              <button key={`${item.url}-${idx + 1}`} type="button" className={styles.sidePhotoCard} onClick={() => setActiveIndex(idx + 1)}>
                 <img
-                  src={src}
+                  src={item.url}
                   alt={`${title} foto ${idx + 2}`}
+                  style={{ objectPosition: `${item.focalX ?? 50}% ${item.focalY ?? 50}%` }}
                   onError={(event) => {
                     if (event.currentTarget.src !== fallbackImage) {
                       event.currentTarget.src = fallbackImage;
@@ -148,6 +157,7 @@ export function PropertyMediaGallery({ title, location, photos, videoUrl, fallba
               <img
                 src={activeMedia?.src ?? fallbackImage}
                 alt={title}
+                style={{ objectPosition: `${activeMedia?.focalX ?? 50}% ${activeMedia?.focalY ?? 50}%` }}
                 onError={(event) => {
                   if (event.currentTarget.src !== fallbackImage) {
                     event.currentTarget.src = fallbackImage;

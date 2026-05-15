@@ -6,205 +6,35 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { PropertyAmenityKey, PropertyCurrency, PropertyOperation, PropertyStatus, PropertyType } from "@/lib/properties";
 import { createSupabaseBrowserClient } from "@/lib/supabaseBrowser";
 
+import type {
+  ActiveRental,
+  AdminListing,
+  AdminMedia,
+  AdminOwner,
+  AdminProperty,
+  ChunkedUploadInitResponse,
+  DrawerMode,
+  FormState,
+  ListingFilter,
+  ListingWizardStep,
+  MediaUploadProgress,
+  MediaUploadResponse,
+  OverviewPayload,
+  OwnerFormState,
+  PanelTab,
+  PropertyFormState,
+  PropertyOperationalStatus,
+} from "./lib/adminTypes";
+import { formatMoney, getListingMedia, getObjectPosition, listingHasMediaIssue, operationLabel } from "./lib/adminUtils";
+import { ListingTable } from "./components/ListingTable";
+import { MediaSection } from "./components/MediaSection";
 import styles from "./AdminPanel.module.css";
-
-type AdminMedia = {
-  id: string;
-  media_type: "photo" | "video";
-  public_url: string | null;
-  storage_path?: string | null;
-  is_cover?: boolean | null;
-  sort_order?: number | null;
-};
-
-type MediaUploadProgress = {
-  label: string;
-  percent: number;
-};
-
-type MediaUploadResponse = {
-  media?: AdminMedia;
-  error?: string;
-};
-
-type ChunkedUploadInitResponse = {
-  uploadId?: string;
-  chunkSize?: number;
-  error?: string;
-};
-
-type AdminListing = {
-  id: string;
-  property_id: string;
-  title: string;
-  description: string | null;
-  price_amount: number | null;
-  price_currency: PropertyCurrency | null;
-  is_featured?: boolean | null;
-  status: PropertyStatus;
-  created_at?: string;
-  asespro_properties: {
-    title?: string | null;
-    description?: string | null;
-    property_type: PropertyType;
-    location_text: string | null;
-    latitude: number | null;
-    longitude: number | null;
-    bedrooms: number | null;
-    bathrooms: number | null;
-    area_m2: number | null;
-    for_sale?: boolean | null;
-    sale_price?: number | null;
-    sale_currency?: PropertyCurrency | null;
-    for_rent?: boolean | null;
-    rent_price?: number | null;
-    rent_currency?: PropertyCurrency | null;
-    has_garage?: boolean | null;
-    has_patio?: boolean | null;
-    has_laundry?: boolean | null;
-    has_living?: boolean | null;
-    has_dining?: boolean | null;
-    has_kitchen?: boolean | null;
-    has_balcony?: boolean | null;
-    has_security?: boolean | null;
-    has_pool?: boolean | null;
-    asespro_property_media?: AdminMedia[];
-  } | null;
-  asespro_listing_operations: Array<{ operation: PropertyOperation }>;
-  asespro_listing_media: AdminMedia[];
-};
 
 const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024;
 const MAX_VIDEO_SIZE_LABEL = "500 MB";
 const RESUMABLE_VIDEO_CHUNK_BYTES = 6 * 1024 * 1024;
 const REQUIRED_VIDEO_MIME = "video/mp4";
 const REQUIRED_VIDEO_CODECS = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-
-type PropertyOperationalStatus = "disponible" | "alquilado" | "vendido";
-
-type AdminProperty = {
-  id: string;
-  code: string | null;
-  title: string;
-  description: string | null;
-  property_type: PropertyType;
-  location_text: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  is_active: boolean;
-  status: PropertyOperationalStatus;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  area_m2: number | null;
-  for_sale?: boolean | null;
-  sale_price?: number | null;
-  sale_currency?: PropertyCurrency | null;
-  for_rent?: boolean | null;
-  rent_price?: number | null;
-  rent_currency?: PropertyCurrency | null;
-  has_garage?: boolean | null;
-  has_patio?: boolean | null;
-  has_laundry?: boolean | null;
-  has_living?: boolean | null;
-  has_dining?: boolean | null;
-  has_kitchen?: boolean | null;
-  has_balcony?: boolean | null;
-  has_security?: boolean | null;
-  has_pool?: boolean | null;
-  asespro_property_owners?: Array<{ owner_id: string }>;
-  asespro_property_media?: AdminMedia[];
-};
-
-type AdminOwner = {
-  id: string;
-  full_name: string;
-  phone: string | null;
-  email: string | null;
-  notes: string | null;
-};
-
-type ActiveRental = {
-  id: string;
-  monthly_price: number;
-  start_date: string;
-  end_date: string | null;
-  status: string;
-};
-
-type OverviewPayload = {
-  listings: AdminListing[];
-  properties: AdminProperty[];
-  owners: AdminOwner[];
-  activeRentals: ActiveRental[];
-  error?: string;
-};
-
-type FormState = {
-  id: string | null;
-  isFeatured: boolean;
-  ownerId: string;
-  ownerMode: "existing" | "new";
-  newOwnerFullName: string;
-  newOwnerPhone: string;
-  newOwnerEmail: string;
-  newOwnerNotes: string;
-  propertyId: string;
-  propertyMode: "existing" | "new";
-  syncPropertyData: boolean;
-  title: string;
-  description: string;
-  propertyType: PropertyType;
-  locationText: string;
-  street: string;
-  streetNumber: string;
-  city: "Paso de los Toros" | "Centenario";
-  department: "Tacuarembo" | "Durazno";
-  country: "Uruguay";
-  bedrooms: string;
-  bathrooms: string;
-  areaM2: string;
-  forSale: boolean;
-  salePrice: string;
-  saleCurrency: PropertyCurrency;
-  forRent: boolean;
-  rentPrice: string;
-  rentCurrency: PropertyCurrency;
-  amenities: Record<PropertyAmenityKey, boolean>;
-  operations: PropertyOperation[];
-  status: PropertyStatus;
-};
-
-type OwnerFormState = {
-  id: string | null;
-  fullName: string;
-  phone: string;
-  email: string;
-  notes: string;
-};
-
-type PropertyFormState = {
-  id: string;
-  title: string;
-  description: string;
-  propertyType: PropertyType;
-  locationText: string;
-  bedrooms: string;
-  bathrooms: string;
-  areaM2: string;
-  status: PropertyOperationalStatus;
-  forSale: boolean;
-  salePrice: string;
-  saleCurrency: PropertyCurrency;
-  forRent: boolean;
-  rentPrice: string;
-  rentCurrency: PropertyCurrency;
-  amenities: Record<PropertyAmenityKey, boolean>;
-};
-
-type PanelTab = "resumen" | "publicaciones" | "inmuebles" | "propietarios" | "alquileres";
-type DrawerMode = "listing" | "owner" | "property" | "publication" | null;
-type ListingFilter = "todos" | PropertyStatus;
-type ListingWizardStep = "propietario" | "inmueble" | "publicacion";
 
 const EMPTY_AMENITIES: Record<PropertyAmenityKey, boolean> = {
   garage: false,
@@ -263,6 +93,15 @@ const EMPTY_LISTING_FORM: FormState = {
   amenities: { ...EMPTY_AMENITIES },
   operations: ["alquiler"],
   status: "activo",
+  slug: "",
+  seoTitle: "",
+  seoDescription: "",
+  publicSummary: "",
+  internalNotes: "",
+  publishStatus: "publicado",
+  visibility: "web",
+  featuredOrder: "",
+  homepageSection: "",
 };
 
 const EMPTY_OWNER_FORM: OwnerFormState = {
@@ -328,50 +167,8 @@ const TAB_COPY: Record<PanelTab, { eyebrow: string; title: string; description: 
   },
 };
 
-function formatMoney(amount: number | null, currency: PropertyCurrency | null): string {
-  if (typeof amount !== "number") return "Sin precio";
-  const normalizedCurrency = currency || "USD";
-  try {
-    return new Intl.NumberFormat("es-UY", {
-      style: "currency",
-      currency: normalizedCurrency,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  } catch {
-    return `${normalizedCurrency} ${new Intl.NumberFormat("es-UY", { maximumFractionDigits: 0 }).format(amount)}`;
-  }
-}
-
-function operationLabel(operations: Array<{ operation: PropertyOperation }>): string {
-  const values = operations.map((item) => item.operation);
-  if (values.includes("alquiler") && values.includes("venta")) return "Alquiler / Venta";
-  return values[0] === "venta" ? "Venta" : "Alquiler";
-}
-
-function listingHasMediaIssue(listing: AdminListing): boolean {
-  const media = getListingMedia(listing);
-  const photos = media.filter((item) => item.media_type === "photo").length;
-  const hasVideo = media.some((item) => item.media_type === "video");
-  return photos === 0 || !hasVideo;
-}
-
-function getListingMedia(listing: AdminListing): AdminMedia[] {
-  const propertyMedia = listing.asespro_properties?.asespro_property_media ?? [];
-  return propertyMedia.length > 0 ? propertyMedia : listing.asespro_listing_media;
-}
-
 function matchesSearch(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.trim().toLowerCase());
-}
-
-function reorderMediaItems(items: AdminMedia[], fromId: string, toId: string): AdminMedia[] {
-  const fromIndex = items.findIndex((item) => item.id === fromId);
-  const toIndex = items.findIndex((item) => item.id === toId);
-  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return items;
-  const copy = [...items];
-  const [moved] = copy.splice(fromIndex, 1);
-  copy.splice(toIndex, 0, moved);
-  return copy;
 }
 
 function buildAddress(form: FormState): string {
@@ -735,6 +532,15 @@ export function AdminPanel(): JSX.Element {
       amenities: getAmenityFormValues(listing.asespro_properties),
       operations: operations.length > 0 ? operations : ["alquiler"],
       status: listing.status,
+      slug: listing.slug ?? "",
+      seoTitle: listing.seo_title ?? "",
+      seoDescription: listing.seo_description ?? "",
+      publicSummary: listing.public_summary ?? "",
+      internalNotes: listing.internal_notes ?? "",
+      publishStatus: listing.publish_status ?? (listing.status === "activo" ? "publicado" : "pausado"),
+      visibility: listing.visibility ?? "web",
+      featuredOrder: listing.featured_order?.toString() ?? "",
+      homepageSection: listing.homepage_section ?? "",
     });
     setDrawerMode("publication");
     setActiveTab("publicaciones");
@@ -934,6 +740,17 @@ export function AdminPanel(): JSX.Element {
         status: listingForm.status,
         operations: listingForm.operations,
         isFeatured: listingForm.isFeatured,
+        title: listingForm.title,
+        description: listingForm.description,
+        slug: listingForm.slug,
+        seoTitle: listingForm.seoTitle,
+        seoDescription: listingForm.seoDescription,
+        publicSummary: listingForm.publicSummary,
+        internalNotes: listingForm.internalNotes,
+        publishStatus: listingForm.publishStatus,
+        visibility: listingForm.visibility,
+        featuredOrder: listingForm.featuredOrder,
+        homepageSection: listingForm.homepageSection,
       }),
     });
     const payload = (await response.json()) as { error?: string };
@@ -1023,6 +840,9 @@ export function AdminPanel(): JSX.Element {
         id: item.id,
         sortOrder: index,
         isCover: mediaType === "photo" ? index === 0 : false,
+        isVisible: item.is_visible !== false,
+        focalX: item.focal_x ?? 50,
+        focalY: item.focal_y ?? 50,
       })),
     };
 
@@ -1044,6 +864,14 @@ export function AdminPanel(): JSX.Element {
     await loadOverview(token);
     setBusy(false);
     setMessage("Orden de archivos actualizado.");
+  }
+
+  async function updatePropertyMedia(propertyId: string, mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>): Promise<void> {
+    if (!token || !propertyId || !item.id) return;
+    const currentProperty = properties.find((property) => property.id === propertyId);
+    const currentItems = (currentProperty?.asespro_property_media ?? []).filter((media) => media.media_type === mediaType);
+    const merged = currentItems.map((media) => (media.id === item.id ? { ...media, ...updates } : media));
+    await reorderPropertyMedia(propertyId, mediaType, merged);
   }
 
   async function updateListingStatus(listing: AdminListing, status: PropertyStatus): Promise<void> {
@@ -1729,6 +1557,7 @@ export function AdminPanel(): JSX.Element {
             <PublicationDrawer
               form={listingForm}
               busy={busy}
+              media={listings.find((listing) => listing.id === listingForm.id) ? getListingMedia(listings.find((listing) => listing.id === listingForm.id) as AdminListing) : []}
               onClose={() => setDrawerMode(null)}
               onSubmit={savePublication}
               onChange={setListingForm}
@@ -1789,6 +1618,7 @@ export function AdminPanel(): JSX.Element {
               onUploadVideo={() => void uploadSelectedPropertyVideoFile()}
               onDeleteMedia={(mediaId) => void deletePropertyMedia(propertyForm.id, mediaId)}
               onReorderMedia={(mediaType, orderedItems) => void reorderPropertyMedia(propertyForm.id, mediaType, orderedItems)}
+              onUpdateMedia={(mediaType, item, updates) => void updatePropertyMedia(propertyForm.id, mediaType, item, updates)}
             />
           </Modal>
         ) : null}
@@ -1883,7 +1713,7 @@ function MediaPreview({ media }: { media: AdminMedia[] }): JSX.Element {
 
   return (
     <div className={`${styles.mediaPreview} ${cover?.public_url && video?.public_url ? styles.mediaPreviewWithVideo : ""}`}>
-      {cover?.public_url ? <img src={cover.public_url} alt="" /> : <span>Sin foto</span>}
+      {cover?.public_url ? <img src={cover.public_url} alt="" style={{ objectPosition: getObjectPosition(cover) }} /> : <span>Sin foto</span>}
       {video?.public_url ? <video src={video.public_url} muted playsInline preload="metadata" /> : null}
     </div>
   );
@@ -2286,6 +2116,7 @@ function ListingDrawer({
 function PublicationDrawer({
   form,
   busy,
+  media,
   onClose,
   onSubmit,
   onChange,
@@ -2293,12 +2124,18 @@ function PublicationDrawer({
 }: {
   form: FormState;
   busy: boolean;
+  media: AdminMedia[];
   onClose: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onChange: (form: FormState) => void;
   onToggleOperation: (operation: PropertyOperation) => void;
 }): JSX.Element {
   const availableOperations = getPublicationOperations(form);
+  const cover = media.find((item) => item.media_type === "photo" && item.is_cover && item.public_url) ?? media.find((item) => item.media_type === "photo" && item.public_url);
+  const selectedOperation = form.operations[0] ?? availableOperations[0] ?? "alquiler";
+  const selectedPrice = selectedOperation === "venta" ? Number(form.salePrice) : Number(form.rentPrice);
+  const selectedCurrency = selectedOperation === "venta" ? form.saleCurrency : form.rentCurrency;
+  const summary = form.publicSummary || form.description;
   return (
     <section className={styles.drawer} aria-label="Ficha de publicación">
       <div className={styles.drawerHead}>
@@ -2309,9 +2146,40 @@ function PublicationDrawer({
         <button type="button" className={styles.closeButton} onClick={onClose}>Cerrar</button>
       </div>
       <form className={styles.formPanel} onSubmit={onSubmit}>
-        <div className={styles.twoCols}>
-          <label>Estado<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyStatus })}><option value="activo">Activo</option><option value="desactivado">Desactivado</option></select></label>
-          <label>Inmueble<input value={form.title} readOnly /></label>
+        <div className={styles.editorGrid}>
+          <section className={styles.previewPanel} aria-label="Vista previa web">
+            <div className={styles.previewCard}>
+              <div className={styles.previewImage}>
+                {cover?.public_url ? <img src={cover.public_url} alt="" style={{ objectPosition: getObjectPosition(cover) }} /> : <span>Sin portada</span>}
+                <small>{selectedOperation === "venta" ? "Venta" : "Alquiler"}</small>
+              </div>
+              <div className={styles.previewBody}>
+                <strong>{form.title || "Titulo de publicacion"}</strong>
+                <p>{summary || "Resumen publico para la tarjeta y vistas previas."}</p>
+                <span>{formatMoney(Number.isFinite(selectedPrice) ? selectedPrice : null, selectedCurrency)}</span>
+              </div>
+            </div>
+          </section>
+          <section className={styles.editorFields}>
+            <div className={styles.twoCols}>
+              <label>Estado web<select value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value as PropertyStatus })}><option value="activo">Activo</option><option value="desactivado">Desactivado</option></select></label>
+              <label>Workflow<select value={form.publishStatus} onChange={(event) => onChange({ ...form, publishStatus: event.target.value as FormState["publishStatus"] })}><option value="borrador">Borrador</option><option value="revision">Revision</option><option value="publicado">Publicado</option><option value="pausado">Pausado</option><option value="archivado">Archivado</option></select></label>
+            </div>
+            <div className={styles.twoCols}>
+              <label>Visibilidad<select value={form.visibility} onChange={(event) => onChange({ ...form, visibility: event.target.value as FormState["visibility"] })}><option value="web">Web publica</option><option value="privado">Privado</option><option value="link_directo">Solo link directo</option></select></label>
+              <label>Orden destacada<input inputMode="numeric" value={form.featuredOrder} onChange={(event) => onChange({ ...form, featuredOrder: event.target.value })} /></label>
+            </div>
+            <label>Titulo publico<input value={form.title} onChange={(event) => onChange({ ...form, title: event.target.value })} /></label>
+            <label>Slug<input value={form.slug} onChange={(event) => onChange({ ...form, slug: event.target.value })} placeholder="casa-centro-paso-de-los-toros" /></label>
+            <label>Resumen para cards<textarea value={form.publicSummary} onChange={(event) => onChange({ ...form, publicSummary: event.target.value })} /></label>
+            <label>Descripcion publica<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
+            <div className={styles.twoCols}>
+              <label>SEO title<input value={form.seoTitle} onChange={(event) => onChange({ ...form, seoTitle: event.target.value })} /></label>
+              <label>Seccion home<input value={form.homepageSection} onChange={(event) => onChange({ ...form, homepageSection: event.target.value })} /></label>
+            </div>
+            <label>SEO description<textarea value={form.seoDescription} onChange={(event) => onChange({ ...form, seoDescription: event.target.value })} /></label>
+            <label>Notas internas<textarea value={form.internalNotes} onChange={(event) => onChange({ ...form, internalNotes: event.target.value })} /></label>
+          </section>
         </div>
         <div className={styles.operations}>
           {availableOperations.map((operation) => (
@@ -2384,6 +2252,7 @@ function PropertyDrawer({
   onUploadVideo,
   onDeleteMedia,
   onReorderMedia,
+  onUpdateMedia,
 }: {
   form: PropertyFormState;
   busy: boolean;
@@ -2405,6 +2274,7 @@ function PropertyDrawer({
   onUploadVideo: () => void;
   onDeleteMedia: (mediaId: string) => void;
   onReorderMedia: (mediaType: "photo" | "video", orderedItems: AdminMedia[]) => void;
+  onUpdateMedia: (mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>) => void;
 }): JSX.Element {
   const sortedMedia = [...currentMedia].sort((a, b) => {
     if (a.is_cover && !b.is_cover) return -1;
@@ -2462,8 +2332,8 @@ function PropertyDrawer({
           </div>
           {sortedMedia.length > 0 ? (
             <div className={styles.fileSections}>
-              <MediaSection title="Fotos" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("photo", orderedItems)} />
-              <MediaSection title="Videos" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("video", orderedItems)} />
+              <MediaSection title="Fotos" mediaType="photo" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("photo", orderedItems)} onUpdateMedia={onUpdateMedia} />
+              <MediaSection title="Videos" mediaType="video" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => onReorderMedia("video", orderedItems)} onUpdateMedia={onUpdateMedia} />
             </div>
           ) : (
             <p className={styles.empty}>Este inmueble todavía no tiene archivos cargados.</p>
@@ -2510,125 +2380,6 @@ function PropertyDrawer({
           </button>
         </div>
       </form>
-    </section>
-  );
-}
-
-function MediaSection({
-  title,
-  items,
-  busy,
-  onDeleteMedia,
-  onReorder,
-}: {
-  title: string;
-  items: AdminMedia[];
-  busy: boolean;
-  onDeleteMedia: (mediaId: string) => void;
-  onReorder: (orderedItems: AdminMedia[]) => void;
-}): JSX.Element {
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-
-  return (
-    <section className={styles.fileSection}>
-      <div className={styles.fileSectionHead}>
-        <strong>{title}</strong>
-        <span>{items.length}</span>
-      </div>
-      {items.length > 0 ? (
-        <div className={styles.fileGrid}>
-          {items.map((item) => (
-            <article
-              key={item.id}
-              className={`${styles.fileTile} ${draggingId === item.id ? styles.fileTileDragging : ""}`}
-              draggable={!busy}
-              onDragStart={() => setDraggingId(item.id)}
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={(event) => {
-                event.preventDefault();
-                if (!draggingId || draggingId === item.id) return;
-                onReorder(reorderMediaItems(items, draggingId, item.id));
-                setDraggingId(null);
-              }}
-              onDragEnd={() => setDraggingId(null)}
-            >
-              <div className={styles.fileThumb}>
-                {item.media_type === "video" && item.public_url ? (
-                  <video src={item.public_url} controls preload="metadata" />
-                ) : item.public_url ? (
-                  <img src={item.public_url} alt="" />
-                ) : (
-                  <span>Sin vista</span>
-                )}
-                <small>{item.media_type === "video" ? "MP4" : item.is_cover ? "Principal" : "Foto"}</small>
-              </div>
-              <button type="button" className={styles.dangerButton} disabled={busy} onClick={() => onDeleteMedia(item.id)}>
-                Eliminar
-              </button>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <p className={styles.empty}>Sin {title.toLowerCase()} cargados.</p>
-      )}
-    </section>
-  );
-}
-
-function ListingTable({
-  listings,
-  busy,
-  onEdit,
-  onStatusChange,
-  onFeaturedChange,
-}: {
-  listings: AdminListing[];
-  busy: boolean;
-  onEdit: (listing: AdminListing) => void;
-  onStatusChange: (listing: AdminListing, status: PropertyStatus) => Promise<void>;
-  onFeaturedChange: (listing: AdminListing, isFeatured: boolean) => Promise<void>;
-}): JSX.Element {
-  return (
-    <section className={styles.tablePanel}>
-      <div className={styles.sectionHead}>
-        <div>
-          <h3>Publicaciones</h3>
-          <p>Controla qué entra a la web, qué queda pausado y qué ya se cerró.</p>
-        </div>
-        <span>{listings.length}</span>
-      </div>
-      {listings.map((listing) => {
-        const media = getListingMedia(listing);
-        const photos = media.filter((item) => item.media_type === "photo").length;
-        const hasVideo = media.some((item) => item.media_type === "video");
-        return (
-          <article key={listing.id} className={`${styles.rowCard} ${styles.rowCardWithMedia}`}>
-            <MediaPreview media={media} />
-            <div className={styles.rowMain}>
-              <strong>{listing.title}</strong>
-              <p>{listing.asespro_properties?.location_text ?? "Sin ubicación"} - {operationLabel(listing.asespro_listing_operations)} - {formatMoney(listing.price_amount, listing.price_currency)}</p>
-              <small>{photos} fotos - {hasVideo ? "con video" : "sin video"} - {listing.status}</small>
-            </div>
-            <div className={styles.rowActions}>
-              <select value={listing.status} disabled={busy} onChange={(event) => void onStatusChange(listing, event.target.value as PropertyStatus)}>
-                <option value="activo">Activo</option>
-                <option value="desactivado">Desactivado</option>
-              </select>
-              <label className={styles.featuredToggle}>
-                <input
-                  type="checkbox"
-                  checked={listing.is_featured === true}
-                  disabled={busy}
-                  onChange={(event) => void onFeaturedChange(listing, event.target.checked)}
-                />
-                Destacada
-              </label>
-              <button type="button" onClick={() => onEdit(listing)}>Editar</button>
-            </div>
-          </article>
-        );
-      })}
-      {listings.length === 0 ? <p className={styles.empty}>No hay publicaciones para estos filtros.</p> : null}
     </section>
   );
 }

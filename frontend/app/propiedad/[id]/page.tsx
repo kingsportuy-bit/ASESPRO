@@ -37,45 +37,45 @@ const AMENITY_LABELS: Array<{ key: PropertyAmenityKey; label: string }> = [
 
 function AmenityIcon({ type }: { type: AmenityItem["key"] }): JSX.Element {
   if (type === "bathrooms") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 8a7 7 0 0 1 14 0v5h5v7H24V8a2 2 0 0 0-4 0v25h37v7h-4v4a14 14 0 0 1-11 14l1 4H21l1-4A14 14 0 0 1 11 44v-4H7v-7h10V8Zm3 32v4a7 7 0 0 0 7 7h10a7 7 0 0 0 7-7v-4H20Zm20-27h10v7H40v-7Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M15 12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8v5h-8v-5h-2v22h34v8h-5v3a13 13 0 0 1-13 13H25a13 13 0 0 1-13-13v-3H7v-8h8V12Zm6 30v3a5 5 0 0 0 5 5h12a5 5 0 0 0 5-5v-3H21Z" /></svg>;
   }
   if (type === "area") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M11 10h8v6h-3v32h3v6h-8v-8H5v-8h6V26H5v-8h6v-8Zm15 8h28v28H26V18Zm5 22h18V24H31v16Zm2-30h16V5l10 8-10 8v-5H33v5l-10-8 10-8v5Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 12h40v40H12V12Zm8 8v24h24V20H20Zm14-14h18v18h-7v-6H34V6ZM6 34h12v7h-5v11H6V34Z" /></svg>;
   }
   if (type === "bedrooms") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 18a6 6 0 0 1 6-6h6a9 9 0 0 1 9 9v7h2v-7a9 9 0 0 1 9-9h6a6 6 0 0 1 6 6v12a9 9 0 0 1 6 9v15h-8v-6H12v6H4V39a9 9 0 0 1 6-9V18Zm8 10h9v-7a5 5 0 0 0-5-5h-4v12Zm20 0h10V16h-6a5 5 0 0 0-5 5v7h1ZM12 38v4h40v-4a3 3 0 0 0-3-3H15a3 3 0 0 0-3 3Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 24h18a7 7 0 0 1 7 7v3h15a8 8 0 0 1 8 8v13h-9v-6H16v6H7V16h9v18h13v-3a2 2 0 0 0-2-2H9v-5Z" /></svg>;
   }
   if (type === "casa") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 31 32 7l26 24-5 6-4-4v24H37V40H27v17H15V33l-4 4-5-6Zm41-18h8v13l-8-7v-6Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 31 32 8l26 23-5 7-4-4v23H36V42h-8v15H15V34l-4 4-5-7Z" /></svg>;
   }
   if (type === "apartamento") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 6h38a5 5 0 0 1 5 5v42h4v6H4v-6h4V11a5 5 0 0 1 5-5Zm8 8v8h8v-8h-8Zm14 0v8h8v-8h-8ZM21 29v8h8v-8h-8Zm14 0v8h8v-8h-8ZM27 53h10V42H27v11Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 6h36a5 5 0 0 1 5 5v42h5v6H4v-6h5V11a5 5 0 0 1 5-5Zm10 10v8h7v-8h-7Zm16 0v8h7v-8h-7ZM24 32v8h7v-8h-7Zm16 0v8h7v-8h-7ZM28 53h8V43h-8v10Z" /></svg>;
   }
   if (type === "garage") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 36h4l6-15a8 8 0 0 1 7-5h12a8 8 0 0 1 7 5l6 15h4a4 4 0 0 1 4 4v5h-5v10h-9V45H19v10h-9V45H5v-5a4 4 0 0 1 4-4Zm13-2h20l-4-10H26l-4 10Zm-5 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm30 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M11 34h4l6-13h22l6 13h4a5 5 0 0 1 5 5v12h-8v6h-8v-6H22v6h-8v-6H6V39a5 5 0 0 1 5-5Zm13-5-2 5h20l-2-5H24Z" /></svg>;
   }
   if (type === "patio") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M29 52V36c-11-1-19-8-19-17A13 13 0 0 1 34 12a11 11 0 0 1 19 8c0 9-7 15-17 16v16h16v6H12v-6h17Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M28 52V37C17 36 10 30 10 21a12 12 0 0 1 22-7 11 11 0 0 1 20 7c0 9-7 15-18 16v15h18v6H12v-6h16Z" /></svg>;
   }
   if (type === "laundry") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 6h30a5 5 0 0 1 5 5v42a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5Zm3 8v7h24v-7H20Zm12 13a13 13 0 1 0 0 26 13 13 0 0 0 0-26Zm-6 13c5 4 10 4 16 0a9 9 0 0 1-16 0Zm16-23a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 6h30a5 5 0 0 1 5 5v42a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V11a5 5 0 0 1 5-5Zm4 8v8h22v-8H21Zm11 15a12 12 0 1 0 0 24 12 12 0 0 0 0-24Z" /></svg>;
   }
   if (type === "living") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 24h30a8 8 0 0 1 8 8v16h-5v8h-8v-8H22v8h-8v-8H9V32a8 8 0 0 1 8-8Zm1-8h28a7 7 0 0 1 7 7v5a12 12 0 0 0-6-2H17c-2 0-4 1-6 2v-5a7 7 0 0 1 7-7Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 25h30a8 8 0 0 1 8 8v15h-5v8h-8v-8H22v8h-8v-8H9V33a8 8 0 0 1 8-8Zm2-9h26a7 7 0 0 1 7 7v4a12 12 0 0 0-5-1H17a12 12 0 0 0-5 1v-4a7 7 0 0 1 7-7Z" /></svg>;
   }
   if (type === "dining") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 30h24a5 5 0 0 1 5 5v5H15v-5a5 5 0 0 1 5-5Zm9 10h6v16h-6V40Zm-18 1h6l-3 17H8l3-17Zm36 0h6l3 17h-6l-3-17ZM14 19a7 7 0 1 1 14 0v5H14v-5Zm22 0a7 7 0 1 1 14 0v5H36v-5Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 31h28a5 5 0 0 1 5 5v6H13v-6a5 5 0 0 1 5-5Zm11 11h6v16h-6V42Zm-18 3h7l-4 13H8l3-13Zm35 0h7l3 13h-6l-4-13ZM22 17a7 7 0 0 1 7 7v4H15v-4a7 7 0 0 1 7-7Zm20 0a7 7 0 0 1 7 7v4H35v-4a7 7 0 0 1 7-7Z" /></svg>;
   }
   if (type === "kitchen") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 6h36a4 4 0 0 1 4 4v44a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4Zm4 8v10h28V14H18Zm0 18v18h28V32H18Zm4-15h7v4h-7v-4Zm15 0a3 3 0 1 0 0 .1V17Zm9 0a3 3 0 1 0 0 .1V17Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 6h36a4 4 0 0 1 4 4v44a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4Zm5 9v11h26V15H19Zm0 20v14h26V35H19Z" /></svg>;
   }
   if (type === "balcony") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 8h32v28h6v8h-5v14h-6V44h-8v14h-6V44h-8v14h-6V44h-5v-8h6V8Zm7 7v21h18V15H23Zm6 4h6v17h-6V19Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M17 8h30v28h7v8h-5v14h-7V44h-7v14h-6V44h-7v14h-7V44h-5v-8h7V8Zm8 8v20h14V16H25Z" /></svg>;
   }
   if (type === "security") {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5c8 6 16 8 24 8v15c0 15-9 26-24 31C17 54 8 43 8 28V13c8 0 16-2 24-8Zm-9 27h18v-7a9 9 0 0 0-18 0v7Zm5 0v-7a4 4 0 0 1 8 0v7h-8Zm4 8a4 4 0 0 0-2 7v5h4v-5a4 4 0 0 0-2-7Z" /></svg>;
+    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5c8 6 16 8 24 8v15c0 15-9 26-24 31C17 54 8 43 8 28V13c8 0 16-2 24-8Zm-9 28h18v-7a9 9 0 0 0-18 0v7Zm5 0h8v13h-8V33Z" /></svg>;
   }
-  return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M19 13a4 4 0 0 1 8 0v24h10V13a4 4 0 0 1 8 0v24h7v6H12v-6h7V13Zm-4 40c4 3 8 3 12 0s8-3 12 0 8 3 12 0v6c-4 3-8 3-12 0s-8-3-12 0-8 3-12 0v-6Zm0-10c4 3 8 3 12 0s8-3 12 0 8 3 12 0v6c-4 3-8 3-12 0s-8-3-12 0-8 3-12 0v-6Z" /></svg>;
+  return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M19 14a4 4 0 0 1 8 0v23h10V14a4 4 0 0 1 8 0v23h7v7H12v-7h7V14Zm-4 38c4 3 8 3 12 0s8-3 12 0 8 3 12 0v6c-4 3-8 3-12 0s-8-3-12 0-8 3-12 0v-6Z" /></svg>;
 }
 
 export async function generateMetadata({ params }: PropertyDetailPageProps): Promise<Metadata> {
@@ -124,6 +124,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
           title={property.title}
           location={property.location}
           photos={galleryWithFallback}
+          media={property.media}
           videoUrl={videoUrl}
           fallbackImage={fallbackImage}
         />

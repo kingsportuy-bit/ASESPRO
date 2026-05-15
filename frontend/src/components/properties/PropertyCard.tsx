@@ -14,7 +14,9 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property, selected = false, onSelect }: PropertyCardProps): JSX.Element {
   const interactionLabel = `Abrir ${property.title} en ${property.location}`;
-  const coverImage = property.photoUrls.find((photo) => photo.trim().length > 0) ?? getPropertyCoverImage(property.id);
+  const coverMedia = property.media?.find((item) => item.type === "photo" && item.url.trim().length > 0);
+  const coverImage = coverMedia?.url ?? property.photoUrls.find((photo) => photo.trim().length > 0) ?? getPropertyCoverImage(property.id);
+  const objectPosition = `${coverMedia?.focalX ?? 50}% ${coverMedia?.focalY ?? 50}%`;
 
   return (
     <article className={`${styles.card} ${selected ? styles.cardSelected : ""}`} role="listitem">
@@ -30,6 +32,7 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
               src={coverImage}
               alt=""
               className={styles.thumb}
+              style={{ objectPosition }}
               loading="lazy"
               onError={(event) => {
                 const fallback = getPropertyCoverImage(property.id);

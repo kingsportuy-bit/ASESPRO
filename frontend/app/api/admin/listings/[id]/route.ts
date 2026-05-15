@@ -175,14 +175,29 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
     return NextResponse.json({ error: "Supabase no esta configurado." }, { status: 500 });
   }
 
-  const payload = (await request.json()) as { status?: PropertyStatus; operations?: unknown; isFeatured?: boolean };
+  const payload = (await request.json()) as {
+    status?: PropertyStatus;
+    operations?: unknown;
+    isFeatured?: boolean;
+    title?: string;
+    description?: string;
+    slug?: string;
+    seoTitle?: string;
+    seoDescription?: string;
+    publicSummary?: string;
+    internalNotes?: string;
+    publishStatus?: "borrador" | "revision" | "publicado" | "pausado" | "archivado";
+    visibility?: "web" | "privado" | "link_directo";
+    featuredOrder?: string | number | null;
+    homepageSection?: string;
+  };
   const hasStatus = payload.status !== undefined;
   const status = payload.status;
   if (hasStatus && status !== "activo" && status !== "desactivado") {
     return NextResponse.json({ error: "Estado inválido." }, { status: 400 });
   }
 
-  const updates: Record<string, string | null | boolean> = {
+  const updates: Record<string, string | number | null | boolean> = {
     updated_at: new Date().toISOString(),
   };
   if (hasStatus) {
@@ -193,8 +208,22 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
   if (typeof payload.isFeatured === "boolean") {
     updates.is_featured = payload.isFeatured;
   }
+  if (typeof payload.title === "string" && payload.title.trim()) updates.title = payload.title.trim();
+  if (typeof payload.description === "string") updates.description = payload.description.trim();
+  if (typeof payload.slug === "string") updates.slug = payload.slug.trim() || null;
+  if (typeof payload.seoTitle === "string") updates.seo_title = payload.seoTitle.trim() || null;
+  if (typeof payload.seoDescription === "string") updates.seo_description = payload.seoDescription.trim() || null;
+  if (typeof payload.publicSummary === "string") updates.public_summary = payload.publicSummary.trim() || null;
+  if (typeof payload.internalNotes === "string") updates.internal_notes = payload.internalNotes.trim() || null;
+  if (payload.publishStatus === "borrador" || payload.publishStatus === "revision" || payload.publishStatus === "publicado" || payload.publishStatus === "pausado" || payload.publishStatus === "archivado") updates.publish_status = payload.publishStatus;
+  if (payload.visibility === "web" || payload.visibility === "privado" || payload.visibility === "link_directo") updates.visibility = payload.visibility;
+  if (payload.homepageSection !== undefined) updates.homepage_section = typeof payload.homepageSection === "string" && payload.homepageSection.trim() ? payload.homepageSection.trim() : null;
+  if (payload.featuredOrder !== undefined) {
+    const featuredOrder = Number(payload.featuredOrder);
+    updates.featured_order = Number.isFinite(featuredOrder) ? featuredOrder : null;
+  }
 
-  if (!hasStatus && !Array.isArray(payload.operations) && typeof payload.isFeatured !== "boolean") {
+  if (Object.keys(updates).length === 1 && !Array.isArray(payload.operations)) {
     return NextResponse.json({ error: "No hay cambios para actualizar." }, { status: 400 });
   }
 

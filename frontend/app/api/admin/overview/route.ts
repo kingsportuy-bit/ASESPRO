@@ -4,7 +4,7 @@ import { requireAdminUser } from "@/lib/adminAuth";
 import { getSupabaseAdminClient } from "@/lib/supabaseServer";
 
 const LISTINGS_SELECT_WITH_FEATURED =
-  "id,property_id,title,description,price_amount,price_currency,is_featured,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
+  "id,property_id,title,description,price_amount,price_currency,is_featured,slug,seo_title,seo_description,public_summary,internal_notes,publish_status,visibility,featured_order,homepage_section,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover,alt_text,caption,focal_x,focal_y,is_visible,quality_status)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover,alt_text,caption,focal_x,focal_y,is_visible,quality_status)";
 const LISTINGS_SELECT_FALLBACK =
   "id,property_id,title,description,price_amount,price_currency,status,created_at,asespro_properties(title,description,property_type,location_text,latitude,longitude,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)),asespro_listing_operations(operation),asespro_listing_media(id,media_type,public_url,storage_path,sort_order,is_cover)";
 
@@ -43,7 +43,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     listingsPromise(),
     supabase
       .from("asespro_properties")
-      .select("id,code,title,description,property_type,location_text,latitude,longitude,is_active,status,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,created_at,asespro_property_owners(owner_id),asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover)")
+      .select("id,code,title,description,property_type,location_text,latitude,longitude,is_active,status,bedrooms,bathrooms,area_m2,for_sale,sale_price,sale_currency,for_rent,rent_price,rent_currency,has_garage,has_patio,has_laundry,has_living,has_dining,has_kitchen,has_balcony,has_security,has_pool,created_at,asespro_property_owners(owner_id),asespro_property_media(id,media_type,public_url,storage_path,sort_order,is_cover,alt_text,caption,focal_x,focal_y,is_visible,quality_status)")
       .order("created_at", { ascending: false }),
     supabase.from("asespro_owners").select("id,full_name,phone,email,notes,created_at").order("created_at", { ascending: false }),
     supabase

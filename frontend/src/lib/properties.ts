@@ -19,6 +19,15 @@ export type PropertyAmenityKey =
 
 export type PropertyAmenities = Partial<Record<PropertyAmenityKey, boolean>>;
 
+export type PropertyMediaItem = {
+  type: "photo" | "video";
+  url: string;
+  focalX?: number;
+  focalY?: number;
+  altText?: string;
+  caption?: string;
+};
+
 export type PropertyListing = {
   id: string;
   title: string;
@@ -38,6 +47,10 @@ export type PropertyListing = {
   amenities?: PropertyAmenities;
   status: PropertyStatus;
   photoUrls: string[];
+  media?: PropertyMediaItem[];
+  publicSummary?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   videoUrl?: string;
 };
 
