@@ -27,7 +27,7 @@ import type {
 } from "./lib/adminTypes";
 import { formatMoney, getListingMedia, getObjectPosition, listingHasMediaIssue, operationLabel } from "./lib/adminUtils";
 import { ListingTable } from "./components/ListingTable";
-import { MediaSection } from "./components/MediaSection";
+import { PropertyMediaEditor } from "./components/PropertyMediaEditor";
 import styles from "./AdminPanel.module.css";
 
 const MAX_VIDEO_SIZE_BYTES = 500 * 1024 * 1024;
@@ -2312,41 +2312,6 @@ function PropertyDrawer({
   onDeleteMedia: (mediaId: string) => void;
   onSaveMedia: (items: AdminMedia[]) => void;
 }): JSX.Element {
-  const [mediaDraft, setMediaDraft] = useState<AdminMedia[]>([]);
-
-  useEffect(() => {
-    setMediaDraft([...currentMedia].sort(sortMedia));
-  }, [currentMedia]);
-
-  const sortedMedia = [...mediaDraft].sort(sortMedia);
-  const mediaHasPendingChanges = JSON.stringify(sortedMedia) !== JSON.stringify([...currentMedia].sort(sortMedia));
-  const photoMedia = sortedMedia.filter((item) => item.media_type === "photo");
-  const videoMedia = sortedMedia.filter((item) => item.media_type === "video");
-
-  function sortMedia(a: AdminMedia, b: AdminMedia): number {
-    if (a.is_cover && !b.is_cover) return -1;
-    if (!a.is_cover && b.is_cover) return 1;
-    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
-  }
-
-  function updateMediaDraft(mediaType: "photo" | "video", items: AdminMedia[]): void {
-    setMediaDraft((current) => {
-      const normalizedItems = items.map((item, index) => ({
-        ...item,
-        sort_order: index,
-        is_cover: mediaType === "photo" ? index === 0 : false,
-      }));
-      return [...current.filter((item) => item.media_type !== mediaType), ...normalizedItems].sort(sortMedia);
-    });
-  }
-
-  function updateMediaItem(mediaType: "photo" | "video", item: AdminMedia, updates: Partial<AdminMedia>): void {
-    updateMediaDraft(
-      mediaType,
-      (mediaType === "photo" ? photoMedia : videoMedia).map((candidate) => (candidate.id === item.id ? { ...candidate, ...updates } : candidate)),
-    );
-  }
-
   return (
     <section className={styles.drawer} aria-label="Formulario de inmueble">
       <div className={styles.drawerHead}>
@@ -2388,28 +2353,7 @@ function PropertyDrawer({
           </div>
         ) : null}
         <label>Descripción<textarea value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} /></label>
-        <div className={styles.fileManager}>
-          <div className={styles.fileManagerHead}>
-            <div>
-              <strong>Editor multimedia</strong>
-              <p>Reordena, elegi portada, ajusta foco y guarda todo junto.</p>
-            </div>
-            <div className={styles.fileManagerActions}>
-              <span>{sortedMedia.length} archivos</span>
-              <button type="button" className={mediaHasPendingChanges ? styles.primaryButton : styles.disabledSaveButton} disabled={busy || !mediaHasPendingChanges} onClick={() => onSaveMedia(sortedMedia)}>
-                {busy ? "Guardando..." : "Guardar multimedia"}
-              </button>
-            </div>
-          </div>
-          {sortedMedia.length > 0 ? (
-            <div className={styles.fileSections}>
-              <MediaSection title="Fotos" mediaType="photo" items={photoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => updateMediaDraft("photo", orderedItems)} onUpdateMedia={updateMediaItem} />
-              <MediaSection title="Videos" mediaType="video" items={videoMedia} busy={busy} onDeleteMedia={onDeleteMedia} onReorder={(orderedItems) => updateMediaDraft("video", orderedItems)} onUpdateMedia={updateMediaItem} />
-            </div>
-          ) : (
-            <p className={styles.empty}>Este inmueble todavía no tiene archivos cargados.</p>
-          )}
-        </div>
+        <PropertyMediaEditor currentMedia={currentMedia} busy={busy} onDeleteMedia={onDeleteMedia} onSaveMedia={onSaveMedia} />
         <div className={styles.twoCols}>
           <label>Nuevas imágenes<input type="file" accept="image/*" multiple onChange={(event) => onPhotosChange(Array.from(event.target.files ?? []))} /></label>
           <label>Video MP4 vertical<input key={`property-video-${fileInputResetKey}`} type="file" accept="video/mp4,.mp4" onChange={(event) => onVideoFileChange(event.target.files?.[0] ?? null)} /></label>

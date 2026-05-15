@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { AdminMedia } from "../lib/adminTypes";
 import { getObjectPosition, reorderMediaItems } from "../lib/adminUtils";
 import styles from "../AdminPanel.module.css";
 
-export function MediaSection({
+function MediaSectionComponent({
   title,
   mediaType,
   items,
@@ -95,3 +95,5 @@ export function MediaSection({
     </section>
   );
 }
+
+export const MediaSection = memo(MediaSectionComponent);
