@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://asespro.kodebix.com/sitemap.xml

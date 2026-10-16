@@ -388,47 +388,6 @@
   line-height: 1.5;
 }
 
-.cleaningBanner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-radius: 20px;
-  overflow: hidden;
-  background: linear-gradient(125deg, #003f31 0%, #00513f 44%, #006b54 100%);
-  color: #ffffff;
-}
-
-.cleaningCopy {
-  padding: 30px 26px;
-}
-
-.cleaningCopy h2 {
-  margin: 0;
-  font-size: clamp(2rem, 1.5rem + 1.8vw, 3.2rem);
-  letter-spacing: -0.02em;
-}
-
-.cleaningCopy p {
-  margin: 10px 0 0;
-  color: rgba(255, 255, 255, 0.88);
-  max-width: 420px;
-  line-height: 1.6;
-}
-
-.cleaningActions {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.cleaningImage {
-  width: 100%;
-  height: 100%;
-  min-height: 270px;
-  object-fit: cover;
-  opacity: 0.72;
-}
-
 .mapTeaser h2 {
   margin: 0;
   font-size: clamp(1.7rem, 1.35rem + 1.15vw, 2.6rem);
@@ -494,10 +453,7 @@
 }
 
 .trustSection {
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 18px;
-  align-items: start;
+  display: block;
 }
 
 .trustCopy h2 {
@@ -531,21 +487,10 @@
   color: #3d4a3e;
 }
 
-.trustMedia {
-  border-radius: 16px;
-  overflow: hidden;
-  min-height: 360px;
-}
-
-.trustMedia img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .contactStrip {
   display: grid;
-  grid-template-columns: 1fr 0.95fr;
+  grid-template-columns: 1fr auto;
+  align-items: center;
   gap: 16px;
   border-radius: 20px;
   background: #f0f4f3;
@@ -571,57 +516,17 @@
   gap: 8px;
 }
 
-.contactFormMock {
-  border-radius: 16px;
-  background: #ffffff;
-  padding: 18px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.contactFormMock label {
-  display: grid;
-  gap: 6px;
-  font-size: 11px;
-  color: #444746;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 800;
-}
-
-.contactFormMock input,
-.contactFormMock textarea {
-  min-height: 48px;
-  border: 0;
-  border-bottom: 1px solid rgba(190, 201, 195, 0.62);
-  background: transparent;
-  color: #181c1c;
-  font: inherit;
-  padding: 9px 2px;
-}
-
-.contactFormMock textarea {
-  min-height: 106px;
-  resize: vertical;
-}
-
-.contactFormMock label:last-of-type {
-  grid-column: 1 / -1;
-}
-
 .contactActions {
-  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: flex-end;
 }
 
 @media (max-width: 900px) {
   .featuredGrid,
   .steps,
   .quickGrid,
-  .cleaningBanner,
   .trustSection,
   .contactStrip {
     grid-template-columns: 1fr;
@@ -648,7 +553,7 @@
     padding: 20px 14px 24px;
   }
 
-  .contactFormMock {
-    grid-template-columns: 1fr;
+  .contactActions {
+    justify-content: flex-start;
   }
 }

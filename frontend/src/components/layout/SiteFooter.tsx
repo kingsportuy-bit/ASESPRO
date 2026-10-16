@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 
 import styles from "./SiteFooter.module.css";
 
+const CLEANING_SITE = "https://asespro.kodebix.com/";
+const PHONE = "+59899715662";
+
 export function SiteFooter(): JSX.Element {
   const pathname = usePathname();
   const year = new Date().getFullYear();
@@ -17,8 +20,8 @@ export function SiteFooter(): JSX.Element {
             Todos los derechos reservados | &copy; {year} ASESPRO
             <span className={styles.poweredBy}>
               power by{" "}
-              <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
-                Codexa.uy
+              <a href="https://kodebix.com" target="_blank" rel="noreferrer" className={styles.codexaLink}>
+                Kodebix.com
               </a>
             </span>
           </p>
@@ -41,28 +44,26 @@ export function SiteFooter(): JSX.Element {
           <Link href="/venta" className={styles.link}>
             Venta
           </Link>
-          <Link href="/servicio-limpieza" className={styles.link}>
-            Servicio de limpieza
-          </Link>
           <Link href="/contacto" className={styles.link}>
             Contacto
           </Link>
+          <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
         </nav>
 
         <div className={styles.brandBlock}>
-          <img src="/LOGO_ASESPRO_transparente (2).png?v=20260429b" alt="ASESPRO" className={styles.brandLogo} />
+          <img src="/asespro-inmobiliaria-vertical-green.svg" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
         </div>
 
         <div className={`${styles.col} ${styles.contactBlock}`}>
           <p className={styles.colTitle}>Contacto</p>
           <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
-          <a href="tel:+59898382388" className={styles.link}>
-            +598 98 382 388
+          <a href={`tel:${PHONE}`} className={styles.link}>
+            +598 99 715 662
           </a>
-          <a href="https://wa.me/59898382388" target="_blank" rel="noreferrer" className={styles.link}>
-            WhatsApp +598 98 382 388
+          <a href={`https://wa.me/${PHONE.replace('+', '')}`} target="_blank" rel="noreferrer" className={styles.link}>
+            WhatsApp +598 99 715 662
           </a>
-          <a href="https://www.instagram.com/asespro.servicios" target="_blank" rel="noreferrer" className={styles.link}>
+          <a href="https://www.instagram.com/asespro.inmobiliaria/" target="_blank" rel="noreferrer" className={styles.link}>
             Instagram
           </a>
         </div>
@@ -70,7 +71,7 @@ export function SiteFooter(): JSX.Element {
 
       <div className={`${styles.inner} ${styles.mobileInner}`}>
         <div className={styles.brandBlock}>
-          <img src="/LOGO_ASESPRO_transparente (2).png?v=20260429b" alt="ASESPRO" className={styles.brandLogo} />
+          <img src="/asespro-inmobiliaria-vertical-green.svg" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
         </div>
 
         <div className={styles.mobileColumns}>
@@ -85,24 +86,22 @@ export function SiteFooter(): JSX.Element {
             <Link href="/venta" className={styles.link}>
               Venta
             </Link>
-            <Link href="/servicio-limpieza" className={styles.link}>
-            Servicio de limpieza
-            </Link>
             <Link href="/contacto" className={styles.link}>
               Contacto
             </Link>
+            <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
           </nav>
 
           <div className={styles.col}>
             <p className={styles.colTitle}>Contacto</p>
             <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
-            <a href="tel:+59898382388" className={styles.link}>
-              +598 98 382 388
+            <a href={`tel:${PHONE}`} className={styles.link}>
+              +598 99 715 662
             </a>
-            <a href="https://wa.me/59898382388" target="_blank" rel="noreferrer" className={styles.link}>
-              WhatsApp +598 98 382 388
+            <a href={`https://wa.me/${PHONE.replace('+', '')}`} target="_blank" rel="noreferrer" className={styles.link}>
+              WhatsApp +598 99 715 662
             </a>
-            <a href="https://www.instagram.com/asespro.servicios" target="_blank" rel="noreferrer" className={styles.link}>
+            <a href="https://www.instagram.com/asespro.inmobiliaria/" target="_blank" rel="noreferrer" className={styles.link}>
               Instagram
             </a>
           </div>
@@ -114,8 +113,8 @@ export function SiteFooter(): JSX.Element {
           Todos los derechos reservados | &copy; {year} ASESPRO
           <span className={styles.poweredBy}>
             power by{" "}
-            <a href="https://codexa.uy" target="_blank" rel="noreferrer" className={styles.codexaLink}>
-              Codexa.uy
+            <a href="https://kodebix.com" target="_blank" rel="noreferrer" className={styles.codexaLink}>
+              Kodebix.com
             </a>
           </span>
         </p>

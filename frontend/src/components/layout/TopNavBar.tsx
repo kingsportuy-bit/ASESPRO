@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./TopNavBar.module.css";
 
@@ -15,9 +15,10 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Inicio" },
   { href: "/alquiler", label: "Alquiler" },
   { href: "/venta", label: "Venta" },
-  { href: "/servicio-limpieza", label: "Servicio de limpieza" },
   { href: "/contacto", label: "Contacto" },
 ];
+
+const CLEANING_SITE = "https://asespro.kodebix.com/";
 
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -29,6 +30,22 @@ export function TopNavBar(): JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+  const menuPanelRef = useRef<HTMLElement>(null);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent): void => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (menuPanelRef.current?.contains(target) || menuToggleRef.current?.contains(target)) return;
+      setMenuOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [menuOpen]);
 
   if (pathname.startsWith("/admin")) {
     return <></>;
@@ -63,7 +80,7 @@ export function TopNavBar(): JSX.Element {
     >
       <div className={styles.inner}>
         <Link href="/" className={styles.logo}>
-          <img src="/LOGO_ASESPRO_transparente_horizontal.png?v=20260429b" alt="ASESPRO" className={styles.logoDesktop} />
+          <img src="/asespro-inmobiliaria-horizontal-white.svg" alt="ASESPRO Inmobiliaria" className={styles.logoDesktop} />
           <img src="/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b" alt="ASESPRO" className={styles.logoMobile} />
         </Link>
 
@@ -73,9 +90,10 @@ export function TopNavBar(): JSX.Element {
               {item.label}
             </Link>
           ))}
+          <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
         </div>
 
-        <button type="button" className={styles.mobileToggle} aria-label="Abrir menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
+        <button ref={menuToggleRef} type="button" className={styles.mobileToggle} aria-label="Abrir menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
           <span />
           <span />
           <span />
@@ -87,7 +105,7 @@ export function TopNavBar(): JSX.Element {
       </div>
 
       <div className={`${styles.mobileOverlay} ${menuOpen ? styles.mobileOverlayOpen : ""}`} onClick={() => setMenuOpen(false)} />
-      <aside className={`${styles.mobilePanel} ${menuOpen ? styles.mobilePanelOpen : ""}`} aria-hidden={!menuOpen}>
+      <aside ref={menuPanelRef} className={`${styles.mobilePanel} ${menuOpen ? styles.mobilePanelOpen : ""}`} aria-hidden={!menuOpen}>
         <div className={styles.mobileHead}>
           <strong>ASESPRO</strong>
           <button type="button" className={styles.mobileClose} aria-label="Cerrar menu" onClick={() => setMenuOpen(false)}>
@@ -105,6 +123,7 @@ export function TopNavBar(): JSX.Element {
               {item.label}
             </Link>
           ))}
+          <a href={CLEANING_SITE} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Servicios</a>
           <Link href="/contacto" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
             Consultar ahora
           </Link>

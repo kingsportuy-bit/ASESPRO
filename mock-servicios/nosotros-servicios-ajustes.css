@@ -1,0 +1,73 @@
+.about-asespro{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:clamp(42px,8vw,120px);align-items:center}
+.about-asespro-copy h2{max-width:660px;margin-bottom:0}
+.about-asespro-detail{max-width:600px}
+.about-asespro-detail p{color:var(--muted);font-size:clamp(15px,1.35vw,18px);line-height:1.8}
+.about-asespro-detail p:last-child{margin-bottom:0}
+.founders-section{position:relative;isolation:isolate;overflow:hidden;padding-block:clamp(56px,8vw,104px);background:radial-gradient(ellipse at 88% 100%,rgba(45,174,92,.44),transparent 46%),linear-gradient(120deg,#007e2e,#009335);color:#fff}
+.founders-content{position:relative;z-index:1}
+.founders-photo{position:relative;overflow:hidden;margin:0;background:#009335;border-radius:0 clamp(54px,9vw,132px) 0 clamp(54px,9vw,132px);}
+.founders-photo img{display:block;width:100%;height:auto;transform:scale(1.025);object-fit:cover;object-position:center 42%;border:0;outline:0;box-shadow:none}
+.founders-people{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:clamp(34px,5vw,62px);text-align:center}
+.founders-people article{padding:0 16px}
+.founders-people h3{margin:0 0 3px;color:#fff;font-size:clamp(22px,3vw,38px);font-weight:600;letter-spacing:-.035em}
+.founders-people p{margin:0;color:rgba(255,255,255,.8);font-size:clamp(15px,1.8vw,23px);font-weight:400}
+.founders-caption{margin:24px 0 0;text-align:center;color:#fff;font-size:clamp(18px,2.3vw,30px);font-weight:700;letter-spacing:-.025em}
+.director-context{overflow:hidden;border:0!important;outline:0!important;box-shadow:none!important;border-radius:0 clamp(34px,6vw,84px) 0 clamp(34px,6vw,84px)}
+.director-context img{width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;object-position:center 42%;transform:scale(1.035);border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important}
+.director-context figcaption{margin-top:12px}
+.principles-story-media{overflow:hidden;border:0!important;outline:0!important;box-shadow:none!important}
+.principles-story-media img{border:0!important;outline:0!important;box-shadow:none!important}
+.service-how-grid article{display:flex;flex-direction:column;align-items:flex-start}
+.service-how-grid article>span.service-how-icon{display:block;width:30px;height:30px;margin:0 0 22px;padding:0;background:transparent;color:var(--green-dark);font-size:inherit;line-height:1}
+.service-how-icon svg{display:block;width:28px;height:28px}
+.service-how-grid h3{margin-bottom:11px}
+.service-how-grid p{margin-bottom:0}
+.service-list-grid article>span.service-list-icon{display:grid;place-items:start center;width:28px;height:30px;margin:0;padding:0;background:transparent;color:var(--green-dark);font-size:inherit;line-height:1}
+.service-list-icon svg{display:block;width:22px;height:22px;overflow:visible;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.service-listing .section-intro{margin-bottom:44px}
+.contact-section--full h2 em{max-width:12ch}
+@media (hover:hover) and (pointer:fine){.founders-photo img,.director-context img{transition:transform var(--motion-layout) var(--motion-ease)}.founders-photo:hover img,.director-context:hover img{transform:scale(1.055)}.service-how-grid article:hover .service-how-icon{transform:translateY(-2px) scale(1.06)}.service-how-icon{transition:transform var(--motion-base) var(--motion-ease)}}
+@media(max-width:760px){.about-asespro{grid-template-columns:1fr;gap:28px}.about-asespro-copy h2{font-size:clamp(42px,10vw,64px)}.founders-section{padding-block:52px}.founders-photo{border-top-right-radius:56px;border-bottom-left-radius:56px}.founders-photo img{transform:scale(1.035)}.founders-people{gap:14px;margin-top:30px}.founders-people article{padding-inline:4px}.founders-people h3{font-size:clamp(18px,5vw,25px)}.founders-people p{font-size:14px}.founders-caption{margin-top:22px;font-size:17px}.director-context{max-width:none}.service-how-grid article{padding:25px 22px}.service-list-grid article{grid-template-columns:26px 1fr;gap:16px}}
+@media(max-width:420px){.founders-people{grid-template-columns:1fr;gap:22px}.founders-people h3{font-size:22px}.founders-caption{max-width:22ch;margin-inline:auto}}
+@media(prefers-reduced-motion:reduce){.founders-photo img,.director-context img,.service-how-icon{transition:none!important}.founders-photo:hover img,.director-context:hover img{transform:none}}
+
+.service-how .section-intro,.service-listing .section-intro{grid-template-columns:1fr}
+.contact-section--full{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:clamp(30px,6vw,86px)}
+.contact-section--full h2{font-size:clamp(42px,5vw,64px);line-height:.98}
+.director-context{overflow:visible;border:0!important;outline:0!important;box-shadow:none!important;border-radius:0!important}
+.director-context-frame{display:block;overflow:hidden;border:0;border-radius:0 clamp(34px,6vw,84px) 0 clamp(34px,6vw,84px)}
+.director-context img{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;object-position:center 42%;transform:scale(1.08);border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important}
+.director-context figcaption{display:block;margin-top:12px;color:var(--muted);font-size:12px}
+@media (hover:hover) and (pointer:fine){.director-context:hover img{transform:scale(1.1)}}
+@media(max-width:760px){.director-context-frame{border-top-right-radius:48px;border-bottom-left-radius:48px}}
+@media(prefers-reduced-motion:reduce){.director-context img{transition:none!important}.director-context:hover img{transform:scale(1.08)}}
+
+/* Foto de las socias: escala contenida y sin movimiento */
+.founders-content{max-width:960px;margin-inline:auto}
+.founders-photo img,.founders-photo:hover img{transform:none!important;transition:none!important}
+
+
+/* Reducir la escala completa del bloque de las socias */
+.founders-content{max-width:680px;margin-inline:auto}
+.founders-people{gap:16px;margin-top:26px}
+.founders-people article{padding-inline:6px}
+.founders-people h3{font-size:clamp(17px,2vw,26px)}
+.founders-people p{font-size:clamp(13px,1.35vw,17px)}
+.founders-caption{margin-top:18px;font-size:clamp(15px,1.65vw,21px)}
+body[data-page="nosotros"] .principles-chapter h3{font-size:clamp(1.7rem,3vw,2.7rem);line-height:1.08}
+body[data-page="nosotros"] .principles-chapter p{margin-top:16px}
+
+/* Etiqueta institucional centrada encima de la presentación */
+.about-asespro{row-gap:20px;column-gap:clamp(42px,8vw,120px)}
+  .about-asespro-eyebrow{grid-column:1/-1;margin:0;text-align:left}
+@media(max-width:760px){.about-asespro{row-gap:18px}}
+
+/* Valores usa el mismo encuadre adaptable que las demás escenas */
+body[data-page="nosotros"] .principles-story-media img[data-chapter-image="valores"]{object-fit:cover;background:var(--green-dark)}
+@media(max-width:900px){
+ body[data-page="nosotros"] .principles-story-media{touch-action:pan-y}
+ body[data-page="nosotros"] .principles-story-media img{object-fit:cover}
+}
+
+.about-asespro-eyebrow{display:block!important}
+

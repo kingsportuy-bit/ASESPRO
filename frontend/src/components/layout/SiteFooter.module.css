@@ -218,3 +218,25 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 960px) {
+  .mobileInner .mobileColumns {
+    width: 100%;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 14px;
+  }
+
+  .mobileInner .col {
+    width: 100%;
+    align-items: center;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .mobileInner .link {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}

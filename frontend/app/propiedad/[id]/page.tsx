@@ -5,6 +5,7 @@ import { Map } from "@/components/map";
 import { getPublicPropertyById } from "@/lib/propertyRepository";
 import { buildPropertyWhatsAppUrl, formatOperationLabel, formatPrice, propertyMatchesOperation, type PropertyAmenityKey } from "@/lib/properties";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
+import { createPageMetadata } from "@/lib/seo";
 import { PropertyMediaGallery } from "./PropertyMediaGallery";
 
 import styles from "./PropertyDetailPage.module.css";
@@ -15,7 +16,7 @@ type PropertyDetailPageProps = {
   };
 };
 
-const DEFAULT_WHATSAPP_PHONE = "59898382388";
+const DEFAULT_WHATSAPP_PHONE = "59899715662";
 
 type AmenityItem = {
   key: PropertyAmenityKey | "bathrooms" | "area" | "bedrooms" | "casa" | "apartamento";
@@ -85,13 +86,20 @@ export async function generateMetadata({ params }: PropertyDetailPageProps): Pro
     return {
       title: "Propiedad no encontrada",
       description: "La propiedad solicitada no esta disponible en ASESPRO.",
+      robots: { index: false, follow: false },
     };
   }
 
-  return {
+  const description = `${property.location}. Revisa datos, fotos, precio y consulta disponibilidad con ASESPRO. ${property.description}`.slice(0, 160);
+  const image = property.photoUrls.find((photo) => typeof photo === "string" && photo.trim().length > 0) ?? getPropertyCoverImage(property.id);
+
+  return createPageMetadata({
     title: property.title,
-    description: `${property.location}. Revisa datos, fotos, precio y consulta disponibilidad con ASESPRO. ${property.description}`,
-  };
+    description,
+    path: `/propiedad/${encodeURIComponent(params.id)}`,
+    image,
+    imageAlt: property.title,
+  });
 }
 
 export default async function PropertyDetailPage({ params }: PropertyDetailPageProps): Promise<JSX.Element> {
@@ -101,7 +109,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     notFound();
   }
 
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? DEFAULT_WHATSAPP_PHONE;
+  const phone = DEFAULT_WHATSAPP_PHONE;
   const whatsappUrl = buildPropertyWhatsAppUrl(property, phone);
   const fallbackImage = getPropertyCoverImage(property.id);
   const gallery = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);

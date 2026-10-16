@@ -2,12 +2,13 @@
 
 import { ListingWithViewToggle } from "@/features/property-explorer/ListingWithViewToggle";
 import { listPublicPropertiesByOperation } from "@/lib/propertyRepository";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Alquileres en Paso de los Toros",
-  description:
-    "Casas y apartamentos en alquiler en Paso de los Toros, Pueblo Centenario y alrededores. Revisa propiedades disponibles y consulta por WhatsApp.",
-};
+  description: "Casas y apartamentos en alquiler en Paso de los Toros, Pueblo Centenario y alrededores. Revisa propiedades disponibles y consulta por WhatsApp.",
+  path: "/alquiler",
+});
 
 export default async function AlquilerPage(): Promise<JSX.Element> {
   const properties = await listPublicPropertiesByOperation("alquiler");

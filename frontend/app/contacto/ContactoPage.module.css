@@ -1,8 +1,7 @@
 .hero {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 24px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
 }
 
 .heroText h1 {
@@ -27,18 +26,6 @@
   max-width: 640px;
 }
 
-.heroMedia {
-  border-radius: 28px;
-  overflow: hidden;
-  min-height: 350px;
-}
-
-.heroMedia img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 460px;
@@ -52,30 +39,52 @@
 
 .contactCard {
   border-radius: 20px;
-  background: #f0f4f3;
+  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
+  color: #ffffff;
   padding: 20px;
   display: flex;
   gap: 14px;
   align-items: flex-start;
+  text-decoration: none;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.contactCard:hover,
+.waBox:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
 }
 
 .icon {
-  width: 52px;
-  height: 42px;
-  border-radius: 12px;
-  background: #dfe3e2;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #00513f;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.iconDot {
+  fill: currentColor;
+  stroke: none;
 }
 
 .cardLabel {
   margin: 0;
-  color: #444746;
+  color: rgba(255, 255, 255, 0.72);
   font-size: 11px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -85,7 +94,7 @@
 .contactCard strong {
   margin-top: 2px;
   display: block;
-  color: #181c1c;
+  color: #ffffff;
   font-size: clamp(1.28rem, 1.14rem + 0.45vw, 1.7rem);
   letter-spacing: -0.02em;
   word-break: break-word;
@@ -93,18 +102,19 @@
 
 .contactCard p {
   margin: 4px 0 0;
-  color: #3d4a3e;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .waBox {
   border-radius: 22px;
-  background: linear-gradient(135deg, #004a39 0%, #00513f 100%);
+  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
   color: #ffffff;
   text-decoration: none;
   padding: 20px;
   display: flex;
   gap: 14px;
   align-items: center;
+  transition: transform 180ms ease, filter 180ms ease;
 }
 
 .waBox strong {
@@ -130,7 +140,8 @@
 
 .mapCard {
   border-radius: 20px;
-  background: #f0f4f3;
+  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
+  color: #ffffff;
   padding: 20px;
   display: grid;
   gap: 12px;
@@ -140,6 +151,7 @@
   margin: 0;
   font-size: clamp(1.55rem, 1.35rem + 0.7vw, 2.2rem);
   letter-spacing: -0.02em;
+  color: #ffffff;
 }
 
 .mapCard img {
@@ -150,14 +162,14 @@
 }
 
 .mapCardBody strong {
-  color: #181c1c;
+  color: #ffffff;
   font-size: 22px;
   letter-spacing: -0.01em;
 }
 
 .mapCardBody p {
   margin: 8px 0 0;
-  color: #3d4a3e;
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.5;
 }
 
@@ -167,7 +179,11 @@
     grid-template-columns: 1fr;
   }
 
-  .heroMedia {
-    min-height: 280px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactCard,
+  .waBox {
+    transition: none;
   }
 }

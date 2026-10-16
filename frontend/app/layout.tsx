@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
 import { SiteFooter, TopNavBar } from "@/components/layout";
@@ -7,9 +7,10 @@ import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from "@/lib/seo";
 
 import "./globals.css";
 
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+const switzer = localFont({
+  src: "../public/fonts/Switzer-Variable.woff2",
+  variable: "--font-switzer",
+  weight: "100 900",
   display: "swap",
 });
 
@@ -20,9 +21,10 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
   icons: {
-    icon: '/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b',
-    apple: '/LOGO_ASESPRO_transparente_horizontal_moible.png?v=20260429b',
+    icon: [{ url: "/asespro-isotipo-favicon.svg?v=20261016", type: "image/svg+xml" }],
+    apple: "/asespro-isotipo-favicon.svg?v=20261016",
   },
   openGraph: {
     title: `${SITE_NAME} | Inmobiliaria en Paso de los Toros`,
@@ -30,11 +32,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_UY",
     siteName: SITE_NAME,
+    url: "/",
+    images: [{ url: "/HERO_ASESPRO.png", alt: "Propiedades de ASESPRO en Paso de los Toros y Pueblo Centenario" }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} | Inmobiliaria en Paso de los Toros`,
     description: SITE_DESCRIPTION,
+    images: [{ url: "/HERO_ASESPRO.png", alt: "Propiedades de ASESPRO en Paso de los Toros y Pueblo Centenario" }],
   },
   robots: {
     index: true,
@@ -45,7 +50,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
     <html lang="es">
-      <body className={manrope.className}>
+      <body className={switzer.className}>
         <div className="site-frame">
           <TopNavBar />
           <a href="#main-content" className="skip-link">

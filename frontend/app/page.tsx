@@ -5,31 +5,60 @@ import { Map } from "@/components/map";
 import { listPublicProperties } from "@/lib/propertyRepository";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
 import { formatPrice } from "@/lib/properties";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { createPageMetadata, getSiteUrl, SITE_DESCRIPTION, SITE_NAME, serializeJsonLd } from "@/lib/seo";
 
 import styles from "./HomePage.module.css";
 
 export const metadata: Metadata = {
-  title: "Inmobiliaria en Paso de los Toros",
-  description:
-    "Alquiler y venta de casas, apartamentos y terrenos en Paso de los Toros, Pueblo Centenario y alrededores. Consulta propiedades y contacta a ASESPRO.",
+  ...createPageMetadata({
+    title: "Inmobiliaria en Paso de los Toros",
+    description: "Alquiler y venta de casas, apartamentos y terrenos en Paso de los Toros, Pueblo Centenario y alrededores. Consulta propiedades y contacta a ASESPRO.",
+    path: "/",
+  }),
 };
 
 const HERO_IMAGE = "/HERO_ASESPRO.png";
 
 export default async function HomePage(): Promise<JSX.Element> {
   const properties = await listPublicProperties();
+  const siteUrl = getSiteUrl();
+  const organizationStructuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        name: SITE_NAME,
+        url: `${siteUrl}/`,
+        description: SITE_DESCRIPTION,
+        logo: `${siteUrl}/asespro-inmobiliaria-horizontal-green.svg`,
+        telephone: "+59899715662",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Florencio Sánchez 722",
+          addressLocality: "Paso de los Toros",
+          addressRegion: "Tacuarembó",
+          addressCountry: "UY",
+        },
+        sameAs: ["https://www.instagram.com/asespro.inmobiliaria/"],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        url: `${siteUrl}/`,
+        name: `${SITE_NAME} Inmobiliaria`,
+        publisher: { "@id": `${siteUrl}/#organization` },
+        inLanguage: "es-UY",
+      },
+    ],
+  };
   const featuredPool = properties.filter((property) => property.isFeatured);
   const featured = featuredPool.slice(0, 3);
-  const whatsappUrl = buildWhatsAppUrl(
-    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "59898382388",
-    "Hola ASESPRO, quiero consultar por propiedades disponibles. Estoy buscando alquiler o compra en Paso de los Toros, Pueblo Centenario o alrededores.",
-  );
-
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationStructuredData) }} />
       <section className={styles.hero}>
-        <img src={HERO_IMAGE} alt="" className={styles.heroBg} />
+        <img src={HERO_IMAGE} alt="" className={styles.heroBg} width="1376" height="752" fetchPriority="high" />
         <div className="hero-inner">
           <div className={styles.heroContent}>
             <p className={styles.eyebrow}>Inmobiliaria en Paso de los Toros</p>
@@ -61,7 +90,7 @@ export default async function HomePage(): Promise<JSX.Element> {
         </Link>
 
         <Link href="/venta" className={styles.quickCard}>
-          <img src={getPropertyCoverImage("prop-2")} alt="" />
+          <img src="/casa-ventas-urbana.png" alt="Casa de ciudad con jardín en venta" />
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
             <h2 className={styles.quickTitle}>Ventas</h2>
@@ -70,8 +99,8 @@ export default async function HomePage(): Promise<JSX.Element> {
           </div>
         </Link>
 
-        <Link href="/servicio-limpieza" className={`${styles.quickCard} ${styles.quickCardWide}`}>
-          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80" alt="" />
+        <Link href="https://asespro.kodebix.com/" className={`${styles.quickCard} ${styles.quickCardWide}`}>
+          <img src="/limpieza-empresas.webp" alt="Personal de ASESPRO limpiando una oficina" />
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>
             <h2 className={styles.quickTitle}>Limpieza profesional</h2>
@@ -137,23 +166,6 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </section>
 
-      <section className={`${styles.cleaningBanner} ${styles.sectionFrame}`}>
-        <div className={styles.cleaningCopy}>
-          <p className={styles.eyebrow}>Servicio adicional</p>
-          <h2>Limpieza profesional para particulares y empresas</h2>
-          <p>Atendemos hogares, oficinas, locales comerciales y empresas con presupuestos personalizados segun el tipo de espacio, frecuencia y necesidad del servicio.</p>
-          <div className={styles.cleaningActions}>
-            <Link href="/servicio-limpieza" className={styles.primaryAction}>
-              Solicitar presupuesto
-            </Link>
-            <Link href="/servicio-limpieza" className={styles.ghostAction}>
-              Ver servicio de limpieza
-            </Link>
-          </div>
-        </div>
-        <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=1400&q=80" alt="" className={styles.cleaningImage} />
-      </section>
-
       <section className={`${styles.mapTeaser} ${styles.sectionFrame}`}>
             <h2>Explora propiedades por ubicación</h2>
         <p>Ubica rapidamente las opciones disponibles en Paso de los Toros, Pueblo Centenario y alrededores.</p>
@@ -190,9 +202,6 @@ export default async function HomePage(): Promise<JSX.Element> {
             </li>
           </ul>
         </article>
-        <article className={styles.trustMedia}>
-          <img src={getPropertyCoverImage("prop-5")} alt="" />
-        </article>
       </section>
 
       <section className={`${styles.contactStrip} ${styles.sectionFrame}`}>
@@ -206,28 +215,11 @@ export default async function HomePage(): Promise<JSX.Element> {
           </ul>
         </article>
 
-        <article className={styles.contactFormMock}>
-          <label>
-            Nombre completo
-            <input type="text" placeholder="Tu nombre" />
-          </label>
-          <label>
-            Correo electronico
-            <input type="email" placeholder="tu@email.com" />
-          </label>
-          <label>
-            Mensaje
-            <textarea placeholder="Cuentanos que estas buscando." />
-          </label>
-          <div className={styles.contactActions}>
-            <Link href="/contacto" className={styles.primaryAction}>
-              Enviar mensaje
-            </Link>
-            <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
-              Contactar por WhatsApp
-            </a>
-          </div>
-        </article>
+        <div className={styles.contactActions}>
+          <Link href="/contacto" className={styles.primaryAction}>
+            Contactanos
+          </Link>
+        </div>
       </section>
     </main>
   );

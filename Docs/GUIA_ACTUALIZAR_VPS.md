@@ -29,7 +29,11 @@ Antes de actualizar, confirmar:
 
 ### Metodo estandar ASESPRO
 
-Para ASESPRO, usar el script versionado:
+Para ASESPRO, usar el script versionado. Antes de commit, push o cambios en
+producción, comprueba que los tres hosts temporales resuelvan al VPS. Publica
+tres servicios separados: el frontend inmobiliario, el panel temporal y la web
+estática de ASESPRO Servicios. El panel conserva Supabase hasta migrar a
+INMOBILEX; el frontend público no recibe esas credenciales.
 
 ```powershell
 cd C:\Users\Fito\Documents\CODEX\ASESPRO
@@ -41,12 +45,16 @@ El script ejecuta el flujo completo:
 1. Verifica que la rama local sea `main`.
 2. Ejecuta `git diff --check`.
 3. Compila el frontend localmente con `npm run build`.
-4. Agrega cambios, crea commit y hace `git push`.
+4. Agrega únicamente los directorios y documentos de ambos sitios autorizados, crea commit y hace `git push`.
 5. En VPS ejecuta `git pull --ff-only`.
-6. Construye la imagen Docker `asespro-web:latest`.
+6. Construye las imágenes Docker `asespro-web:latest` y `asespro-servicios:latest`.
 7. Ejecuta `docker stack deploy`.
-8. Fuerza refresh de `asespro_asespro-web`.
-9. Valida web y panel por HTTPS.
+8. Fuerza refresh de los servicios de inmobiliaria, panel y ASESPRO Servicios.
+9. Valida los tres dominios, el listado público y la entrada del panel por HTTPS.
+
+Hosts: `asespro.kodebix.com`, `inmobiliaria.asespro.kodebix.com` y
+`panel.inmobiliaria.asespro.kodebix.com`, todos con registro A hacia el VPS
+`31.97.28.4`. Se conservan temporalmente los hosts anteriores de Codexa.
 
 Variantes utiles:
 

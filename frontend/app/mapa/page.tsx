@@ -2,6 +2,7 @@
 
 import { PropertyExplorer } from "@/features/property-explorer/PropertyExplorer";
 import { listPublicProperties } from "@/lib/propertyRepository";
+import { createPageMetadata } from "@/lib/seo";
 
 type MapaPageProps = {
   searchParams?: {
@@ -9,10 +10,11 @@ type MapaPageProps = {
   };
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Mapa de propiedades",
   description: "Mapa de casas, apartamentos y terrenos disponibles en Paso de los Toros, Pueblo Centenario y alrededores.",
-};
+  path: "/mapa",
+});
 
 export default async function MapaPage({ searchParams }: MapaPageProps): Promise<JSX.Element> {
   const properties = await listPublicProperties();

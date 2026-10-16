@@ -3,7 +3,7 @@
 :root {
   --layout-max-width: 1280px;
   --layout-gutter: 32px;
-  --font-main: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-main: var(--font-switzer), "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --surface: #f6faf9;
   --surface-container-low: #f0f4f3;
   --surface-container-highest: #dfe3e2;

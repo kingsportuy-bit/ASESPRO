@@ -111,7 +111,6 @@ export function WhatsAppInquiryForm({
               <option value="alquiler">Alquiler</option>
               <option value="venta">Venta</option>
               <option value="terreno">Terreno</option>
-              <option value="limpieza">Limpieza</option>
             </select>
           </label>
         ) : null}

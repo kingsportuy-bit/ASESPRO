@@ -2,12 +2,13 @@
 
 import { ListingWithViewToggle } from "@/features/property-explorer/ListingWithViewToggle";
 import { listPublicPropertiesByOperation } from "@/lib/propertyRepository";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Propiedades en venta en Paso de los Toros",
-  description:
-    "Casas, apartamentos y terrenos en venta en Paso de los Toros, Pueblo Centenario y alrededores. Consulta opciones y asesoramiento.",
-};
+  description: "Casas, apartamentos y terrenos en venta en Paso de los Toros, Pueblo Centenario y alrededores. Consulta opciones y asesoramiento.",
+  path: "/venta",
+});
 
 export default async function VentaPage(): Promise<JSX.Element> {
   const properties = await listPublicPropertiesByOperation("venta");

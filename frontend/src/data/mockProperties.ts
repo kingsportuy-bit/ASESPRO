@@ -29,9 +29,9 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
     status: "activo",
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     photoUrls: [
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1400&q=80",
+      "/casas-paso-de-los-toros.webp",
+      "/interior-casa-uruguaya.webp",
+      "/casas-paso-de-los-toros.webp",
     ],
   },
   {
@@ -60,9 +60,9 @@ export const MOCK_PROPERTIES: PropertyListing[] = [
     status: "activo",
     videoUrl: "https://www.youtube.com/embed/ysz5S6PUM-U",
     photoUrls: [
-      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1400&q=80",
-      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1400&q=80",
+      "/casas-paso-de-los-toros.webp",
+      "/interior-casa-uruguaya.webp",
+      "/casas-paso-de-los-toros.webp",
     ],
   },
 ];

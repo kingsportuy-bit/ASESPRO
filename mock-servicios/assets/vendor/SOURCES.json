@@ -1,0 +1,16 @@
+[
+  {
+    "package": "gsap",
+    "version": "3.15.0",
+    "license": "Standard 'no charge' license: https://gsap.com/standard-license.",
+    "source": "https://registry.npmjs.org/gsap/-/gsap-3.15.0.tgz",
+    "tarball_sha256": "d2e33ad202d4811e9084883f7ff9a27967ac4095caef51ca4c9d20697a253b1c"
+  },
+  {
+    "package": "swiper",
+    "version": "14.3.0",
+    "license": "MIT",
+    "source": "https://registry.npmjs.org/swiper/-/swiper-14.3.0.tgz",
+    "tarball_sha256": "3a1ebe9d5959b0752dbe0afa6827b1bf34b6e685cce872c211d0f50cc5150172"
+  }
+]
