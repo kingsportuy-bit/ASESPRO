@@ -120,6 +120,15 @@ docker build -t $WebImageName .
 cd $VpsProjectPath
 docker build -t $ServicesImageName -f mock-servicios/Dockerfile mock-servicios
 docker stack deploy -c deploy.stack.yml $StackName
+for service in asespro_asespro-web asespro_asespro-panel asespro_asespro-servicios; do
+  for attempt in $(seq 1 30); do
+    if docker service inspect "$service" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 2
+  done
+  docker service inspect "$service" >/dev/null
+done
 docker service update --force asespro_asespro-web
 docker service update --force asespro_asespro-panel
 docker service update --force asespro_asespro-servicios
