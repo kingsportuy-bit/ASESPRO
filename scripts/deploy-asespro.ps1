@@ -139,6 +139,9 @@ docker service logs --tail 100 asespro_asespro-servicios
 
 Invoke-Step "Deploying on VPS" {
   $remoteScript | & $SshPath -F NUL $VpsHost "bash -s"
+  if ($LASTEXITCODE -ne 0) {
+    throw "VPS deployment failed with exit code $LASTEXITCODE. Smoke tests were not run."
+  }
 }
 
 Invoke-Step "Smoke test" {
