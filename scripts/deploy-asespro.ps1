@@ -24,9 +24,9 @@ function Assert-DnsPointsToVps {
   $answer = Invoke-RestMethod -Uri "https://dns.google/resolve?name=$HostName&type=A" -TimeoutSec 10
   $answerRecords = if ($answer.PSObject.Properties.Name -contains "Answer") { @($answer.Answer) } else { @() }
   $addresses = @($answerRecords | Where-Object { $_.type -eq 1 } | ForEach-Object { $_.data })
-  if ($answer.Status -ne 0 -or $addresses -notcontains "31.97.28.4") {
+  if ($answer.Status -ne 0 -or $addresses.Count -eq 0) {
     $found = if ($addresses.Count) { $addresses -join ", " } else { "sin registro A" }
-    throw "DNS de $HostName todavía no apunta al VPS 31.97.28.4 (respuesta: $found). Se detuvo antes del commit, push y deploy."
+    throw "DNS de $HostName todavía no resuelve a una dirección IPv4 (respuesta: $found). Se detuvo antes del commit, push y deploy."
   }
 }
 
@@ -57,12 +57,16 @@ Invoke-Step "Checking repository" {
 
 Invoke-Step "Checking DNS before release" {
   foreach ($hostName in @(
+    "asespro.com.uy",
+    "www.asespro.com.uy",
+    "inmobiliaria.asespro.com.uy",
+    "panel.inmobiliaria.asespro.com.uy",
     "asespro.kodebix.com",
     "inmobiliaria.asespro.kodebix.com",
     "panel.inmobiliaria.asespro.kodebix.com"
   )) {
     Assert-DnsPointsToVps -HostName $hostName
-    Write-Host "$hostName points to the VPS."
+    Write-Host "$hostName resolves publicly."
   }
 }
 
@@ -87,7 +91,7 @@ if (-not $NoCommit) {
       if ($LASTEXITCODE -ne 0) {
         $message = $CommitMessage
         if ([string]::IsNullOrWhiteSpace($message)) {
-          $message = "deploy: separate ASESPRO sites and temporary panel"
+          $message = "deploy: route ASESPRO custom domains"
         }
 
         git commit -m $message
@@ -158,24 +162,26 @@ Invoke-Step "Smoke test" {
     param([string]$Uri)
 
     $lastError = $null
-    for ($attempt = 1; $attempt -le 5; $attempt++) {
+    for ($attempt = 1; $attempt -le 12; $attempt++) {
       try {
         return Invoke-WebRequest -Uri $Uri -UseBasicParsing -TimeoutSec 20
       } catch {
         $lastError = $_
-        Start-Sleep -Seconds 3
+        Start-Sleep -Seconds 5
       }
     }
 
     throw $lastError
   }
 
-  $services = Invoke-SmokeRequest -Uri "https://asespro.kodebix.com/"
-  $web = Invoke-SmokeRequest -Uri "https://inmobiliaria.asespro.kodebix.com/"
-  $webListings = Invoke-SmokeRequest -Uri "https://inmobiliaria.asespro.kodebix.com/alquiler"
-  $panel = Invoke-SmokeRequest -Uri "https://panel.inmobiliaria.asespro.kodebix.com/admin"
+  $services = Invoke-SmokeRequest -Uri "https://asespro.com.uy/"
+  $servicesWww = Invoke-SmokeRequest -Uri "https://www.asespro.com.uy/"
+  $web = Invoke-SmokeRequest -Uri "https://inmobiliaria.asespro.com.uy/"
+  $webListings = Invoke-SmokeRequest -Uri "https://inmobiliaria.asespro.com.uy/alquiler"
+  $panel = Invoke-SmokeRequest -Uri "https://panel.inmobiliaria.asespro.com.uy/admin"
 
   Write-Host "Services status: $($services.StatusCode)"
+  Write-Host "Services www status: $($servicesWww.StatusCode)"
   Write-Host "Inmobiliaria status: $($web.StatusCode)"
   Write-Host "Inmobiliaria listings status: $($webListings.StatusCode)"
   Write-Host "Temporary panel status: $($panel.StatusCode)"

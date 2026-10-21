@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/contacto", label: "Contacto" },
 ];
 
-const CLEANING_SITE = "https://asespro.kodebix.com/";
+const CLEANING_SITE = "https://asespro.com.uy/";
 
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";

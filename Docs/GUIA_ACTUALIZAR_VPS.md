@@ -30,10 +30,11 @@ Antes de actualizar, confirmar:
 ### Metodo estandar ASESPRO
 
 Para ASESPRO, usar el script versionado. Antes de commit, push o cambios en
-producción, comprueba que los tres hosts temporales resuelvan al VPS. Publica
-tres servicios separados: el frontend inmobiliario, el panel temporal y la web
-estática de ASESPRO Servicios. El panel conserva Supabase hasta migrar a
-INMOBILEX; el frontend público no recibe esas credenciales.
+producción, comprueba que los hosts propios resuelvan públicamente; acepta
+Cloudflare como proxy DNS. Publica tres servicios separados: el frontend
+inmobiliario, el panel y la web estática de ASESPRO Servicios. El panel conserva
+Supabase hasta migrar a INMOBILEX; el frontend público no recibe esas
+credenciales.
 
 ```powershell
 cd C:\Users\Fito\Documents\CODEX\ASESPRO
@@ -52,9 +53,11 @@ El script ejecuta el flujo completo:
 8. Fuerza refresh de los servicios de inmobiliaria, panel y ASESPRO Servicios.
 9. Valida los tres dominios, el listado público y la entrada del panel por HTTPS.
 
-Hosts: `asespro.kodebix.com`, `inmobiliaria.asespro.kodebix.com` y
-`panel.inmobiliaria.asespro.kodebix.com`, todos con registro A hacia el VPS
-`31.97.28.4`. Se conservan temporalmente los hosts anteriores de Codexa.
+Hosts propios: `asespro.com.uy`, `www.asespro.com.uy`,
+`inmobiliaria.asespro.com.uy` y `panel.inmobiliaria.asespro.com.uy`. Los tres
+primeros registros A apuntan al VPS `31.97.28.4`; `www` es CNAME de
+`asespro.com.uy`. Se conservan temporalmente los hosts Kodebix y Codexa como
+alias.
 
 Variantes utiles:
 

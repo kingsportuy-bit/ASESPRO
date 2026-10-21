@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://asespro.kodebix.com/sitemap.xml
+Sitemap: https://asespro.com.uy/sitemap.xml

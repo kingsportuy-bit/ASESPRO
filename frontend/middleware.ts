@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_HOSTS = new Set(["inmobiliaria.asespro.kodebix.com", "asespro.codexa.uy"]);
-const PANEL_HOSTS = new Set(["panel.inmobiliaria.asespro.kodebix.com", "panelasespro.codexa.uy"]);
+const PUBLIC_HOSTS = new Set(["inmobiliaria.asespro.com.uy", "inmobiliaria.asespro.kodebix.com", "asespro.codexa.uy"]);
+const PANEL_HOSTS = new Set(["panel.inmobiliaria.asespro.com.uy", "panel.inmobiliaria.asespro.kodebix.com", "panelasespro.codexa.uy"]);
 
 function isUnder(pathname: string, base: string): boolean {
   return pathname === base || pathname.startsWith(`${base}/`);

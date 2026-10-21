@@ -4,7 +4,7 @@ services:
   asespro-web:
     image: asespro-web:latest
     environment:
-      NEXT_PUBLIC_SITE_URL: https://inmobiliaria.asespro.kodebix.com
+      NEXT_PUBLIC_SITE_URL: https://inmobiliaria.asespro.com.uy
       PROPERTY_DATA_SOURCE: mock
     networks:
       - codexanet
@@ -22,7 +22,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=codexanet
-        - traefik.http.routers.asespro-web.rule=Host(`inmobiliaria.asespro.kodebix.com`) || Host(`asespro.codexa.uy`)
+        - traefik.http.routers.asespro-web.rule=Host(`inmobiliaria.asespro.com.uy`) || Host(`inmobiliaria.asespro.kodebix.com`) || Host(`asespro.codexa.uy`)
         - traefik.http.routers.asespro-web.entrypoints=websecure
         - traefik.http.routers.asespro-web.tls=true
         - traefik.http.routers.asespro-web.tls.certresolver=letsencryptresolver
@@ -54,7 +54,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=codexanet
-        - traefik.http.routers.asespro-panel.rule=Host(`panel.inmobiliaria.asespro.kodebix.com`) || Host(`panelasespro.codexa.uy`)
+        - traefik.http.routers.asespro-panel.rule=Host(`panel.inmobiliaria.asespro.com.uy`) || Host(`panel.inmobiliaria.asespro.kodebix.com`) || Host(`panelasespro.codexa.uy`)
         - traefik.http.routers.asespro-panel.entrypoints=websecure
         - traefik.http.routers.asespro-panel.tls=true
         - traefik.http.routers.asespro-panel.tls.certresolver=letsencryptresolver
@@ -84,7 +84,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=codexanet
-        - traefik.http.routers.asespro-servicios.rule=Host(`asespro.kodebix.com`)
+        - traefik.http.routers.asespro-servicios.rule=Host(`asespro.com.uy`) || Host(`www.asespro.com.uy`) || Host(`asespro.kodebix.com`)
         - traefik.http.routers.asespro-servicios.entrypoints=websecure
         - traefik.http.routers.asespro-servicios.tls=true
         - traefik.http.routers.asespro-servicios.tls.certresolver=letsencryptresolver

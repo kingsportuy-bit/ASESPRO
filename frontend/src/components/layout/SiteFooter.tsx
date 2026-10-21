@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 import styles from "./SiteFooter.module.css";
 
-const CLEANING_SITE = "https://asespro.kodebix.com/";
+const CLEANING_SITE = "https://asespro.com.uy/";
 const PHONE = "+59899715662";
 
 export function SiteFooter(): JSX.Element {
