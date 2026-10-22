@@ -17,11 +17,6 @@
       gsap.fromTo(logoLines,{yPercent:105,opacity:0},{yPercent:0,opacity:1,duration:motion.enter,stagger:.1,ease:motion.ease,scrollTrigger:logoTrigger});
       if(logoStrip) gsap.fromTo(logoStrip,{y:18,opacity:0},{y:0,opacity:1,duration:motion.enter,delay:.18,ease:motion.ease,scrollTrigger:logoTrigger});
     }
-    const brandIntro=document.querySelector('.brand-intro');
-    if(brandIntro){
-      const brandTrigger={trigger:brandIntro,start:'top 80%',once:true};
-      gsap.fromTo(brandIntro.querySelectorAll('.section-title > .brand-intro-line'),{y:22,opacity:0},{y:0,opacity:1,duration:motion.enter,stagger:.08,ease:motion.ease,overwrite:'auto',scrollTrigger:brandTrigger});
-    }
   }
   const brandWordRotate = document.querySelector('[data-brand-word-rotate]');
   if (brandWordRotate) {
@@ -30,12 +25,15 @@
     const brandCover = brandViewport.querySelector('[data-brand-word-cover]');
     const brandMeasure = brandViewport.querySelector('[data-brand-word-measurer]');
     const brandWords = ['MANTENEMOS', 'ORGANIZAMOS', 'ORDENAMOS', 'LIMPIAMOS'];
-    const brandBase = motion.base * 1000;
-    const brandReveal = motion.fast * 1000;
+    const brandSection = brandViewport.closest('.brand-intro');
+    const brandModules = [...brandSection.querySelectorAll('[data-brand-module]')];
+    const brandExperience = brandSection.querySelector('.brand-intro-experience');
+    const brandReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const brandEase = getComputedStyle(document.documentElement).getPropertyValue('--motion-ease').trim();
     let brandWordIndex = 0;
-    let brandAnimation = null;
     let brandTimer = 0;
+    let brandInView = false;
+    let brandEntered = false;
     const syncBrandWidth = (initial = false) => {
       if (!brandCurrent || !brandMeasure) return;
       const measureWord = (word) => {
@@ -51,65 +49,71 @@
         brandViewport.style.removeProperty('transition');
       }
     };
-    const animateBrandCover = (from, to, duration) => {
-      if (!brandCover || typeof brandCover.animate !== 'function') {
-        if (brandCover) brandCover.style.transform = to;
-        return Promise.resolve();
-      }
-      const animation = brandCover.animate(
-        [{transform: from}, {transform: to}],
-        {duration, easing: brandEase, fill: 'forwards'}
+    const scheduleBrandWord = () => {
+      window.clearTimeout(brandTimer);
+      if (brandInView && !document.hidden) brandTimer = window.setTimeout(rotateBrandWord, 3500);
+    };
+    const assembleBrand = () => {
+      if (brandEntered || typeof brandExperience?.animate !== 'function') return;
+      brandEntered = true;
+      const offsets = ['translate(18%, -18%)', 'translate(-18%, -18%)', 'scale(.96)', 'scale(.96)', 'translate(-18%, 18%)', 'translate(18%, 18%)'];
+      brandModules.forEach((module, index) => module.animate(
+        brandReducedMotion.matches ? [{opacity:.55}, {opacity:1}] : [{transform:offsets[index], opacity:.35}, {transform:'translate(0, 0) scale(1)', opacity:1}],
+        {duration: (brandReducedMotion.matches ? motion.fast : motion.enter) * 1000, delay: brandReducedMotion.matches ? 0 : index * 60, easing:brandEase}
+      ));
+      brandExperience.animate(
+        brandReducedMotion.matches ? [{opacity:.65}, {opacity:1}] : [{transform:'translateY(10%) scale(.96)', opacity:.65}, {transform:'translateY(0) scale(1)', opacity:1}],
+        {duration:(brandReducedMotion.matches ? motion.fast : motion.enter) * 1000, delay:brandReducedMotion.matches ? 0 : 120, easing:brandEase}
       );
-      brandAnimation = animation;
-      return animation.finished.catch(() => {}).then(() => {
-        animation.cancel();
-        brandCover.style.transform = to;
-        if (brandAnimation === animation) brandAnimation = null;
-      });
     };
     const rotateBrandWord = async () => {
-      if (!brandCurrent || !brandCover) return;
+      if (!brandCurrent || !brandCover || !brandInView || document.hidden) return;
       const nextIndex = (brandWordIndex + 1) % brandWords.length;
-      await animateBrandCover('translateX(-100%)', 'translateX(0)', brandReveal);
+      brandCover.textContent = brandWords[nextIndex];
+      if (typeof brandCurrent.animate === 'function') {
+        const duration = (brandReducedMotion.matches ? motion.fast : motion.layout) * 1000;
+        const outgoing = brandCurrent.animate(
+          brandReducedMotion.matches ? [{opacity:1}, {opacity:0}] : [{transform:'translateY(0)', opacity:1}, {transform:'translateY(-110%)', opacity:0}],
+          {duration, easing:brandEase, fill:'forwards'}
+        );
+        const incoming = brandCover.animate(
+          brandReducedMotion.matches ? [{transform:'translateY(0)', opacity:0}, {transform:'translateY(0)', opacity:1}] : [{transform:'translateY(110%)', opacity:0}, {transform:'translateY(0)', opacity:1}],
+          {duration, easing:brandEase, fill:'forwards'}
+        );
+        const module = brandModules[[0,1,4,5][nextIndex]];
+        const offsets = ['translate(0, 0)', 'translate(-10%, -10%)', 'translate(-10%, 10%)', 'translate(10%, 10%)'];
+        module?.animate(
+          brandReducedMotion.matches ? [{opacity:.6}, {opacity:1}] : [{transform:'translate(0, 0)'}, {transform:nextIndex === 0 ? 'translate(10%, -10%)' : offsets[nextIndex], offset:.4}, {transform:'translate(0, 0)'}],
+          {duration: (brandReducedMotion.matches ? motion.fast : motion.enter) * 1000, easing:brandEase}
+        );
+        await Promise.all([outgoing.finished.catch(() => {}), incoming.finished.catch(() => {})]);
+        brandCurrent.textContent = brandWords[nextIndex];
+        outgoing.cancel();
+        incoming.cancel();
+      } else {
+        brandCurrent.textContent = brandWords[nextIndex];
+      }
       brandWordIndex = nextIndex;
-      brandCurrent.textContent = brandWords[brandWordIndex];
-      syncBrandWidth();
-      await animateBrandCover('translateX(0)', 'translateX(100%)', brandBase);
-      brandCover.style.transform = 'translateX(-100%)';
-      brandTimer = window.setTimeout(rotateBrandWord, 3000);
+      brandCover.textContent = '';
+      scheduleBrandWord();
     };
     syncBrandWidth(true);
     const scheduleBrandWidth = () => syncBrandWidth();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBrandWidth);
     window.addEventListener('resize', scheduleBrandWidth, {passive: true});
-    brandTimer = window.setTimeout(rotateBrandWord, 3000);
-  }  const experienceCount = document.querySelector('.brand-intro-experience-count');
-  const experienceMark = document.querySelector('.brand-intro-experience');
-  if (experienceCount && experienceMark) {
-    const finishExperienceCount = () => { experienceCount.textContent = '15'; };
-    const animateExperienceCount = () => {
-      const duration = motion.enter * 2000;
-      const start = performance.now();
-      experienceCount.textContent = '0';
-      const frame = (now) => {
-        const progress = Math.min(1, (now - start) / duration);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        experienceCount.textContent = String(Math.round(eased * 15));
-        if (progress < 1) requestAnimationFrame(frame);
-        else finishExperienceCount();
-      };
-      requestAnimationFrame(frame);
-    };
     if ('IntersectionObserver' in window) {
-      const experienceObserver = new IntersectionObserver((entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        experienceObserver.disconnect();
-        animateExperienceCount();
-      }, {threshold: .35});
-      experienceObserver.observe(experienceMark);
+      const brandObserver = new IntersectionObserver(([entry]) => {
+        brandInView = entry.isIntersecting;
+        if (brandInView) assembleBrand();
+        scheduleBrandWord();
+      }, {threshold:.15});
+      brandObserver.observe(brandSection);
     } else {
-      finishExperienceCount();
+      brandInView = true;
+      assembleBrand();
+      scheduleBrandWord();
     }
+    document.addEventListener('visibilitychange', scheduleBrandWord);
   }
   const googleReviewSlider = document.querySelector('[data-google-review-slider]');
   if (googleReviewSlider) {

@@ -48,3 +48,8 @@ Librerías frontend locales: GSAP3.15.0 y Swiper14.3.0, descargadas de registro 
 - Fuente: imagen de mayor calidad adjuntada por Fito el 2026-10-16, Gemini_Generated_Image_c6eqtnc6eqtnc6eq.jfif.
 - Archivo servido: mock-servicios/assets/team/team-directivas-hq.jfif, copia local sin retoque; se aplica recorte CSS con máscara asimétrica, sin alterar la foto.
 
+## Composición animada de marca en Inicio, 2026-10-21
+
+- La decoración vectorial de «Somos ASESPRO» reutiliza los seis trazados del isotipo de `mock-servicios/assets/asespro-isotipo-favicon.svg`, sin redibujar su geometría. Se incorpora como SVG decorativo en el HTML; no sustituye los logos de navegación o footer.
+- La composición usa el verde de Servicios y texto HTML para «15 años de experiencia». El ensamblado de las piezas y el cambio vertical de palabras se implementan con Web Animations API, respetando movimiento reducido y deteniéndose cuando la sección queda fuera de pantalla.
+

@@ -113,35 +113,38 @@ body[data-page="inicio"] .section-title{margin:0;color:var(--ink);font-size:clam
 body[data-page="inicio"] .section-title>span{display:block}
 body[data-page="inicio"] .section-title-accent{color:var(--green-dark)}
 
-/* One responsive composition: white background, three stable lines and a full experience label. */
-body[data-page="inicio"] .brand-intro{position:relative;isolation:isolate;overflow:hidden;padding:clamp(76px,8vw,112px) 0;background:#fff;color:var(--ink)}
-body[data-page="inicio"] .brand-intro-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:clamp(40px,5vw,80px);align-items:center}
+/* Kinetic brand composition: the original isotype frames the experience seal. */
+body[data-page="inicio"] .brand-intro{position:relative;isolation:isolate;overflow:hidden;padding:clamp(80px,8vw,112px) 0;background:#fff;color:var(--ink)}
+body[data-page="inicio"] .brand-intro-grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:clamp(40px,5vw,80px);align-items:center}
 body[data-page="inicio"] .brand-intro-grid>div{min-width:0}
-body[data-page="inicio"] .brand-intro .section-title{font-size:clamp(44px,5.5vw,72px);font-weight:800;line-height:1.08;letter-spacing:-.05em}
+body[data-page="inicio"] .brand-intro .section-title{font-size:clamp(40px,4.5vw,64px);font-weight:800;line-height:1.12;letter-spacing:-.05em}
+body[data-page="inicio"] .brand-intro-line:first-child{margin-bottom:.25em;font-size:.86em;white-space:nowrap}
 body[data-page="inicio"] .brand-intro-line,body[data-page="inicio"] .brand-intro-tail{color:var(--ink)}
 body[data-page="inicio"] .brand-intro-line em{color:var(--green-dark);font-style:normal}
-body[data-page="inicio"] .brand-intro-verb-line{display:flex!important;flex-direction:column;align-items:flex-start;gap:0}
-body[data-page="inicio"] .brand-intro-verb-viewport{position:relative;display:inline-block;flex:0 0 auto;max-width:100%;line-height:1.15;white-space:nowrap;overflow:hidden;vertical-align:baseline;text-align:left}
-body[data-page="inicio"] .brand-intro-word-current{display:inline-block;color:var(--green-dark);white-space:nowrap}
-body[data-page="inicio"] .brand-intro-word-cover{position:absolute;inset:0;z-index:2;width:100%;height:100%;background:#fff;transform:translateX(-100%);pointer-events:none}
+body[data-page="inicio"] .brand-intro-verb-line{display:flex!important;flex-direction:column;align-items:flex-start;gap:.2em}
+body[data-page="inicio"] .brand-intro-verb-viewport{position:relative;display:inline-block;flex:0 0 auto;box-sizing:content-box;max-width:calc(100% - .56em);padding:.13em .28em .2em;border-radius:.22em .22em .22em 0;background:var(--green-dark);color:#fff;line-height:1.15;white-space:nowrap;overflow:hidden;vertical-align:baseline;text-align:center;box-shadow:0 10px 0 -6px #ccebd6}
+body[data-page="inicio"] .brand-intro-word-current{position:relative;display:inline-block;color:#fff;white-space:nowrap}
+body[data-page="inicio"] .brand-intro-word-cover{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:inherit;color:#fff;background:transparent;transform:translateY(110%);opacity:0;pointer-events:none}
 body[data-page="inicio"] .brand-intro-word-measurer{position:absolute;inset:0 auto auto 0;display:inline-block;visibility:hidden;pointer-events:none;white-space:nowrap}
 body[data-page="inicio"] .brand-intro-tail{display:block;white-space:nowrap}
-body[data-page="inicio"] .brand-intro-environment{position:relative;display:grid;place-items:center;justify-self:center;width:320px;max-width:100%;height:280px}
-body[data-page="inicio"] .brand-intro-experience{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:18px;width:100%;min-width:0;color:var(--ink);line-height:1;text-align:left}
-body[data-page="inicio"] .brand-intro-experience-count{display:block;flex:0 0 auto;color:var(--green-dark);font-size:clamp(128px,12vw,164px);font-weight:800;line-height:1;letter-spacing:-.07em;font-variant-numeric:tabular-nums}
-body[data-page="inicio"] .brand-intro-experience-label{display:flex;flex:0 0 auto;flex-direction:column;font-size:16px;font-weight:700;line-height:1.35;letter-spacing:-.02em}
+body[data-page="inicio"] .brand-intro-environment{position:relative;display:grid;place-items:center;justify-self:center;width:390px;max-width:100%;aspect-ratio:1}
+body[data-page="inicio"] .brand-intro-experience{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:206px;height:220px;min-width:0;border:7px solid #fff;border-radius:28px 62px 28px 62px;background:var(--green-dark);color:#fff;box-shadow:0 16px 38px #006f281c;line-height:1;text-align:center}
+body[data-page="inicio"] .brand-intro-experience-count{display:block;color:#fff;font-size:126px;font-weight:800;line-height:.92;letter-spacing:-.075em;font-variant-numeric:tabular-nums;padding-right:.075em}
+body[data-page="inicio"] .brand-intro-experience-label{display:flex;flex-direction:column;margin-top:10px;color:#fff;font-size:15px;font-weight:650;line-height:1.25;letter-spacing:-.01em}
 body[data-page="inicio"] .brand-intro-experience-label span{display:block}
-body[data-page="inicio"] .brand-intro-isotype{position:absolute;inset:0;z-index:0;display:block;width:280px;height:280px;margin:auto;background:var(--green);opacity:.07;mask-image:url("assets/LOGO_ASESPRO_transparente.png");mask-size:237.8613% 215.3902%;mask-position:51.782% 0;mask-repeat:no-repeat;-webkit-mask-image:url("assets/LOGO_ASESPRO_transparente.png");-webkit-mask-size:237.8613% 215.3902%;-webkit-mask-position:51.782% 0;-webkit-mask-repeat:no-repeat}
+body[data-page="inicio"] .brand-intro-isotype{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;overflow:visible;color:var(--green)}
+body[data-page="inicio"] .brand-intro-isotype g{transform-box:fill-box;transform-origin:center}
 @media(max-width:900px){
- body[data-page="inicio"] .brand-intro{padding:64px 0 58px}
- body[data-page="inicio"] .brand-intro-grid{grid-template-columns:minmax(0,1fr);gap:26px}
- body[data-page="inicio"] .brand-intro .section-title{font-size:clamp(32px,9.8vw,44px);text-align:center}
- body[data-page="inicio"] .brand-intro-line:first-child{white-space:nowrap}
+ body[data-page="inicio"] .brand-intro{padding:64px 0 62px}
+ body[data-page="inicio"] .brand-intro-grid{grid-template-columns:minmax(0,1fr);gap:34px}
+ body[data-page="inicio"] .brand-intro .section-title{font-size:clamp(28px,8.8vw,42px);text-align:center}
+ body[data-page="inicio"] .brand-intro-line:first-child{font-size:clamp(27px,8.2vw,38px);margin-bottom:.3em}
  body[data-page="inicio"] .brand-intro-verb-line{align-items:center}
- body[data-page="inicio"] .brand-intro-verb-viewport{text-align:center}
- body[data-page="inicio"] .brand-intro-environment{height:190px}
- body[data-page="inicio"] .brand-intro-experience-count{font-size:124px}
- body[data-page="inicio"] .brand-intro-isotype{width:230px;height:230px}
+ body[data-page="inicio"] .brand-intro-tail{font-size:1.1em}
+ body[data-page="inicio"] .brand-intro-environment{width:280px}
+ body[data-page="inicio"] .brand-intro-experience{width:160px;height:176px;border-width:6px;border-radius:22px 46px 22px 46px}
+ body[data-page="inicio"] .brand-intro-experience-count{font-size:100px}
+ body[data-page="inicio"] .brand-intro-experience-label{margin-top:7px;font-size:13px}
 }
 /* CTA between the introduction and expandable service previews. */
 body[data-page="inicio"] .service-contact-cta{padding:104px 0 110px;background:#fff}
