@@ -108,12 +108,6 @@
           brandReducedMotion.matches ? [{transform:'translateY(0)', opacity:0}, {transform:'translateY(0)', opacity:1}] : [{transform:'translateY(110%)', opacity:0}, {transform:'translateY(0)', opacity:1}],
           {duration, easing:brandEase, fill:'forwards'}
         );
-        const module = brandModules[[0,1,4,5][nextIndex]];
-        const offsets = ['translate(0, 0)', 'translate(-10%, -10%)', 'translate(-10%, 10%)', 'translate(10%, 10%)'];
-        module?.animate(
-          brandReducedMotion.matches ? [{opacity:.6}, {opacity:1}] : [{transform:'translate(0, 0)'}, {transform:nextIndex === 0 ? 'translate(10%, -10%)' : offsets[nextIndex], offset:.4}, {transform:'translate(0, 0)'}],
-          {duration: (brandReducedMotion.matches ? motion.fast : motion.enter) * 1000, easing:brandEase}
-        );
         await Promise.all([outgoing.finished.catch(() => {}), incoming.finished.catch(() => {})]);
         brandCurrent.textContent = brandWords[nextIndex];
         outgoing.cancel();
