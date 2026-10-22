@@ -29,7 +29,6 @@
     const brandModules = [...brandSection.querySelectorAll('[data-brand-module]')];
     const brandExperience = brandSection.querySelector('.brand-intro-experience');
     const brandExperienceCount = brandExperience?.querySelector('.brand-intro-experience-count');
-    const brandEnvironment = brandSection.querySelector('.brand-intro-environment');
     const brandReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const brandEase = getComputedStyle(document.documentElement).getPropertyValue('--motion-ease').trim();
     let brandWordIndex = 0;
@@ -54,7 +53,6 @@
     };
     const syncBrandExperienceMotion = () => {
       const visible = brandExperienceInView && !document.hidden;
-      brandEnvironment?.classList.toggle('is-flower-active', visible && !brandReducedMotion.matches);
       if (visible && !brandCountComplete && !brandCountFrame) {
         brandCountPrevious = null;
         brandCountFrame = requestAnimationFrame(advanceBrandCount);
@@ -154,7 +152,6 @@
     }
     document.addEventListener('visibilitychange', scheduleBrandWord);
     document.addEventListener('visibilitychange', syncBrandExperienceMotion);
-    brandReducedMotion.addEventListener('change', syncBrandExperienceMotion);
   }
   const googleReviewSlider = document.querySelector('[data-google-review-slider]');
   if (googleReviewSlider) {
