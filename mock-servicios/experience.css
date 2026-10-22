@@ -99,7 +99,25 @@ body[data-page=contacto] .page-hero{padding:62px 0 32px}body[data-page=contacto]
 .google-rating-footer a{flex:none;color:var(--green-dark);font-size:13px;font-weight:800;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:4px}
 .google-rating-footer a:hover{color:var(--green)}
 @media(hover:hover) and (pointer:fine){.google-rating-card:hover{transform:translateY(-4px);box-shadow:0 34px 68px #20282016}}
-@media(max-width:700px){.google-rating-card{padding:32px 24px}.google-rating-score>strong{font-size:70px}.google-rating-footer{align-items:start;flex-direction:column}}
+@media(max-width:700px){
+  .testimonial-stage.google-rating-stage{padding-block:76px}
+  .google-rating-stage .testimonial-layout{grid-template-columns:minmax(0,1fr);gap:30px;align-items:start}
+  .google-rating-stage .testimonial-heading{min-width:0}
+  .google-rating-stage .testimonial-heading h2{max-width:12ch;font-size:clamp(42px,11vw,58px);line-height:.98;letter-spacing:-.045em}
+  .google-rating-stage .testimonial-heading p{max-width:32ch;margin-top:18px;font-size:15px;line-height:1.55}
+  .google-rating-card{min-width:0;padding:28px 22px}
+  .google-rating-top{gap:12px}
+  .google-rating-score{gap:16px;margin:10px 0 24px}
+  .google-rating-score>strong{font-size:64px}
+  .google-rating-mark{flex:none;width:38px;height:38px;font-size:22px}
+  .google-review-carousel{min-width:0;padding-block:20px 14px}
+  .google-review-window{min-height:156px}
+  .google-review-slide{min-width:0;overflow-wrap:anywhere}
+  .google-review-slide blockquote{font-size:clamp(25px,7vw,32px);line-height:1.16}
+  .google-review-controls{gap:12px}
+  .google-review-dots,.google-review-arrows{gap:5px}
+  .google-rating-footer{align-items:start;flex-direction:column;gap:12px}
+}
 @media(prefers-reduced-motion:reduce){.google-rating-card,.google-review-dot::after,.google-review-arrows button{transition:none!important}.google-rating-card:hover,.google-review-arrows button:hover{transform:none!important}.google-review-slide{animation:none!important}}
 /* Nueva información institucional y recorridos de Servicios */
 .about-asespro{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,8vw,120px);align-items:center;padding-top:clamp(70px,10vw,140px);padding-bottom:clamp(70px,10vw,140px)}

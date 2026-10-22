@@ -99,7 +99,7 @@ export default async function HomePage(): Promise<JSX.Element> {
           </div>
         </Link>
 
-        <Link href="https://asespro.com.uy/" className={`${styles.quickCard} ${styles.quickCardWide}`}>
+        <Link href="https://asespro.com.uy/" target="_blank" rel="noopener noreferrer" className={`${styles.quickCard} ${styles.quickCardWide}`}>
           <img src="/limpieza-empresas.webp" alt="Personal de ASESPRO limpiando una oficina" />
           <div className={styles.quickShade} />
           <div className={styles.quickBody}>

@@ -90,7 +90,7 @@ export function TopNavBar(): JSX.Element {
               {item.label}
             </Link>
           ))}
-          <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
+          <a href={CLEANING_SITE} target="_blank" rel="noopener noreferrer" className={styles.link}>Servicios</a>
         </div>
 
         <button ref={menuToggleRef} type="button" className={styles.mobileToggle} aria-label="Abrir menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>
@@ -123,7 +123,7 @@ export function TopNavBar(): JSX.Element {
               {item.label}
             </Link>
           ))}
-          <a href={CLEANING_SITE} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Servicios</a>
+          <a href={CLEANING_SITE} target="_blank" rel="noopener noreferrer" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Servicios</a>
           <Link href="/contacto" className={styles.mobileCta} onClick={() => setMenuOpen(false)}>
             Consultar ahora
           </Link>

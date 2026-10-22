@@ -71,3 +71,18 @@ body[data-page="nosotros"] .principles-story-media img[data-chapter-image="valor
 
 .about-asespro-eyebrow{display:block!important}
 
+
+/* Ajustes de lectura en móvil para FAQ y CTA de contacto. */
+@media(max-width:760px){
+ .faq-layout{grid-template-columns:minmax(0,1fr);gap:32px}
+ .faq-layout>div:first-child,.faq-list{min-width:0;width:100%}
+ .faq-layout h2{max-width:14ch;font-size:clamp(38px,10vw,50px);line-height:.98;letter-spacing:-.045em}
+ .faq-list summary{position:relative;padding:4px 34px 4px 0;font-size:clamp(17px,4.6vw,21px);line-height:1.35;overflow-wrap:break-word}
+ .faq-list summary::after{position:absolute;top:50%;right:0;float:none;transform:translateY(-50%)}
+ .faq-list details p{font-size:15px;line-height:1.6}
+ .contact-section--full{grid-template-columns:minmax(0,1fr);gap:24px;padding:68px max(24px,calc((100vw - 540px)/2)) 72px}
+ .contact-section--full>div{min-width:0;width:100%}
+ .contact-section--full h2{max-width:12ch;font-size:clamp(42px,10.5vw,58px);line-height:.98;overflow-wrap:normal}
+ .contact-section--full>div:nth-child(2)>p{max-width:34ch;margin:0 0 22px;font-size:16px;line-height:1.55}
+ .contact-section--full .button{max-width:100%}
+}

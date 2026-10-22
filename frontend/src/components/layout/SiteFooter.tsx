@@ -47,7 +47,7 @@ export function SiteFooter(): JSX.Element {
           <Link href="/contacto" className={styles.link}>
             Contacto
           </Link>
-          <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
+          <a href={CLEANING_SITE} target="_blank" rel="noopener noreferrer" className={styles.link}>Servicios</a>
         </nav>
 
         <div className={styles.brandBlock}>
@@ -89,7 +89,7 @@ export function SiteFooter(): JSX.Element {
             <Link href="/contacto" className={styles.link}>
               Contacto
             </Link>
-            <a href={CLEANING_SITE} className={styles.link}>Servicios</a>
+            <a href={CLEANING_SITE} target="_blank" rel="noopener noreferrer" className={styles.link}>Servicios</a>
           </nav>
 
           <div className={styles.col}>
