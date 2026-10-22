@@ -100,8 +100,8 @@ body[data-page=contacto] .page-hero{padding:62px 0 32px}body[data-page=contacto]
 .google-rating-footer a:hover{color:var(--green)}
 @media(hover:hover) and (pointer:fine){.google-rating-card:hover{transform:translateY(-4px);box-shadow:0 34px 68px #20282016}}
 @media(max-width:700px){
-  .testimonial-stage.google-rating-stage{padding-block:76px}
-  .google-rating-stage .testimonial-layout{grid-template-columns:minmax(0,1fr);gap:30px;align-items:start}
+  .testimonial-stage.google-rating-stage{min-width:0;max-width:100%;overflow-x:clip;padding-block:76px}
+  .google-rating-stage .testimonial-layout{grid-template-columns:minmax(0,1fr);min-width:0;width:100%;gap:30px;align-items:start}
   .google-rating-stage .testimonial-heading{min-width:0}
   .google-rating-stage .testimonial-heading h2{max-width:12ch;font-size:clamp(42px,11vw,58px);line-height:.98;letter-spacing:-.045em}
   .google-rating-stage .testimonial-heading p{max-width:32ch;margin-top:18px;font-size:15px;line-height:1.55}
