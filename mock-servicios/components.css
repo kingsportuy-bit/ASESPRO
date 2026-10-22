@@ -129,11 +129,15 @@ body[data-page="inicio"] .brand-intro-word-measurer{position:absolute;inset:0 au
 body[data-page="inicio"] .brand-intro-tail{display:block;white-space:nowrap}
 body[data-page="inicio"] .brand-intro-environment{position:relative;display:grid;place-items:center;justify-self:center;width:390px;max-width:100%;aspect-ratio:1}
 body[data-page="inicio"] .brand-intro-experience{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:206px;height:220px;min-width:0;border:7px solid #fff;border-radius:28px 62px 28px 62px;background:var(--green-dark);color:#fff;box-shadow:0 16px 38px #006f281c;line-height:1;text-align:center}
-body[data-page="inicio"] .brand-intro-experience-count{display:block;color:#fff;font-size:126px;font-weight:800;line-height:.92;letter-spacing:-.075em;font-variant-numeric:tabular-nums;padding-right:.075em}
+body[data-page="inicio"] .brand-intro-experience-count{display:block;width:1.25em;color:#fff;font-size:126px;font-weight:800;line-height:.92;letter-spacing:-.075em;font-variant-numeric:tabular-nums;padding-right:.075em}
 body[data-page="inicio"] .brand-intro-experience-label{display:flex;flex-direction:column;margin-top:10px;color:#fff;font-size:15px;font-weight:650;line-height:1.25;letter-spacing:-.01em}
 body[data-page="inicio"] .brand-intro-experience-label span{display:block}
-body[data-page="inicio"] .brand-intro-isotype{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;overflow:visible;color:var(--green)}
+body[data-page="inicio"] .brand-intro-isotype{position:absolute;inset:0;z-index:0;display:block;width:90%;height:90%;margin:auto;overflow:visible;color:var(--green);transform-origin:center;animation:brand-flower-turn 24s linear infinite;animation-play-state:paused}
+body[data-page="inicio"] .brand-intro-environment.is-flower-active .brand-intro-isotype{animation-play-state:running}
 body[data-page="inicio"] .brand-intro-isotype g{transform-box:fill-box;transform-origin:center}
+@keyframes brand-flower-turn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){body[data-page="inicio"] .brand-intro-isotype{animation:none}}
+@media(min-width:901px) and (max-width:1200px){body[data-page="inicio"] .brand-intro-isotype{width:78%;height:78%}}
 @media(max-width:900px){
  body[data-page="inicio"] .brand-intro{padding:64px 0 62px}
  body[data-page="inicio"] .brand-intro-grid{grid-template-columns:minmax(0,1fr);gap:34px}
@@ -141,7 +145,8 @@ body[data-page="inicio"] .brand-intro-isotype g{transform-box:fill-box;transform
  body[data-page="inicio"] .brand-intro-line:first-child{font-size:clamp(27px,8.2vw,38px);margin-bottom:.3em}
  body[data-page="inicio"] .brand-intro-verb-line{align-items:center}
  body[data-page="inicio"] .brand-intro-tail{font-size:1.1em}
- body[data-page="inicio"] .brand-intro-environment{width:280px}
+ body[data-page="inicio"] .brand-intro-environment{width:320px}
+ body[data-page="inicio"] .brand-intro-isotype{width:74%;height:74%}
  body[data-page="inicio"] .brand-intro-experience{width:160px;height:176px;border-width:6px;border-radius:22px 46px 22px 46px}
  body[data-page="inicio"] .brand-intro-experience-count{font-size:100px}
  body[data-page="inicio"] .brand-intro-experience-label{margin-top:7px;font-size:13px}

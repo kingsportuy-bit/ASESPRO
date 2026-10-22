@@ -52,4 +52,5 @@ Librerías frontend locales: GSAP3.15.0 y Swiper14.3.0, descargadas de registro 
 
 - La decoración vectorial de «Somos ASESPRO» reutiliza los seis trazados del isotipo de `mock-servicios/assets/asespro-isotipo-favicon.svg`, sin redibujar su geometría. Se incorpora como SVG decorativo en el HTML; no sustituye los logos de navegación o footer.
 - La composición usa el verde de Servicios y texto HTML para «15 años de experiencia». El ensamblado de las piezas y el cambio vertical de palabras se implementan con Web Animations API, respetando movimiento reducido y deteniéndose cuando la sección queda fuera de pantalla.
+- Ajuste solicitado por Fito: el número recorre del 1 al 15 una vez al aparecer su tarjeta. El isotipo decorativo gira detrás de la tarjeta en ciclos de 24 segundos; se pausa fuera de pantalla y con la pestaña oculta, y respeta la preferencia de movimiento reducido. El número y su etiqueta conservan su orientación.
 

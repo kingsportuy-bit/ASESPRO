@@ -28,12 +28,42 @@
     const brandSection = brandViewport.closest('.brand-intro');
     const brandModules = [...brandSection.querySelectorAll('[data-brand-module]')];
     const brandExperience = brandSection.querySelector('.brand-intro-experience');
+    const brandExperienceCount = brandExperience?.querySelector('.brand-intro-experience-count');
+    const brandEnvironment = brandSection.querySelector('.brand-intro-environment');
     const brandReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const brandEase = getComputedStyle(document.documentElement).getPropertyValue('--motion-ease').trim();
     let brandWordIndex = 0;
     let brandTimer = 0;
     let brandInView = false;
     let brandEntered = false;
+    let brandExperienceInView = false;
+    let brandCountFrame = 0;
+    let brandCountElapsed = 0;
+    let brandCountPrevious = null;
+    let brandCountComplete = false;
+    if (brandExperienceCount) brandExperienceCount.textContent = '1';
+    const advanceBrandCount = (timestamp) => {
+      brandCountFrame = 0;
+      if (!brandExperienceInView || document.hidden || brandCountComplete) return;
+      if (brandCountPrevious !== null) brandCountElapsed += timestamp - brandCountPrevious;
+      brandCountPrevious = timestamp;
+      const progress = Math.min(1, brandCountElapsed / (motion.enter * 2000));
+      if (brandExperienceCount) brandExperienceCount.textContent = String(1 + Math.floor(progress * 14));
+      brandCountComplete = progress === 1;
+      if (!brandCountComplete) brandCountFrame = requestAnimationFrame(advanceBrandCount);
+    };
+    const syncBrandExperienceMotion = () => {
+      const visible = brandExperienceInView && !document.hidden;
+      brandEnvironment?.classList.toggle('is-flower-active', visible && !brandReducedMotion.matches);
+      if (visible && !brandCountComplete && !brandCountFrame) {
+        brandCountPrevious = null;
+        brandCountFrame = requestAnimationFrame(advanceBrandCount);
+      } else if (!visible) {
+        cancelAnimationFrame(brandCountFrame);
+        brandCountFrame = 0;
+        brandCountPrevious = null;
+      }
+    };
     const syncBrandWidth = (initial = false) => {
       if (!brandCurrent || !brandMeasure) return;
       const measureWord = (word) => {
@@ -108,12 +138,23 @@
         scheduleBrandWord();
       }, {threshold:.15});
       brandObserver.observe(brandSection);
+      if (brandExperience) {
+        const experienceObserver = new IntersectionObserver(([entry]) => {
+          brandExperienceInView = entry.isIntersecting && entry.intersectionRatio >= .35;
+          syncBrandExperienceMotion();
+        }, {threshold:[0,.35]});
+        experienceObserver.observe(brandExperience);
+      }
     } else {
       brandInView = true;
+      brandExperienceInView = true;
       assembleBrand();
       scheduleBrandWord();
+      syncBrandExperienceMotion();
     }
     document.addEventListener('visibilitychange', scheduleBrandWord);
+    document.addEventListener('visibilitychange', syncBrandExperienceMotion);
+    brandReducedMotion.addEventListener('change', syncBrandExperienceMotion);
   }
   const googleReviewSlider = document.querySelector('[data-google-review-slider]');
   if (googleReviewSlider) {
