@@ -38,14 +38,11 @@
     let brandTimer = 0;
     const syncBrandWidth = (initial = false) => {
       if (!brandCurrent || !brandMeasure) return;
-      const isMobile = window.matchMedia('(max-width: 620px)').matches;
       const measureWord = (word) => {
         brandMeasure.textContent = word;
         return brandMeasure.getBoundingClientRect().width;
       };
-      const width = isMobile
-        ? Math.max(...brandWords.map(measureWord))
-        : measureWord(brandCurrent.textContent);
+      const width = Math.max(...brandWords.map(measureWord));
       brandMeasure.textContent = brandCurrent.textContent;
       if (initial) brandViewport.style.transition = 'none';
       brandViewport.style.width = `${width}px`;
@@ -77,7 +74,6 @@
       brandWordIndex = nextIndex;
       brandCurrent.textContent = brandWords[brandWordIndex];
       syncBrandWidth();
-      await new Promise((resolve) => window.setTimeout(resolve, brandBase));
       await animateBrandCover('translateX(0)', 'translateX(100%)', brandBase);
       brandCover.style.transform = 'translateX(-100%)';
       brandTimer = window.setTimeout(rotateBrandWord, 3000);

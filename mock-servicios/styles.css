@@ -1,4 +1,6 @@
 @font-face{font-family:Manrope;src:url("assets/manrope-latin.woff2") format("woff2");font-style:normal;font-weight:200 800;font-display:swap}
+/* Keep the closed off-canvas menu outside the document's horizontal scroll area. */
+html{overflow-x:clip}
 :root{--green:#009335;--green-dark:#007e2e;--green-deep:#006f28;--ink:#202820;--muted:#5f6863;--paper:#f8faf8;--white:#fff;--mint:#e8f3ec;--line:#dbe6dd;--shell:min(1200px,calc(100% - 72px));--motion-ease:cubic-bezier(.23,1,.32,1);--motion-gsap-ease:power3.out;--motion-fast:180ms;--motion-base:260ms;--motion-layout:500ms;--motion-enter:680ms;--ease:var(--motion-ease);--radius:16px}
 *{box-sizing:border-box;caret-color:var(--green-dark);scrollbar-color:var(--green-dark) var(--mint);scrollbar-width:thin}
 ::selection{background:#bfe3c5;color:var(--ink)} html{scroll-behavior:smooth;scroll-padding-top:96px}body{margin:0;background:var(--paper);color:var(--ink);font:500 15px/1.65 Manrope,Arial,sans-serif;overflow-x:hidden}img{display:block;max-width:100%}a{color:inherit}button,input,select,textarea{font:inherit}button{cursor:pointer}:focus-visible{outline:3px solid var(--green);outline-offset:4px}.shell{width:var(--shell);margin-inline:auto}.skip-link{position:fixed;z-index:100;top:-60px;left:18px;padding:12px 18px;border-radius:999px;background:#fff;color:var(--green-dark);font-weight:800}.skip-link:focus{top:18px}
