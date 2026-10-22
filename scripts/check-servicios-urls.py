@@ -71,6 +71,9 @@ for path in PAGES:
         parsed = urllib.parse.urlsplit(urllib.parse.urljoin(ORIGIN + path, link))
         if parsed.scheme not in ['http', 'https'] or parsed.netloc != 'asespro.com.uy':
             continue
+        # Cloudflare wraps protected email links in a CDN-owned endpoint.
+        if parsed.path.startswith('/cdn-cgi/'):
+            continue
         assert not parsed.path.endswith('.html'), (path, link)
         target = urllib.parse.urlunsplit(('', '', parsed.path, parsed.query, ''))
         target = urllib.parse.quote(target, safe='/%?=&:+')
