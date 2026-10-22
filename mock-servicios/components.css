@@ -149,15 +149,15 @@ body[data-page="inicio"] .service-contact-cta .button{margin:0 auto}
 }
 
 /* Más presencia para la introducción de marca sin cambiar su contenido. */
-body[data-page="inicio"] .brand-intro{position:relative;isolation:isolate;overflow:hidden;padding:clamp(84px,10vw,132px) 0;background:linear-gradient(128deg,#006f28 0%,#007e2e 52%,#009335 100%);color:#fff}
+body[data-page="inicio"] .brand-intro{position:relative;isolation:isolate;overflow:hidden;padding:clamp(84px,10vw,132px) 0;background:#fff;color:var(--ink)}
 body[data-page="inicio"] .brand-intro-grid{position:relative;z-index:1}
-body[data-page="inicio"] .brand-intro .section-title{color:#fff;font-size:clamp(48px,6.2vw,78px);line-height:.98;letter-spacing:-.055em}
-body[data-page="inicio"] .brand-intro-line,body[data-page="inicio"] .brand-intro-tail{color:#fff}
-body[data-page="inicio"] .brand-intro-line em{color:#d7efd9}
+body[data-page="inicio"] .brand-intro .section-title{color:var(--ink);font-size:clamp(48px,6.2vw,78px);line-height:.98;letter-spacing:-.055em}
+body[data-page="inicio"] .brand-intro-line,body[data-page="inicio"] .brand-intro-tail{color:var(--ink)}
+body[data-page="inicio"] .brand-intro-line em{color:var(--green-dark)}
 body[data-page="inicio"] .brand-intro-environment{width:min(100%,320px);height:320px}
-body[data-page="inicio"] .brand-intro-experience{position:relative;z-index:2;width:auto;min-width:248px;padding:12px 22px 14px;border-left:4px solid #d7efd9;background:rgba(0,54,21,.22);color:#fff}
-body[data-page="inicio"] .brand-intro-experience-count{width:auto;color:#fff;font-size:clamp(118px,11vw,148px);letter-spacing:-.075em}
-body[data-page="inicio"] .brand-intro-experience-label{width:106px;color:#e5f5e8;font-size:15px;font-weight:700;line-height:1.25;letter-spacing:.035em;text-transform:uppercase}
+body[data-page="inicio"] .brand-intro-experience{position:relative;z-index:2;width:auto;min-width:248px;padding:8px 18px 10px;border-left:4px solid var(--green-dark);background:transparent;color:var(--ink)}
+body[data-page="inicio"] .brand-intro-experience-count{width:auto;color:var(--green-dark);font-size:clamp(128px,12vw,156px);letter-spacing:-.075em}
+body[data-page="inicio"] .brand-intro-experience-label{width:106px;color:var(--ink);font-size:15px;font-weight:750;line-height:1.25;letter-spacing:.035em;text-transform:uppercase}
 body[data-page="inicio"] .brand-intro-isotype{background:#fff;opacity:.1}
 @media(max-width:620px){
  body[data-page="inicio"] .brand-intro{padding:62px 0 58px}
