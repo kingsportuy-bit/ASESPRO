@@ -4,8 +4,8 @@
   width: 100%;
   overflow: hidden;
   border-radius: 20px;
-  border: 1px solid rgba(190, 201, 195, 0.15);
-  background: #f0f4f3;
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
+  background: var(--surface-container-low);
 }
 
 .canvas {
@@ -32,8 +32,8 @@
   height: 100%;
   padding: 24px;
   text-align: center;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 14px;
   font-weight: 600;
-  background: linear-gradient(180deg, #f6faf9 0%, #f0f4f3 100%);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-container-low) 100%);
 }

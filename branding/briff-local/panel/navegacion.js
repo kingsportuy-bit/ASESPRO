@@ -1,0 +1,5 @@
+(()=>{
+ const tabs=[...document.querySelectorAll('.panel-tabs [role=tab]')];
+ function activate(button,focus=false){for(const tab of tabs){const active=tab===button;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!active;}document.querySelector('header .toolbar').style.display=button.id==='tab-identidad'?'flex':'none';document.querySelector('header p').textContent=button.id==='tab-propiedades'?'Prepará un carrusel de propiedades con tus fotos, datos y logo.':button.id==='tab-compositor'?'Componé un fondo y una capa de texto, listos para Instagram.':'Probá colores, Switzer, logos vectoriales y símbolos.';if(focus)button.focus();window.dispatchEvent(new CustomEvent('asespro-tab',{detail:button.id}));}
+ tabs.forEach((tab,i)=>{tab.onclick=()=>activate(tab);tab.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const j=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowLeft'?-1:1)+tabs.length)%tabs.length;activate(tabs[j],true);};});activate(document.getElementById('tab-propiedades'));
+})();

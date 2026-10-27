@@ -1,7 +1,7 @@
 .gallery {
   border-radius: 22px;
-  background: #f6faf9;
-  border: 1px solid rgba(190, 201, 195, 0.2);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--line) 20%, transparent);
   padding: 14px;
   display: grid;
   gap: 12px;
@@ -22,7 +22,7 @@
 
 .galleryHead p {
   margin: 0;
-  color: #4d5955;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -41,7 +41,7 @@
   border: 0;
   border-radius: 14px;
   overflow: hidden;
-  background: #e4ebe8;
+  background: var(--mint);
   cursor: pointer;
   padding: 0;
   min-width: 0;
@@ -105,13 +105,13 @@
 }
 
 .moreMediaButton {
-  background: #00513f;
+  background: var(--primary);
   color: #ffffff;
 }
 
 .videoMediaButton {
-  background: #e1e3e1;
-  color: #00513f;
+  background: var(--secondary-container);
+  color: var(--primary);
 }
 
 .content {
@@ -121,10 +121,10 @@
 }
 
 .article {
-  background: #f6faf9;
+  background: var(--surface);
   border-radius: 22px;
   padding: 24px;
-  border: 1px solid rgba(190, 201, 195, 0.18);
+  border: 1px solid color-mix(in srgb, var(--line) 18%, transparent);
 }
 
 .pillRow {
@@ -141,8 +141,8 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 800;
-  color: #00513f;
-  background: rgba(158, 243, 214, 0.9);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--mint) 90%, transparent);
 }
 
 .sectionTitle {
@@ -154,7 +154,7 @@
 
 .article p {
   margin: 0 0 14px;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   line-height: 1.7;
 }
 
@@ -184,20 +184,20 @@
 .amenities svg {
   width: 48px;
   height: 48px;
-  color: #00513f;
+  color: var(--primary);
   fill: currentColor;
-  filter: drop-shadow(0 6px 10px rgba(0, 81, 63, 0.12));
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--green-dark) 12%, transparent));
 }
 
 .amenities strong {
-  color: #181c1c;
+  color: var(--on-surface);
   font-size: 14px;
   font-weight: 900;
   line-height: 1.1;
 }
 
 .amenities span {
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -295,7 +295,7 @@
   min-height: 38px;
   border-radius: 999px;
   padding: 8px 14px;
-  background: rgba(0, 81, 63, 0.92);
+  background: color-mix(in srgb, var(--green-dark) 92%, transparent);
   color: #ffffff;
   text-decoration: none;
   font-size: 12px;
@@ -311,8 +311,8 @@
   border-radius: 22px;
   background: #ffffff;
   padding: 22px;
-  border: 1px solid rgba(190, 201, 195, 0.22);
-  box-shadow: 0 18px 30px rgba(24, 28, 28, 0.06);
+  border: 1px solid color-mix(in srgb, var(--line) 22%, transparent);
+  box-shadow: 0 18px 30px color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 .priceLabel {
@@ -320,13 +320,13 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 11px;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   font-weight: 700;
 }
 
 .price {
   margin: 8px 0 0;
-  color: #00513f;
+  color: var(--primary);
   font-size: clamp(1.85rem, 1.5rem + 0.95vw, 2.55rem);
   letter-spacing: -0.03em;
 }
@@ -334,7 +334,7 @@
 .agent {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(190, 201, 195, 0.4);
+  border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -348,18 +348,18 @@
   background:
     radial-gradient(circle at 50% 36%, #ffffff 0 18%, transparent 19%),
     radial-gradient(circle at 50% 78%, #ffffff 0 31%, transparent 32%),
-    linear-gradient(135deg, #00513f 0%, #006b54 100%);
+    linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
 .agent strong {
   display: block;
-  color: #181c1c;
+  color: var(--on-surface);
 }
 
 .agent p {
   margin: 3px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 13px;
 }
 
@@ -384,17 +384,17 @@
 
 .primaryAction {
   color: #ffffff;
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
 }
 
 .secondaryAction {
-  color: #181c1c;
-  background: #f0f4f3;
+  color: var(--on-surface);
+  background: var(--surface-container-low);
 }
 
 .refCode {
   margin: 14px 0 0;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   font-size: 12px;
   text-align: center;
 }

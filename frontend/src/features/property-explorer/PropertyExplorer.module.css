@@ -16,15 +16,15 @@
 }
 
 .panel {
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   border-radius: 24px;
-  background: linear-gradient(170deg, #ffffff 0%, #f0f4f3 100%);
+  background: linear-gradient(170deg, #ffffff 0%, var(--surface-container-low) 100%);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   overflow: hidden;
-  box-shadow: 0 28px 46px rgba(24, 28, 28, 0.06);
+  box-shadow: 0 28px 46px color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 .layoutFullHeight .panel {
@@ -33,7 +33,7 @@
   border-radius: 0;
   border-width: 0 1px 0 0;
   box-shadow: none;
-  background: linear-gradient(170deg, #ffffff 0%, #f0f4f3 100%);
+  background: linear-gradient(170deg, #ffffff 0%, var(--surface-container-low) 100%);
 }
 
 .layoutFullHeight .list {
@@ -51,20 +51,20 @@
   font-size: 26px;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: #181c1c;
+  color: var(--on-surface);
 }
 
 .panelHint {
   margin: 0;
   font-size: 13px;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .resultCount {
   margin: 4px 0 0;
   font-size: 12px;
   font-weight: 800;
-  color: #00513f;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -79,15 +79,15 @@
 }
 
 .emptyState {
-  border: 1px dashed rgba(190, 201, 195, 0.35);
+  border: 1px dashed color-mix(in srgb, var(--line) 35%, transparent);
   border-radius: 12px;
   padding: 12px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
 }
 
 .emptyState p {
   margin: 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 13px;
 }
 

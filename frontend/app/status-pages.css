@@ -1,7 +1,7 @@
 .status-card {
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #f0f4f3 100%);
+  background: linear-gradient(180deg, #ffffff 0%, var(--surface-container-low) 100%);
   padding: 24px;
   display: grid;
   gap: 10px;
@@ -9,27 +9,27 @@
 
 .status-card h2 {
   margin: 0;
-  color: #181c1c;
+  color: var(--on-surface);
   font-size: 24px;
 }
 
 .status-card p {
   margin: 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 14px;
 }
 
 .status-link {
   width: fit-content;
   min-height: 48px;
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   border-radius: 999px;
   padding: 10px 16px;
   font-size: 12px;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: #181c1c;
+  color: var(--on-surface);
   font-weight: 700;
   background: #ffffff;
   display: inline-flex;
@@ -38,6 +38,6 @@
 }
 
 .status-link:hover {
-  color: #00513f;
-  background: #f0f4f3;
+  color: var(--primary);
+  background: var(--surface-container-low);
 }

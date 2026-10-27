@@ -20,7 +20,7 @@
 
 .description {
   margin: 10px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   max-width: 700px;
   font-size: clamp(1rem, 0.95rem + 0.45vw, 1.2rem);
   line-height: 1.58;
@@ -32,8 +32,8 @@
   gap: 6px;
   padding: 4px;
   border-radius: 999px;
-  background: #f0f4f3;
-  border: 1px solid rgba(190, 201, 195, 0.3);
+  background: var(--surface-container-low);
+  border: 1px solid color-mix(in srgb, var(--line) 30%, transparent);
 }
 
 .viewBtn {
@@ -41,7 +41,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 700;
@@ -50,12 +50,12 @@
 
 .viewBtnActive {
   background: #ffffff;
-  color: #00513f;
+  color: var(--primary);
 }
 
 .filterRow {
   border-radius: 22px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
   padding: 20px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -71,16 +71,16 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   font-weight: 700;
 }
 
 .filterField select {
   min-height: 48px;
-  border: 1px solid rgba(190, 201, 195, 0.35);
+  border: 1px solid color-mix(in srgb, var(--line) 35%, transparent);
   border-radius: 14px;
   background: #ffffff;
-  color: #181c1c;
+  color: var(--on-surface);
   padding: 0 16px;
   font: inherit;
 }
@@ -93,7 +93,7 @@
   justify-content: center;
   border: 0;
   border-radius: 14px;
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
   color: #ffffff;
   text-decoration: none;
   font-size: 13px;
@@ -110,7 +110,7 @@
 
 .emptyState {
   border-radius: 22px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
   padding: 28px;
   display: grid;
   gap: 12px;
@@ -124,7 +124,7 @@
 
 .emptyState p {
   margin: 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   line-height: 1.55;
 }
 
@@ -133,7 +133,7 @@
   min-height: 48px;
   border-radius: 999px;
   padding: 12px 18px;
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
   color: #ffffff;
   text-decoration: none;
   font-size: 13px;
@@ -208,7 +208,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 800;
-  background: rgba(0, 81, 63, 0.9);
+  background: color-mix(in srgb, var(--green-dark) 90%, transparent);
   color: #ffffff;
 }
 
@@ -228,20 +228,20 @@
   font-size: clamp(1.35rem, 1.2rem + 0.45vw, 1.7rem);
   letter-spacing: -0.02em;
   line-height: 1.03;
-  color: #181c1c;
+  color: var(--on-surface);
 }
 
 .cardPrice {
   margin: 0;
   font-size: clamp(1.2rem, 1.08rem + 0.35vw, 1.55rem);
   letter-spacing: -0.02em;
-  color: #00513f;
+  color: var(--primary);
   font-weight: 800;
 }
 
 .cardLocation {
   margin: 8px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 14px;
 }
 
@@ -255,8 +255,8 @@
   align-items: center;
   justify-content: center;
   padding: 8px 18px;
-  background: #eef3f1;
-  color: #181c1c;
+  background: var(--mint);
+  color: var(--on-surface);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -273,9 +273,9 @@
   width: 46px;
   height: 46px;
   border-radius: 999px;
-  border: 1px solid rgba(190, 201, 195, 0.35);
-  background: #f0f4f3;
-  color: #444746;
+  border: 1px solid color-mix(in srgb, var(--line) 35%, transparent);
+  background: var(--surface-container-low);
+  color: var(--on-secondary-fixed-variant);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -284,13 +284,13 @@
 }
 
 .pageNumberActive {
-  background: #00513f;
+  background: var(--primary);
   color: #ffffff;
 }
 
 .mapSection {
   border-radius: 24px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
   padding: 22px;
   display: grid;
   gap: 12px;
@@ -312,7 +312,7 @@
 
 .mapHead p {
   margin: 6px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .mapFrame {
@@ -328,7 +328,7 @@
   z-index: 1200;
   border: 0;
   width: 100%;
-  background: rgba(24, 28, 28, 0.16);
+  background: color-mix(in srgb, var(--ink) 16%, transparent);
   cursor: pointer;
   color: #ffffff;
   text-decoration: none;
@@ -354,8 +354,8 @@
 .mapCta {
   border-radius: 20px;
   min-height: 500px;
-  background: radial-gradient(circle at 50% 10%, #ffffff 0%, #f0f4f3 100%);
-  border: 1px dashed rgba(190, 201, 195, 0.7);
+  background: radial-gradient(circle at 50% 10%, #ffffff 0%, var(--surface-container-low) 100%);
+  border: 1px dashed color-mix(in srgb, var(--line) 70%, transparent);
   display: grid;
   place-items: center;
   padding: 20px;
@@ -379,7 +379,7 @@
 
 .mapCtaCard p {
   margin: 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 @media (max-width: 1080px) {

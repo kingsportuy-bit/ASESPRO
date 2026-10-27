@@ -7,7 +7,7 @@
   border-radius: 999px;
   border: 0;
   text-decoration: none;
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
   color: #ffffff;
   font-weight: 800;
   font-size: 14px;

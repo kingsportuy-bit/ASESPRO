@@ -25,7 +25,7 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(96deg, rgba(0, 81, 63, 0.58) 0%, rgba(0, 81, 63, 0.42) 38%, rgba(24, 28, 28, 0.45) 100%);
+  background: linear-gradient(96deg, color-mix(in srgb, var(--green-dark) 58%, transparent) 0%, color-mix(in srgb, var(--green-dark) 42%, transparent) 38%, color-mix(in srgb, var(--ink) 45%, transparent) 100%);
 }
 
 .heroGlowA,
@@ -41,7 +41,7 @@
   height: 260px;
   right: 12%;
   top: 12%;
-  background: rgba(158, 243, 214, 0.35);
+  background: color-mix(in srgb, var(--mint) 35%, transparent);
 }
 
 .heroGlowB {
@@ -49,7 +49,7 @@
   height: 180px;
   right: 4%;
   bottom: 10%;
-  background: rgba(0, 81, 63, 0.32);
+  background: color-mix(in srgb, var(--green-dark) 32%, transparent);
 }
 
 .heroContent {
@@ -104,7 +104,7 @@
   padding: 0 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.86);
-  color: #003f31;
+  color: var(--green-deep);
   font-size: 12px;
   font-weight: 700;
   position: relative;
@@ -116,7 +116,7 @@
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: #0a7d62;
+  background: var(--green-deep);
   position: absolute;
   left: 10px;
   top: 50%;
@@ -138,13 +138,13 @@
 }
 
 .primaryAction {
-  background: linear-gradient(135deg, #00513f 0%, #006b54 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
   color: #ffffff;
 }
 
 .secondaryAction {
   background: rgba(255, 255, 255, 0.87);
-  color: #181c1c;
+  color: var(--on-surface);
 }
 
 .ghostAction {
@@ -190,7 +190,7 @@
 .quickShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(190deg, rgba(24, 28, 28, 0.05) 0%, rgba(0, 81, 63, 0.76) 100%);
+  background: linear-gradient(190deg, color-mix(in srgb, var(--ink) 5%, transparent) 0%, color-mix(in srgb, var(--green-dark) 76%, transparent) 100%);
 }
 
 .quickBody {
@@ -227,7 +227,7 @@
 .featured {
   padding: 26px;
   border-radius: 22px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
 }
 
 .featuredHead {
@@ -241,7 +241,7 @@
 .featuredHead h2 {
   margin: 2px 0 0;
   font-size: clamp(1.7rem, 1.35rem + 1.1vw, 2.5rem);
-  color: #00513f;
+  color: var(--primary);
   letter-spacing: -0.02em;
 }
 
@@ -250,7 +250,7 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #00513f;
+  color: var(--primary);
   font-weight: 800;
 }
 
@@ -282,8 +282,8 @@
   left: 10px;
   top: 10px;
   border-radius: 999px;
-  background: rgba(158, 243, 214, 0.95);
-  color: #00513f;
+  background: color-mix(in srgb, var(--mint) 95%, transparent);
+  color: var(--primary);
   padding: 4px 9px;
   font-size: 10px;
   letter-spacing: 0.05em;
@@ -298,7 +298,7 @@
 .featuredPrice {
   margin: 0;
   font-size: clamp(1.1rem, 1rem + 0.35vw, 1.35rem);
-  color: #00513f;
+  color: var(--primary);
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -307,13 +307,13 @@
   margin: 6px 0 0;
   font-size: clamp(1.35rem, 1.18rem + 0.45vw, 1.6rem);
   letter-spacing: -0.02em;
-  color: #181c1c;
+  color: var(--on-surface);
   line-height: 1.02;
 }
 
 .featuredMeta {
   margin: 8px 0 14px;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 13px;
 }
 
@@ -326,11 +326,11 @@
   border-radius: 14px;
   padding: 8px 16px;
   text-decoration: none;
-  color: #181c1c;
+  color: var(--on-surface);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.01em;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
 }
 
 .process {
@@ -347,7 +347,7 @@
 .process > p {
   margin: 10px auto 0;
   max-width: 690px;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .steps {
@@ -371,20 +371,20 @@
   justify-content: center;
   font-weight: 700;
   color: #ffffff;
-  background: #00513f;
+  background: var(--primary);
 }
 
 .step h3 {
   margin: 12px 0 6px;
   font-size: 19px;
-  color: #181c1c;
+  color: var(--on-surface);
   letter-spacing: -0.01em;
 }
 
 .step p {
   margin: 0;
   font-size: 14px;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   line-height: 1.5;
 }
 
@@ -396,7 +396,7 @@
 
 .mapTeaser > p {
   margin: 8px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .mapShell {
@@ -411,7 +411,7 @@
   inset: 0;
   z-index: 1200;
   pointer-events: auto;
-  background: rgba(24, 28, 28, 0.14);
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -448,7 +448,7 @@
 
 .mapOverlayCard p {
   margin: 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 14px;
 }
 
@@ -473,18 +473,18 @@
 .trustCopy li {
   padding-left: 16px;
   border-left: 3px solid transparent;
-  border-image: linear-gradient(125deg, #003f31 0%, #00513f 44%, #006b54 100%) 1;
+  border-image: linear-gradient(125deg, var(--green-deep) 0%, var(--primary) 44%, var(--primary-container) 100%) 1;
 }
 
 .trustCopy strong {
   font-size: 19px;
-  color: #181c1c;
+  color: var(--on-surface);
   letter-spacing: -0.01em;
 }
 
 .trustCopy p {
   margin: 6px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .contactStrip {
@@ -493,7 +493,7 @@
   align-items: center;
   gap: 16px;
   border-radius: 20px;
-  background: #f0f4f3;
+  background: var(--surface-container-low);
   padding: 22px;
 }
 
@@ -505,13 +505,13 @@
 
 .contactInfo p {
   margin: 10px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
 }
 
 .contactInfo ul {
   margin: 18px 0 0;
   padding-left: 18px;
-  color: #181c1c;
+  color: var(--on-surface);
   display: grid;
   gap: 8px;
 }

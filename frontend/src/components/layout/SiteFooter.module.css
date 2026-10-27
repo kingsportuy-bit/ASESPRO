@@ -1,8 +1,8 @@
 .footer {
   width: 100%;
   margin-top: 26px;
-  border-top: 1px solid rgba(190, 201, 195, 0.18);
-  background: #f8faf7;
+  border-top: 1px solid color-mix(in srgb, var(--line) 18%, transparent);
+  background: var(--paper);
 }
 
 .adminFooter {
@@ -12,7 +12,7 @@
 
 .adminFooter .bottomBar {
   margin-top: 0;
-  background: #0f2420;
+  background: var(--ink);
 }
 
 .inner {
@@ -41,7 +41,7 @@
 
 .copy {
   margin: 12px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 13px;
   font-weight: 500;
   line-height: 1.6;
@@ -86,7 +86,7 @@
 }
 
 .codexaLink {
-  color: #d6f5ea;
+  color: var(--mint);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease;
@@ -127,7 +127,7 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   font-weight: 700;
 }
 
@@ -136,19 +136,19 @@
   font-size: 13px;
   line-height: 1.4;
   text-decoration: none;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-weight: 600;
   letter-spacing: -0.01em;
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: #00513f;
+  color: var(--primary);
 }
 
 .bottomBar {
   width: 100%;
-  background: linear-gradient(125deg, #003f31 0%, #00513f 44%, #006b54 100%);
+  background: linear-gradient(125deg, var(--green-deep) 0%, var(--primary) 44%, var(--primary-container) 100%);
   margin-top: 20px;
 }
 

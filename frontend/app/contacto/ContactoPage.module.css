@@ -9,11 +9,11 @@
   font-size: clamp(2.6rem, 1.95rem + 2.8vw, 5.8rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
-  color: #181c1c;
+  color: var(--on-surface);
 }
 
 .accent {
-  color: #00513f;
+  color: var(--primary);
   font-style: italic;
   font-weight: 500;
 }
@@ -21,7 +21,7 @@
 .heroText p {
   margin: 18px 0 0;
   font-size: clamp(1rem, 0.9rem + 0.45vw, 1.2rem);
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   line-height: 1.6;
   max-width: 640px;
 }
@@ -39,7 +39,7 @@
 
 .contactCard {
   border-radius: 20px;
-  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
+  background: linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%);
   color: #ffffff;
   padding: 20px;
   display: flex;
@@ -107,7 +107,7 @@
 
 .waBox {
   border-radius: 22px;
-  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
+  background: linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%);
   color: #ffffff;
   text-decoration: none;
   padding: 20px;
@@ -140,7 +140,7 @@
 
 .mapCard {
   border-radius: 20px;
-  background: linear-gradient(135deg, #006b54 0%, #00513f 100%);
+  background: linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%);
   color: #ffffff;
   padding: 20px;
   display: grid;

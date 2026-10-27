@@ -6,6 +6,7 @@ import { SiteFooter, TopNavBar } from "@/components/layout";
 import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from "@/lib/seo";
 
 import "./globals.css";
+import "./brand-tokens.css";
 
 const switzer = localFont({
   src: "../public/fonts/Switzer-Variable.woff2",

@@ -1,0 +1,25 @@
+.panel-tabs{display:flex;gap:8px;border-bottom:1px solid #ccd8d0;margin-bottom:26px;padding-bottom:12px;flex-wrap:wrap}.panel-tabs [aria-selected=true]{background:#006f28;color:#fff;border-color:#006f28}.tab-panel[hidden],#compositor-panel[hidden]{display:none!important}.comp-layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:34px}.comp-controls{display:flex;flex-direction:column;gap:17px}.comp-controls label{font-size:13px;font-weight:600;display:block}.comp-upload{background:#f4f7f5;padding:16px;border:1px solid #dce4df;border-radius:10px}.comp-upload input[type=file]{max-width:100%;font-size:12px!important;background:#fff}.comp-upload p{overflow-wrap:anywhere;margin-bottom:0}.comp-upload button{margin-top:12px;font-size:12px}.comp-fit-actions{display:flex;flex-direction:column;gap:8px}.comp-adjust{border:1px solid #dce4df;border-radius:10px;display:flex;flex-direction:column;gap:14px;padding:16px;min-width:0}.comp-adjust legend{font-size:13px;font-weight:600;padding:0 6px}.comp-preview{min-width:0;align-self:start;position:sticky;top:22px}.comp-preview-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:13px}.comp-preview-head span{color:#738377}.comp-checker{position:relative;min-height:300px;background-color:#e4e9e6;background-image:conic-gradient(#f4f6f5 25%,transparent 0 50%,#f4f6f5 0 75%,transparent 0);background-size:22px 22px;display:flex;justify-content:center;border:1px solid #dce4df;overflow:hidden}.comp-checker canvas{display:block;max-width:100%;max-height:760px;width:auto;height:auto;object-fit:contain}#comp-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px;color:#50695b;font-size:16px;background:#edf3efe8}#comp-status{overflow-wrap:anywhere}.comp-controls .check{display:flex}.comp-preview .hint{max-width:650px}@media(max-width:850px){.comp-layout{grid-template-columns:1fr}.comp-preview{position:static}.comp-checker canvas{max-height:650px}.comp-controls{display:grid;grid-template-columns:1fr 1fr}.comp-controls>.hint,.comp-adjust,#comp-download{grid-column:1/-1}}@media(max-width:550px){.comp-controls{display:flex}.comp-preview-head{flex-wrap:wrap}}
+
+/* El contorno y el canvas comparten la proporción del archivo exportado. */
+.comp-checker{width:min(100%,calc(var(--comp-preview-height,760px) * var(--comp-ratio,.8)));aspect-ratio:var(--comp-ratio,.8);height:auto;min-height:0;margin-inline:auto;display:block;border:0;outline:1px solid #dce4df;isolation:isolate}
+.comp-checker #comp-canvas{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:fill}
+.comp-preview-head{align-items:center;flex-wrap:wrap}
+#comp-toggle-safe{font-size:12px;white-space:normal}
+#comp-toggle-safe[aria-pressed=true]{background:#fff4da;border-color:#cc9228;color:#624600}
+#comp-safe-overlay{position:absolute;border:2px dashed #ffd279;box-shadow:0 0 0 1800px #00000035;pointer-events:none;z-index:2}
+#comp-safe-overlay[hidden],#comp-safe-note[hidden]{display:none!important}
+#comp-safe-overlay span{position:absolute;top:7px;left:7px;font-size:11px;font-weight:600;background:#ffd279;color:#3c300a;padding:4px 7px;border-radius:4px}
+@media(max-width:850px){.comp-checker{--comp-preview-height:650px}}
+
+
+
+.comp-layer-radios{display:flex;gap:10px;align-items:center}
+.comp-layer-radios label{display:flex;flex:1;align-items:center;justify-content:center;gap:8px;border:1px solid #cbd7cf;border-radius:7px;padding:10px 12px;cursor:pointer}
+.comp-layer-radios label:has(input:checked){background:#e0f2e9;border-color:#007e2e;color:#006f28}
+#compositor-panel .comp-layer-radios input[type=radio]{display:inline-block;accent-color:#007e2e;margin:0;width:15px;height:15px;min-width:15px;padding:0;border:0;background:transparent}
+.comp-position-sliders{gap:18px}.comp-position-sliders output{font-size:11px;float:right;white-space:nowrap}
+.comp-magnet-hint{margin:0;font-size:11px!important}
+.magnetic-range{display:block;position:relative;padding-bottom:7px}
+.magnetic-range input[type=range]{position:relative;z-index:1;margin-bottom:0}
+.magnetic-range::after{content:'';position:absolute;width:2px;height:6px;bottom:0;left:calc((100% - 16px) * var(--magnet-position,.5) + 7px);background:#007e2e;border-radius:2px;pointer-events:none}
+.magnetic-range input.at-default{accent-color:#006f28}

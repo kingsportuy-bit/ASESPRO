@@ -1,0 +1,92 @@
+{
+  "colors": {
+    "deep": "#006F28",
+    "primary": "#009335",
+    "mint": "#E8F3EC",
+    "paper": "#F8FAF8",
+    "accent": "#E8F3EC"
+  },
+  "font": "Switzer",
+  "title": "Gancho breve\npara la placa",
+  "support": "Una sola idea en una línea de apoyo.",
+  "theme": "dark",
+  "background": "gradient",
+  "icon": "house-line",
+  "style": "regular",
+  "weight": 700,
+  "typeSize": 102,
+  "iconSize": 370,
+  "angle": 1,
+  "logoRule": {
+    "darkDefault": "#FFFFFF",
+    "lightDefault": "#009335",
+    "editable": true,
+    "monochrome": true
+  },
+  "safe": false,
+  "web": "inmobiliaria.asespro.com.uy",
+  "phoneInArtwork": false,
+  "status": "vigente",
+  "logoConfigs": {
+    "dark": {
+      "variant": "horizontal",
+      "color": "#FFFFFF",
+      "backgroundRole": "deep",
+      "variants": {
+        "mobile": {
+          "label": "Isologo",
+          "color": "#FFFFFF"
+        },
+        "vertical": {
+          "label": "Normal",
+          "color": "#FFFFFF"
+        },
+        "horizontal": {
+          "label": "Horizontal",
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    "light": {
+      "variant": "mobile",
+      "color": "#009335",
+      "backgroundRole": "paper",
+      "variants": {
+        "mobile": {
+          "label": "Isologo",
+          "color": "#009335"
+        },
+        "vertical": {
+          "label": "Normal",
+          "color": "#009335"
+        },
+        "horizontal": {
+          "label": "Horizontal",
+          "color": "#009335"
+        }
+      }
+    }
+  },
+  "version": 6,
+  "updatedAt": "2026-10-27",
+  "logoDescriptor": "INMOBILIARIA",
+  "logoDescriptorFont": "Switzer Regular (curvas)",
+  "compositionGuides": {
+    "optional": true,
+    "post": {
+      "width": 1080,
+      "height": 1350,
+      "top": 64,
+      "bottom": 64,
+      "side": 80
+    },
+    "story": {
+      "width": 1080,
+      "height": 1920,
+      "top": 160,
+      "bottom": 160,
+      "side": 80
+    }
+  },
+  "paletteSource": "ASESPRO Servicios / mock-servicios/styles.css"
+}

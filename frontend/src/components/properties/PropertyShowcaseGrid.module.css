@@ -1,7 +1,7 @@
 .section {
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   border-radius: 28px;
-  background: linear-gradient(180deg, #f0f4f3 0%, #f6faf9 100%);
+  background: linear-gradient(180deg, var(--surface-container-low) 0%, var(--surface) 100%);
   padding: 20px;
 }
 
@@ -15,23 +15,23 @@
 
 .head h2 {
   margin: 0;
-  color: #181c1c;
+  color: var(--on-surface);
   letter-spacing: -0.02em;
   font-size: clamp(1.7rem, 1.35rem + 1.1vw, 2.5rem);
 }
 
 .head p {
   margin: 6px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   max-width: 540px;
 }
 
 .chip {
   border-radius: 999px;
   padding: 7px 12px;
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   background: #ffffff;
-  color: #444746;
+  color: var(--on-secondary-fixed-variant);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 11px;
@@ -48,9 +48,9 @@
 .card {
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid rgba(190, 201, 195, 0.15);
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
   background: #ffffff;
-  box-shadow: 0 30px 44px rgba(24, 28, 28, 0.06);
+  box-shadow: 0 30px 44px color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 .media {
@@ -81,8 +81,8 @@
 .badge {
   border-radius: 999px;
   padding: 4px 9px;
-  background: rgba(158, 243, 214, 0.95);
-  color: #00513f;
+  background: color-mix(in srgb, var(--mint) 95%, transparent);
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 10px;
@@ -97,12 +97,12 @@
   margin: 0;
   font-size: 18px;
   font-weight: 900;
-  color: #00513f;
+  color: var(--primary);
 }
 
 .title {
   margin: 5px 0 0;
-  color: #181c1c;
+  color: var(--on-surface);
   font-size: 22px;
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -110,7 +110,7 @@
 
 .meta {
   margin: 8px 0 0;
-  color: #3d4a3e;
+  color: var(--on-surface-variant);
   font-size: 13px;
 }
 
@@ -120,8 +120,8 @@
   text-decoration: none;
   border-radius: 999px;
   padding: 9px 12px;
-  border: 1px solid rgba(190, 201, 195, 0.15);
-  color: #181c1c;
+  border: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
+  color: var(--on-surface);
   font-weight: 800;
   font-size: 12px;
   text-transform: uppercase;
@@ -130,8 +130,8 @@
 }
 
 .detailLink:hover {
-  color: #00513f;
-  background: #f0f4f3;
+  color: var(--primary);
+  background: var(--surface-container-low);
 }
 
 @media (max-width: 1080px) {
