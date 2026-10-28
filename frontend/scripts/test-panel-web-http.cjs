@@ -29,14 +29,30 @@ with tempfile.TemporaryDirectory() as folder:
  assert web_local.STORE.read_bytes() != os.environ['TEST_WEB_KEY'].encode()
  loaded=web_local.handle('load',{'id':os.environ['TEST_WEB_ID']})
  assert loaded['photos'] and loaded['item']['property']['hidePrice']
+ import base64
+ upload=web_local.handle('beginVideo',{'id':os.environ['TEST_WEB_ID'],'size':16})
+ chunk=base64.b64encode(bytes([0,0,0,16])+b'ftyp'+bytes(8)).decode()
+ assert web_local.handle('appendVideo',{'id':os.environ['TEST_WEB_ID'],'uploadId':upload['uploadId'],'index':0,'chunk':chunk})['index']==0
  print('PASS Python: puente, DPAPI, configuracion y recuperacion de fotos.')
 `});assert.equal(bridge.status,0,bridge.stderr);console.log(bridge.stdout.trim());
  assert.equal((await call(body)).response.status,400);
+ const clip=path.join(root,'test-video.mp4');
+ const rendered=spawnSync('ffmpeg',['-v','error','-f','lavfi','-i','color=c=green:s=160x120:d=1','-c:v','libx264','-pix_fmt','yuv420p','-movflags','+faststart',clip],{windowsHide:true,encoding:'utf8'});assert.equal(rendered.status,0,rendered.stderr);
+ const video=fs.readFileSync(clip);
+ const upload=(await call({action:'beginVideo',id:body.id,size:video.length})).data;
+ for(let index=0;index<upload.chunks;index++)assert.equal((await call({action:'appendVideo',id:body.id,uploadId:upload.uploadId,index,chunk:video.subarray(index*2097152,(index+1)*2097152).toString('base64')})).response.status,200);
+ body.videoUploadId=upload.uploadId;body.photos=[photo,photo,photo];
  body.version=1;body.area.radius=50;const changed=await call(body);assert.equal(changed.data.item.version,2);assert.equal(changed.data.item.property.approximateRadius,50);
+ assert.equal(changed.data.item.property.photoUrls.length,3);
+ const videoUrl=changed.data.item.property.videoUrl;assert.ok(videoUrl.endsWith('video.mp4'));
+ const videoResponse=await fetch(base+videoUrl,{headers:{Range:'bytes=4-7'}});assert.equal(videoResponse.status,206);assert.equal(await videoResponse.text(),'ftyp');
+ const downloaded=Buffer.from(await(await fetch(base+videoUrl)).arrayBuffer());assert.deepEqual(downloaded,video);
+ const videoPage=await(await fetch(base+url)).text();assert.ok(videoPage.includes('Ver video de la propiedad'));
  assert.equal((await fetch(base+media)).status,404);
  assert.equal((await call({action:'withdraw',id:body.id,version:2})).response.status,200);
  const withdrawn=await(await fetch(base+url)).text();assert.ok(withdrawn.includes('Error 404'));assert.ok(withdrawn.includes('noindex'));assert.ok(!withdrawn.includes('Coordinar visita'));
  assert.equal((await fetch(base+changed.data.item.property.photoUrls[0])).status,404);
+ assert.equal((await fetch(base+videoUrl)).status,404);
  assert.equal((await call()).data.items[0].active,false);
- console.log('PASS HTTP: auth, catálogo vacío, publicación, detalle/WhatsApp, fotos, conflicto de versión, actualización y retiro.');
+ console.log('PASS HTTP: fotos completas, MP4 H.264 real, reproducción por rangos, puente Python, auth, actualización y retiro.');
 }finally{child.kill();await new Promise(r=>child.once('exit',r));fs.rmSync(root,{recursive:true,force:true});}})().catch(error=>{console.error(error);process.exitCode=1;});

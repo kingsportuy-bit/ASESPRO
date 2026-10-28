@@ -2,7 +2,7 @@ import type { PropertyListing, PropertyType } from './properties';
 
 export const PUBLIC_FIELDS = ['operation','type','zone','beds','baths','built','land','garage','wash','patio','pool','balcony','bbq','equipped','water','wifi','cable','expenses','details','woodstove'] as const;
 export const WEB_ID = /^web-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
-export type Publication = { id: string; version: number; active: boolean; updatedAt: string; data: Record<string,string>; area: {lat:number;lng:number;radius:number}; phone:string; property:PropertyListing };
+export type Publication = { id: string; version: number; active: boolean; updatedAt: string; data: Record<string,string>; area: {lat:number;lng:number;radius:number}; phone:string; carouselComplete?:boolean; property:PropertyListing };
 const TYPES: Record<string, PropertyType> = {'Casa':'casa','Apartamento':'apartamento','Terreno':'terreno','Local comercial':'local','Oficina':'oficina','Depósito':'deposito'};
 const PUBLIC_AMOUNT = /(?:US\$|U\$S|USD|UYU|\$|€)\s*\d[\d.,]*|\b\d[\d.,]*\s*(?:pesos|d[oó]lares)\b|\b(?:precio|valor|renta)\s*(?:(?:mensual|de|es|:)\s*)*\d[\d.,]*/i;
 function checkPublicText(zone:string,details:string){

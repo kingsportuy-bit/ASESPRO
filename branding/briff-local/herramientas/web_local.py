@@ -44,6 +44,7 @@ def handle(action,raw):
  if action=='config':return configure(raw)
  config=settings()
  if action=='list':return remote(config,'GET')
+ if action in ['beginVideo','appendVideo']:return remote(config,'POST',{**raw,'action':action})
  if action=='publish':
   if raw.get('reviewed') is not True:raise ValueError('Revisá la publicación web antes de enviarla.')
   return remote(config,'POST',{**raw,'action':'publish'})

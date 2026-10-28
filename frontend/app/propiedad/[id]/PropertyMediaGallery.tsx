@@ -48,6 +48,7 @@ function getEmbeddedVideoUrl(url: string | null | undefined): string | null {
 
 function isSupportedPublicVideoUrl(url: string | null | undefined): boolean {
   if (!url) return false;
+  if (/^\/api\/panel-web\/media\/web-[a-f0-9-]{36}\/\d+\/video\.mp4$/.test(url)) return true;
   if (getEmbeddedVideoUrl(url)) return true;
 
   try {

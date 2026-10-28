@@ -55,4 +55,20 @@ test('atomic updates, duplicate retry, conflicts and withdrawal',async()=>{
  assert.equal(await getPublication(input.id),null);
  await assert.rejects(()=>readPhoto(input.id,photo.at(-2),photo.at(-1)));
 });
+test('full carousel saves every photo and video atomically; incomplete uploads keep previous listing',async()=>{
+ process.env.PANEL_WEB_DATA_DIR=path.join(dir,'catalog-video');
+ const {savePublication,beginVideo,appendVideo,getPublication,videoFile}=require(path.join(dir,'panelWebStore.js'));
+ const input=valid(),jpeg=Buffer.from([255,216,255,224,0,0,255,217]),bytes=Buffer.alloc(2097152+123);bytes.write('ftyp',4);
+ const first=await savePublication(input,[jpeg]);
+ const upload=await beginVideo(input.id,bytes.length);
+ await appendVideo(input.id,upload.uploadId,0,bytes.subarray(0,2097152));
+ input.version=1;input.videoUploadId=upload.uploadId;input.carouselComplete=true;
+ await assert.rejects(()=>savePublication(input,[jpeg,jpeg,jpeg]));assert.equal((await getPublication(input.id)).version,1);
+ await appendVideo(input.id,upload.uploadId,1,bytes.subarray(2097152));
+ const full=await savePublication(input,[jpeg,jpeg,jpeg]);assert.equal(full.property.photoUrls.length,3);assert.ok(full.carouselComplete);
+ assert.deepEqual(fs.readFileSync(await videoFile(input.id,'2')),bytes);
+ input.version=2;delete input.videoUploadId;input.keepVideo=true;const kept=await savePublication(input,[jpeg,jpeg]);assert.ok(kept.property.videoUrl);assert.deepEqual(fs.readFileSync(await videoFile(input.id,'3')),bytes);
+ await assert.rejects(()=>appendVideo(input.id,upload.uploadId,3,bytes));
+ await assert.rejects(()=>beginVideo(input.id,251*1024*1024));
+});
 process.on('exit',()=>fs.rmSync(dir,{recursive:true,force:true}));

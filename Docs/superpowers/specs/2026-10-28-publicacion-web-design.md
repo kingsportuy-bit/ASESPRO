@@ -6,4 +6,4 @@ Arquitectura elegida: catálogo provisional de archivos JSON y JPEG en volumen p
 
 Alternativas: conectar con el admin Supabase exigiría resolver su despliegue y migraciones; esperar a Sportex impide operar ahora. El catálogo de archivos es adecuado para una sola réplica y se respaldará junto al volumen. No se publica ninguna propiedad de prueba en producción.
 
-Decisiones del implementador: radio 50–3000 m; selección de centro de zona, sin geocodificar direcciones. La web provisional usa solo catálogo real cuando PROPERTY_DATA_SOURCE=panel; otros modos se conservan. Catálogo vacío se muestra como vacío. Fotos web limpias en orden del panel, sin portada duplicada; videos siguen en IG en esta versión. Secretos fuera de HTML, localStorage y repositorio.
+Decisiones del implementador: radio 50–3000 m; selección de centro de zona, sin geocodificar direcciones. La web provisional usa solo catálogo real cuando PROPERTY_DATA_SOURCE=panel; otros modos se conservan. Catálogo vacío se muestra como vacío. La web recibe todos los archivos del exportador del carrusel IG, incluida portada y MP4 editado, conservando el orden. Secretos fuera de HTML, localStorage y repositorio.

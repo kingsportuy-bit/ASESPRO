@@ -25,14 +25,14 @@ async function setup(){
    posts++;const input=JSON.parse(options.body);
    if(mode==='reject')return {ok:false,headers:{get:()=> 'application/json'},json:async()=>({error:'Revisá la zona pública.'})};
    if(mode==='offline')throw Error('Sin conexión');
-   saved={id:input.id,version:input.version+1,active:true,property:{title:'Casa en zona centro'}};
+   saved={id:input.id,version:input.version+1,active:true,property:{title:'Casa en zona centro',photoUrls:['one.jpg']}};
    if(mode==='lost')throw Error('Se perdió la respuesta');
    return response({item:saved});
   }
   throw Error('Unexpected URL '+url);
  };
  const map={setView(){return this;},getCenter(){return {lat:-32.82,lng:-56.52};},on(){},invalidateSize(){}};
- const editor={snapshot:()=>({count:1,data:{operation:'ALQUILER'},revision}),photos:async()=>['photo'],run:async task=>task()};
+ const editor={snapshot:()=>({count:1,data:{operation:'ALQUILER'},revision}),media:async()=>({photos:['photo'],video:null}),run:async task=>task()};
  const window={AsesproPropertyEditor:editor,addEventListener(){}};
  const context={window,document:{getElementById:el,createElement:()=>new Element()},location:{origin:'http://127.0.0.1:8765'},crypto:webcrypto,MutationObserver:class{observe(){}},fetch,confirm:()=>true,setTimeout,clearTimeout,AbortController,L:{map:()=>map,tileLayer:()=>({addTo(){}}),circle:()=>({addTo(){return this;},remove(){}})}};
  window.L=context.L;
