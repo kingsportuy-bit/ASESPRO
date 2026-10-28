@@ -93,8 +93,8 @@ body[data-page="nosotros"] .principles-story-media img[data-chapter-image="valor
 .service-clients h2 span{color:var(--green-dark)}
 .client-logo-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px 24px;margin:0;padding:0;list-style:none}
 .client-logo{display:flex;align-items:center;justify-content:center;min-width:0;min-height:132px;padding:24px 16px;border-radius:12px;transition:background-color 180ms ease-out}
-.client-logo-art{display:block;width:100%;max-width:160px;height:76px;object-fit:contain;filter:grayscale(1);opacity:.9;transition:opacity 180ms ease-out}
-@media(hover:hover) and (pointer:fine){.client-logo:hover{background:var(--mint)}.client-logo:hover .client-logo-art{filter:url(#service-client-green);opacity:1}}
+.client-logo-art{display:block;width:100%;max-width:160px;height:76px;object-fit:contain;filter:grayscale(1);opacity:.7;transform:scale(1);transform-origin:center;transition:transform 220ms cubic-bezier(.16,1,.3,1),opacity 180ms ease-out}
+@media(hover:hover) and (pointer:fine){.client-logo:hover{background:var(--mint)}.client-logo:hover .client-logo-art{filter:url(#service-client-green);opacity:1;transform:scale(1.07)}}
 @media(max-width:1000px){.client-logo-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 20px}}
 @media(max-width:600px){.service-clients h2{margin-bottom:28px}.client-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}.client-logo{min-height:112px;padding:20px 12px}.client-logo-art{max-width:144px;height:64px}}
-@media(prefers-reduced-motion:reduce){.client-logo,.client-logo-art{transition:none}}
+@media(prefers-reduced-motion:reduce){.client-logo,.client-logo-art{transition:none}.client-logo:hover .client-logo-art{transform:none}}
