@@ -51,7 +51,7 @@ export function SiteFooter(): JSX.Element {
         </nav>
 
         <div className={styles.brandBlock}>
-          <img src="/asespro-inmobiliaria-vertical-green.svg" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
+          <img src="/asespro-inmobiliaria-footer-oficial.png" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
         </div>
 
         <div className={`${styles.col} ${styles.contactBlock}`}>
@@ -70,7 +70,7 @@ export function SiteFooter(): JSX.Element {
 
       <div className={`${styles.inner} ${styles.mobileInner}`}>
         <div className={styles.brandBlock}>
-          <img src="/asespro-inmobiliaria-vertical-green.svg" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
+          <img src="/asespro-inmobiliaria-footer-oficial.png" alt="ASESPRO Inmobiliaria" className={styles.brandLogo} />
         </div>
 
         <div className={styles.mobileColumns}>
