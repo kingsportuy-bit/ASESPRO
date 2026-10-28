@@ -114,14 +114,6 @@ export default function ContactoPage(): JSX.Element {
               <span className={styles.arrow} aria-hidden="true">↗</span>
             </a>
 
-            <article className={styles.mapCard}>
-              <h2>Nuestra sede</h2>
-              <img src="/sede-asespro-alta-calidad.png" alt="Fachada de la sede de ASESPRO en Paso de los Toros" />
-              <div className={styles.mapCardBody}>
-                <strong>Florencio Sánchez 722</strong>
-                <p>Paso de los Toros, Tacuarembó.</p>
-              </div>
-            </article>
           </aside>
         </section>
       </div>

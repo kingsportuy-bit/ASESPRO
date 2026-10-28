@@ -86,3 +86,15 @@ body[data-page="nosotros"] .principles-story-media img[data-chapter-image="valor
  .contact-section--full>div:nth-child(2)>p{max-width:34ch;margin:0 0 22px;font-size:16px;line-height:1.55}
  .contact-section--full .button{max-width:100%}
 }
+/* Empresas: cuadrícula estática después de los alcances de servicio. */
+.service-clients{background:#fff;scroll-margin-top:110px}
+.client-logo-filters{position:absolute;pointer-events:none}
+.service-clients h2{margin:0 0 48px;font-size:clamp(38px,4.8vw,64px);line-height:1.05;letter-spacing:-.03em}
+.service-clients h2 span{color:var(--green-dark)}
+.client-logo-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px 24px;margin:0;padding:0;list-style:none}
+.client-logo{display:flex;align-items:center;justify-content:center;min-width:0;min-height:132px;padding:24px 16px;border-radius:12px;transition:background-color 180ms ease-out}
+.client-logo-art{display:block;width:100%;max-width:160px;height:76px;object-fit:contain;filter:grayscale(1);opacity:.9;transition:opacity 180ms ease-out}
+@media(hover:hover) and (pointer:fine){.client-logo:hover{background:var(--mint)}.client-logo:hover .client-logo-art{filter:url(#service-client-green);opacity:1}}
+@media(max-width:1000px){.client-logo-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 20px}}
+@media(max-width:600px){.service-clients h2{margin-bottom:28px}.client-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}.client-logo{min-height:112px;padding:20px 12px}.client-logo-art{max-width:144px;height:64px}}
+@media(prefers-reduced-motion:reduce){.client-logo,.client-logo-art{transition:none}}
