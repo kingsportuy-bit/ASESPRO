@@ -8,6 +8,8 @@
 4. Revisar WhatsApp, datos, fotos y círculo; marcar la revisión web y pulsar **Publicar solo en la web**.
 5. Usar **Ver propiedad en la web**. El botón público **Coordinar visita** abre WhatsApp con referencia y enlace. El visitante envía el mensaje.
 
+La sección muestra el resultado de la carga en un recuadro destacado. **Publicada en la web** y su enlace solo aparecen tras confirmación del servidor. **No se publicó** muestra la validación que falló. Si falta respuesta, **No pudimos confirmar** pide usar **Comprobar si se publicó**, que consulta el catálogo sin volver a cargar la propiedad. Una respuesta perdida se reconcilia por referencia y versión. Se conserva el borrador ante errores; no recargarlo sin resguardar los datos y fotos. Las revisiones del panel se aplican en la próxima recarga.
+
 No se envía el texto fuente original ni el copy IG. Se transfieren campos públicos permitidos, fotos JPEG limpias sin EXIF y centro/radio elegidos de la zona. Precio y dirección no forman parte del modelo web. El texto público se valida y requiere revisión humana, especialmente si se editó a mano. Los videos permanecen en IG en esta versión.
 
 ## Actualizar y retirar
@@ -25,6 +27,7 @@ Modo panel muestra exclusivamente las propiedades reales cargadas; no hace fallb
 ## Verificación
 
 - `node frontend/scripts/test-panel-web.cjs`: validación, privacidad, tipos, persistencia, conflictos y retiro.
+- `node frontend/scripts/test-panel-web-feedback.cjs`: estados visibles, errores, comprobación, respuesta perdida sin duplicación y cambios pendientes. Prueba lógica con DOM simulado; no sustituye revisión visual.
 - Desde `frontend`: `npm run build` y `node scripts/test-panel-web-http.cjs`. La prueba HTTP usa servidor y carpeta temporal locales, sin publicar datos en producción.
 - `python branding/briff-local/herramientas/compilar.py`: recompila el panel distribuible con Leaflet 1.9.4 local y licencia incluida.
 

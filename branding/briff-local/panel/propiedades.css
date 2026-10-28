@@ -11,3 +11,12 @@
 .prop-web-catalog article{padding:16px;border:1px solid #58816b;border-radius:12px}
 .prop-web-catalog p{margin:0 0 12px;overflow-wrap:anywhere}
 #web-view[hidden]{display:none}
+.prop-web-badge{display:inline-block;margin-left:12px;padding:5px 9px;border-radius:6px;font-size:13px;font-weight:600;background:var(--ui-bg,#101a17);color:var(--ui-accent,#65e3b6);vertical-align:middle}
+.prop-web-feedback{margin:22px 0;padding:22px;background:var(--ui-bg,#101a17);border:1px solid var(--ui-border,#506b5b);border-radius:12px;scroll-margin-block:24px}
+#web-result-title{margin:0 0 10px;font-size:21px;line-height:1.3;color:var(--ui-text,#e9f1ec)}
+#web-status{margin:0;max-width:68ch;font-size:15px;line-height:1.6;overflow-wrap:anywhere;color:var(--ui-text,#e9f1ec)}
+.prop-web-feedback .button{display:inline-block;margin-top:18px}
+.prop-web-feedback[data-state=success]{border-color:var(--ui-accent,#65e3b6)}
+.prop-web-feedback[data-state=error],.prop-web-feedback[data-state=unknown]{border-color:#ffb59e}
+.prop-web-feedback[data-state=error] #web-result-title,.prop-web-feedback[data-state=unknown] #web-result-title{color:#ffb59e}
+.prop-web-feedback:focus-visible{outline:2px solid var(--ui-accent,#65e3b6);outline-offset:4px}

@@ -12,11 +12,13 @@ def status():
  return {'configured':True,'url':settings()['url']}
 class NoRedirect(urllib.request.HTTPRedirectHandler):
  def redirect_request(self,*args,**kwargs):return None
+class WebConnectionError(ValueError):
+ unconfirmed=True
 def remote(config,method,payload=None,media=None):
  url=config['url']+('/api/panel-web' if media is None else media)
  req=urllib.request.Request(url,data=json.dumps(payload,ensure_ascii=False).encode() if payload is not None else None,headers={'Authorization':'Bearer '+config['key'],'Content-Type':'application/json','Accept':'application/json' if media is None else 'image/jpeg','User-Agent':'ASESPRO-Panel/1.0'},method=method)
  try:
-  with urllib.request.build_opener(NoRedirect).open(req,timeout=120) as response:
+  with urllib.request.build_opener(NoRedirect).open(req,timeout=45) as response:
    body=response.read(21*1024*1024)
    return body if media else json.loads(body)
  except urllib.error.HTTPError as error:
@@ -24,7 +26,7 @@ def remote(config,method,payload=None,media=None):
   try:message=json.loads(error.read(4096)).get('error','La web no completó la solicitud.')
   except Exception:message='La web no completó la solicitud (HTTP '+str(error.code)+').'
   raise ValueError(message) from None
- except (urllib.error.URLError,TimeoutError):raise ValueError('No hubo respuesta de la web. Los datos del editor se conservan; actualizá el catálogo antes de reintentar.') from None
+ except (urllib.error.URLError,TimeoutError):raise WebConnectionError('No hubo respuesta de la web. Los datos del editor se conservan; comprobá si se publicó antes de reintentar.') from None
 def configure(raw):
  url=str(raw.get('url','')).strip().rstrip('/');parsed=urllib.parse.urlsplit(url)
  if parsed.username or parsed.password or parsed.query or parsed.fragment or parsed.path or not (parsed.scheme=='https' and parsed.hostname in ['inmobiliaria.asespro.com.uy','inmobiliaria.asespro.kodebix.com','asespro.codexa.uy'] or parsed.scheme=='http' and parsed.hostname in ['127.0.0.1','localhost']):raise ValueError('Usá el dominio de Inmobiliaria ASESPRO o localhost para pruebas.')

@@ -84,7 +84,7 @@ class Handler(SimpleHTTPRequestHandler):
       if isinstance(raw.get(name),str):(folder/name).write_text(raw[name],encoding='utf-8')
      return self.reply({'folder':str(folder.relative_to(ROOT))})
     return self.reply({'error':'Ruta inválida'},404)
-  except Exception as e:return self.reply({'error':str(e)},400)
+  except Exception as e:return self.reply({'error':str(e),'unconfirmed':getattr(e,'unconfirmed',False) is True},400)
 if __name__=='__main__':
  server=ThreadingHTTPServer(('127.0.0.1',PORT),Handler)
  if '--sin-abrir' not in sys.argv:webbrowser.open(f'http://127.0.0.1:{PORT}')
