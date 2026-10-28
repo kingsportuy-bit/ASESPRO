@@ -23,6 +23,9 @@ test('rejects unsafe public text, invalid area and absent review',()=>{
   const input=valid();edit(input);assert.throws(()=>validatePublication(input));
  }
 });
+test('accepts a 50 metre zone and rejects smaller zones',()=>{
+ const input=valid();input.area.radius=50;assert.equal(validatePublication(input).property.approximateRadius,50);input.area.radius=49;assert.throws(()=>validatePublication(input));
+});
 test('supports every property type in the IG panel without coercing it to house',()=>{
  for(const type of ['Casa','Apartamento','Terreno','Local comercial','Oficina','Depósito']){const input=valid();input.data.type=type;assert.ok(validatePublication(input).property.type);}
 });

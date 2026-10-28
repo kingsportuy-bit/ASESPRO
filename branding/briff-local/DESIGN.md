@@ -2,7 +2,7 @@
 
 ## Publicación web provisional · 28/10/2026
 
-La sección 7 reutiliza datos y fotos del editor con un adaptador explícito. Publicar solo en la web es independiente de la extensión y del estado IG. Revisión web propia, círculo de zona pública de 300–3000 m, WhatsApp editable, catálogo para cargar/actualizar/retirar. Conservar paleta oscura, Switzer y controles existentes. No fotos duplicadas ni portada informativa en web; JPEG derivados sin EXIF. Sin video web en esta primera versión. Credencial cifrada con DPAPI, nunca en navegador ni exportaciones. No anunciar éxito hasta recibir confirmación del servidor. Ante conflicto de versión o timeout, refrescar catálogo y cargar la versión vigente. Retiro reversible conservado en disco, no eliminación definitiva.
+La sección 7 reutiliza datos y fotos del editor con un adaptador explícito. Publicar solo en la web es independiente de la extensión y del estado IG. Revisión web propia, círculo de zona pública de 50–3000 m, WhatsApp editable, catálogo para cargar/actualizar/retirar. Conservar paleta oscura, Switzer y controles existentes. No fotos duplicadas ni portada informativa en web; JPEG derivados sin EXIF. Sin video web en esta primera versión. Credencial cifrada con DPAPI, nunca en navegador ni exportaciones. No anunciar éxito hasta recibir confirmación del servidor. Ante conflicto de versión o timeout, refrescar catálogo y cargar la versión vigente. Retiro reversible conservado en disco, no eliminación definitiva.
 
 Herramienta local en español para preparar piezas inmobiliarias. Fuente de identidad: BRIEF_MARCA.md y CONFIG_MARCA.json. Paleta y Switzer son compartidas; no copiar la distribución de la web. UI de controles blanca, verde profundo y bordes discretos; vista previa protagonista.
 

@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory() as folder:
  print('PASS Python: puente, DPAPI, configuracion y recuperacion de fotos.')
 `});assert.equal(bridge.status,0,bridge.stderr);console.log(bridge.stdout.trim());
  assert.equal((await call(body)).response.status,400);
- body.version=1;body.area.radius=900;const changed=await call(body);assert.equal(changed.data.item.version,2);assert.equal(changed.data.item.property.approximateRadius,900);
+ body.version=1;body.area.radius=50;const changed=await call(body);assert.equal(changed.data.item.version,2);assert.equal(changed.data.item.property.approximateRadius,50);
  assert.equal((await fetch(base+media)).status,404);
  assert.equal((await call({action:'withdraw',id:body.id,version:2})).response.status,200);
  const withdrawn=await(await fetch(base+url)).text();assert.ok(withdrawn.includes('Error 404'));assert.ok(withdrawn.includes('noindex'));assert.ok(!withdrawn.includes('Coordinar visita'));

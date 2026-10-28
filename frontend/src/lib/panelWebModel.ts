@@ -20,7 +20,7 @@ export function validatePublication(value:unknown): Publication {
  if(!['','yes','none','included'].includes(data.expenses))throw Error('Gastos comunes inválidos.');
  for(const key of ['beds','baths','built','land'])if(data[key]!==''&&(!/^\d+(?:\.\d{1,2})?$/.test(data[key])||Number(data[key])>10000000||(['beds','baths'].includes(key)&&(!Number.isInteger(Number(data[key]))||Number(data[key])>99))))throw Error('Cantidad inválida: '+key);
  const {lat,lng,radius}=area;
- if(typeof lat!=='number'||typeof lng!=='number'||typeof radius!=='number'||!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(radius)||lat< -35.5||lat> -30||lng< -58.5||lng> -53||radius<300||radius>3000)throw Error('Elegí una zona de Uruguay y un radio entre 300 y 3000 metros.');
+ if(typeof lat!=='number'||typeof lng!=='number'||typeof radius!=='number'||!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(radius)||lat< -35.5||lat> -30||lng< -58.5||lng> -53||radius<50||radius>3000)throw Error('Elegí una zona de Uruguay y un radio entre 50 y 3000 metros.');
  if(typeof input.phone!=='string'||!/^598\d{8}$/.test(input.phone))throw Error('WhatsApp: ingresá 598 y los 8 dígitos del número.');
  const title=`${data.type}${data.beds!==''?(Number(data.beds)===0?' · monoambiente':` de ${data.beds} dormitorios`):''} en ${data.zone}`;
  const extras:Record<string,string>={garage:'Cochera',wash:'Lavadero',patio:'Patio',pool:'Piscina',balcony:'Balcón',bbq:'Parrillero',woodstove:'Estufa a leña',equipped:'Equipado',water:'Agua incluida',wifi:'Wi-Fi incluido',cable:'TV cable incluido'};

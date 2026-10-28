@@ -2,7 +2,7 @@
 
 ## Catálogo provisional de propiedades · 28/10/2026
 
-En el modo `panel`, solo se publican propiedades reales enviadas desde el editor local. Se conservan diseño y navegación existentes. Tarjetas y detalle no muestran precio; mapa con círculos de zona aproximada de radio 300–3000 m, seleccionada explícitamente en el panel. Sin coordenadas del inmueble en datos públicos. El círculo funciona con clic, toque y teclado; su popup enlaza al detalle. CTA único del detalle: **Coordinar visita**, con referencia y enlace al WhatsApp configurado del operador. El listado vacío se explica sin recurrir a ejemplos. Los otros orígenes de datos mantienen sus contratos.
+En el modo `panel`, solo se publican propiedades reales enviadas desde el editor local. Se conservan diseño y navegación existentes. Tarjetas y detalle no muestran precio; mapa con círculos de zona aproximada de radio 50–3000 m, seleccionada explícitamente en el panel. Sin coordenadas del inmueble en datos públicos. El círculo funciona con clic, toque y teclado; su popup enlaza al detalle. CTA único del detalle: **Coordinar visita**, con referencia y enlace al WhatsApp configurado del operador. El listado vacío se explica sin recurrir a ejemplos. Los otros orígenes de datos mantienen sus contratos.
  
 ## 1. Overview & Creative North Star
 **Creative North Star: "The Architectural Curator"**
