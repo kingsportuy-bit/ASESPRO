@@ -2,7 +2,7 @@
 
 ## Uso
 
-1. Abrir `branding/briff-local/INICIAR_PANEL.cmd`.
+1. Panel en uso del operador: `C:/Users/Fito/Documents/CONTENIDO_MONTEIZADO/asespro inmobiliaria/INICIAR_PANEL.cmd`, que abre `http://127.0.0.1:8765`. La fuente del proyecto está en `branding/briff-local` y abre el puerto 8767; actualizar esa fuente no actualiza automáticamente la copia del operador. Toda entrega del panel debe sincronizar también los archivos modificados a la carpeta de uso, preservando CONFIG_MARCA.json, el puerto 8765, la extensión y los datos locales, y recompilar allí con herramientas/compilar.py.
 2. Cargar los datos y las fotos en las secciones existentes. Para propiedades ya publicadas en IG, cargar aquí sus fotos y datos; no es necesario volver a publicarlas en IG.
 3. Abrir **7. Publicar en la web**. Seleccionar el centro de la zona pública en el mapa y ajustar radio (300–3000 metros). También se puede mover el mapa con teclado y usar su centro.
 4. Revisar WhatsApp, datos, fotos y círculo; marcar la revisión web y pulsar **Publicar solo en la web**.
