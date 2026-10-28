@@ -56,7 +56,6 @@ export function SiteFooter(): JSX.Element {
 
         <div className={`${styles.col} ${styles.contactBlock}`}>
           <p className={styles.colTitle}>Contacto</p>
-          <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
           <a href={`tel:${PHONE}`} className={styles.link}>
             +598 99 715 662
           </a>
@@ -94,7 +93,6 @@ export function SiteFooter(): JSX.Element {
 
           <div className={styles.col}>
             <p className={styles.colTitle}>Contacto</p>
-            <span className={styles.link}>Florencio Sanchez 722, Paso de los Toros</span>
             <a href={`tel:${PHONE}`} className={styles.link}>
               +598 99 715 662
             </a>

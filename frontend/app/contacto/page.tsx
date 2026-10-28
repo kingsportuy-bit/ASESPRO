@@ -42,7 +42,6 @@ export default function ContactoPage(): JSX.Element {
     sameAs: [INSTAGRAM_URL],
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Florencio Sánchez 722",
       addressLocality: "Paso de los Toros",
       addressRegion: "Tacuarembó",
       addressCountry: "UY",

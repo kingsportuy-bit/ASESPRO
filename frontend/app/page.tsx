@@ -35,7 +35,6 @@ export default async function HomePage(): Promise<JSX.Element> {
         telephone: "+59899715662",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "Florencio Sánchez 722",
           addressLocality: "Paso de los Toros",
           addressRegion: "Tacuarembó",
           addressCountry: "UY",
