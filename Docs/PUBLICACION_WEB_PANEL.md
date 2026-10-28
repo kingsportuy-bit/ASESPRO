@@ -14,6 +14,8 @@ No se envía el texto fuente original ni el copy IG. Se transfieren campos públ
 
 ## Actualizar y retirar
 
+La validación pública acepta superficies como «60 m²», distancias, años de reciclaje, características y frases sin monto como «precio a consultar». Un rechazo identifica el campo (Zona o Detalle público) y el fragmento detectado. El copy de Instagram no se envía a la web: se reutilizan los campos estructurados del editor. La revisión humana sigue siendo necesaria para que el texto y las fotos no incluyan datos privados.
+
 El catálogo permite **Cargar para editar**, **Actualizar en la web** y **Retirar de la web**. Cargar reemplaza datos y fotos del editor; se solicita confirmación. La versión evita pisar cambios de otro operador. Reintentar conserva la referencia; si hubo timeout, refrescar catálogo y cargar la versión existente. Retirar oculta detalle y fotos públicas, conservando la copia privada para respaldo. Para otra propiedad, reiniciar el editor o preparar una nueva publicación web y reemplazar datos/fotos; esto crea una referencia distinta.
 
 ## Configuración y despliegue

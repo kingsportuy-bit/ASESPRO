@@ -23,6 +23,19 @@ test('rejects unsafe public text, invalid area and absent review',()=>{
   const input=valid();edit(input);assert.throws(()=>validatePublication(input));
  }
 });
+test('accepts measurements, years, ordinary street descriptions and price on request',()=>{
+ for(const details of ['60 m² construidos y 300 m² de terreno','A 200 metros de la plaza','Reciclada en 2024','Seguridad las 24 horas','Salida a la calle y patio privado','Precio a consultar, dirección a coordinar']){
+  const input=valid();input.data.details=details;assert.doesNotThrow(()=>validatePublication(input),details);
+ }
+});
+test('reports the exact public field and suspicious fragment',()=>{
+ const input=valid();input.data.details='Precio USD 2000';assert.throws(()=>validatePublication(input),/Detalle público.*USD 2000/);
+ input.data.details='Reciclada';input.data.zone='Rivera 123';assert.throws(()=>validatePublication(input),/Zona.*123/);
+});
+test('accepts the Instagram copy supplied by the operator',()=>{
+ const input=valid();input.data.details='Casa de 2 dormitorios 🛏️ y 1 baño 🚿\n\n- Cochera disponible 🚗\n- Patio privado 🌿\n\nReciclada y lista para estrenar: espacios actualizados y cuidados.\n\nEscribinos y coordinamos una visita.\n\nASESPRO Inmobiliaria e inmobiliaria.asespro.com.uy\n\n#Casa #2Dormitorios #Reciclada';
+ assert.doesNotThrow(()=>validatePublication(input));
+});
 test('accepts a 50 metre zone and rejects smaller zones',()=>{
  const input=valid();input.area.radius=50;assert.equal(validatePublication(input).property.approximateRadius,50);input.area.radius=49;assert.throws(()=>validatePublication(input));
 });
