@@ -83,6 +83,7 @@ export function PropertyExplorer({
         </header>
 
         <FilterBar
+          showPriceFilter={properties.some(property => !property.hidePrice)}
           showOperationFilter={showOperationFilter}
           operationFilter={operationFilter}
           onOperationFilterChange={setOperationFilter}

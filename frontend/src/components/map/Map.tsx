@@ -4,6 +4,7 @@ import React, { useMemo, useRef } from "react";
 
 import { useLeafletMap } from "./hooks/useLeafletMap";
 import { usePropertyMarkers } from "./hooks/usePropertyMarkers";
+import { usePropertyAreas } from "./hooks/usePropertyAreas";
 import styles from "./Map.module.css";
 import type { LatLng, MapProps } from "./types";
 
@@ -56,10 +57,11 @@ export default function Map({
 
   usePropertyMarkers({
     map,
-    properties,
+    properties: useMemo(() => properties.filter(property => !property.approximateRadius), [properties]),
     highlightedPropertyId,
     onMarkerClick,
   });
+  usePropertyAreas(map, properties, highlightedPropertyId, onMarkerClick);
 
   return (
     <div className={`${styles.wrapper} ${className ?? ""}`} style={inlineHeightStyle}>

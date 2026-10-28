@@ -11,6 +11,8 @@ export type Property = {
   bathrooms?: number;
   areaM2?: number;
   photoUrls?: string[];
+  approximateRadius?: number;
+  hidePrice?: boolean;
 };
 
 export type MapBounds = {

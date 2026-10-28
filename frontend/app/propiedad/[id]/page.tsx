@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: PropertyDetailPageProps): Pro
     };
   }
 
-  const description = `${property.location}. Revisa datos, fotos, precio y consulta disponibilidad con ASESPRO. ${property.description}`.slice(0, 160);
+  const description = `${property.location}. Revisa datos, fotos y coordiná una visita con ASESPRO. ${property.description}`.slice(0, 160);
   const image = property.photoUrls.find((photo) => typeof photo === "string" && photo.trim().length > 0) ?? getPropertyCoverImage(property.id);
 
   return createPageMetadata({
@@ -109,7 +109,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     notFound();
   }
 
-  const phone = DEFAULT_WHATSAPP_PHONE;
+  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || DEFAULT_WHATSAPP_PHONE;
   const whatsappUrl = buildPropertyWhatsAppUrl(property, phone);
   const fallbackImage = getPropertyCoverImage(property.id);
   const gallery = property.photoUrls.filter((photo) => typeof photo === "string" && photo.trim().length > 0);
@@ -162,8 +162,9 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
             ))}
           </div>
 
-          <h2 className={styles.sectionTitle}>Ubicación</h2>
+          <h2 className={styles.sectionTitle}>{property.approximateRadius ? 'Zona aproximada' : 'Ubicación'}</h2>
           <p>{property.location}</p>
+          {property.approximateRadius && <p>El círculo indica la zona aproximada. La dirección se coordina con el operador.</p>}
 
           <div className={styles.mapWrap} role="region" aria-label="Ubicación de la propiedad en el mapa">
             <Map
@@ -173,6 +174,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                   lat: property.lat,
                   lng: property.lng,
                   price: property.price,
+                  approximateRadius: property.approximateRadius,
+                  hidePrice: property.hidePrice,
+                  title: property.title,
+                  location: property.location,
+                  photoUrls: property.photoUrls,
                 },
               ]}
               highlightedPropertyId={property.id}
@@ -192,23 +198,23 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
           </article>
 
           <aside className={styles.aside}>
-            <p className={styles.priceLabel}>{priceLabel}</p>
-            <h3 className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</h3>
+            {!property.hidePrice && <><p className={styles.priceLabel}>{priceLabel}</p>
+            <h3 className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</h3></>}
             <div className={styles.agent}>
               <span className={styles.agentAvatar} aria-hidden="true" />
               <div>
-                <strong>Josema Fernandez</strong>
+                <strong>{property.hidePrice ? 'ASESPRO Inmobiliaria' : 'Josema Fernandez'}</strong>
                 <p>Agente inmobiliario</p>
               </div>
             </div>
 
             <div className={styles.asideActions}>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.primaryAction}>
-                Consultar por esta propiedad
+                {property.hidePrice ? 'Coordinar visita' : 'Consultar por esta propiedad'}
               </a>
-              <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
+              {!property.hidePrice && <a href={whatsappUrl} target="_blank" rel="noreferrer" className={styles.secondaryAction}>
                 Agendar visita
-              </a>
+              </a>}
             </div>
 
             <p className={styles.refCode}>Referencia: {property.id.toUpperCase()}</p>

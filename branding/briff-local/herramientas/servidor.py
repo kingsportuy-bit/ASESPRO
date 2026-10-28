@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime,timezone,timedelta
 import json,secrets,threading,shutil,os,base64,webbrowser,re,runpy,sys
 from marca import ROOT,brief,logos
-import video_local,ia_local
+import video_local,ia_local,web_local
 TOKEN=secrets.token_urlsafe(32);LOCK=threading.Lock();PORT=8767
 def atomic(path,text):
  tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(text,encoding='utf-8');os.replace(tmp,path)
@@ -57,6 +57,7 @@ class Handler(SimpleHTTPRequestHandler):
    if self.path=='/api/video/upload':return self.reply(video_local.upload(self.rfile,n))
    if n<1 or n>20000000:raise ValueError('Tamaño inválido')
    raw=json.loads(self.rfile.read(n))
+   if self.path.startswith('/api/web/'):return self.reply(web_local.handle(self.path.rsplit('/',1)[1],raw))
    if self.path=='/api/ai/status':return self.reply(ia_local.status(raw.get("check") is True))
    if self.path=='/api/ai/config':return self.reply(ia_local.configure(raw))
    if self.path=='/api/ai/generate':return self.reply(ia_local.generate(raw))

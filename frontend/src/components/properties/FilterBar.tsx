@@ -11,6 +11,7 @@ type FilterBarProps = {
   maxPriceInput: string;
   onMaxPriceInputChange: (value: string) => void;
   locationQuery: string;
+  showPriceFilter?: boolean;
   onLocationQueryChange: (value: string) => void;
 };
 
@@ -23,6 +24,7 @@ export function FilterBar({
   maxPriceInput,
   onMaxPriceInputChange,
   locationQuery,
+  showPriceFilter = true,
   onLocationQueryChange,
 }: FilterBarProps): JSX.Element {
   return (
@@ -45,10 +47,13 @@ export function FilterBar({
           <option value="casa">Casa</option>
           <option value="apartamento">Apartamento</option>
           <option value="terreno">Terreno</option>
+          <option value="local">Local comercial</option>
+          <option value="oficina">Oficina</option>
+          <option value="deposito">Depósito</option>
         </select>
       </label>
 
-      <label>
+      {showPriceFilter && <label>
         Precio maximo
         <input
           type="number"
@@ -59,7 +64,7 @@ export function FilterBar({
           value={maxPriceInput}
           onChange={(event) => onMaxPriceInputChange(event.target.value)}
         />
-      </label>
+      </label>}
 
       <label className={styles.locationFilter}>
         Ubicacion

@@ -1,0 +1,6 @@
+node_modules
+.next
+.env
+.env.*
+.panel-web-data
+tsconfig.tsbuildinfo

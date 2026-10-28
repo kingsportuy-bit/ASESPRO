@@ -130,7 +130,7 @@ export default async function HomePage(): Promise<JSX.Element> {
                   <span className={styles.badge}>{property.operation}</span>
                 </div>
                 <div className={styles.featuredInfo}>
-                  <p className={styles.featuredPrice}>{formatPrice(property.price, property.priceCurrency)}</p>
+                  {!property.hidePrice && <p className={styles.featuredPrice}>{formatPrice(property.price, property.priceCurrency)}</p>}
                   <h3 className={styles.featuredTitle}>{property.title}</h3>
                   <p className={styles.featuredMeta}>{property.location}</p>
                   <Link href={`/propiedad/${property.id}`} className={styles.detailLink}>

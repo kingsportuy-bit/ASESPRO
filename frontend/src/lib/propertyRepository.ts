@@ -12,6 +12,8 @@ import {
   type PropertyType,
 } from "./properties";
 import { getSupabaseAdminClient } from "./supabaseServer";
+import { getPublication, listPublications } from "./panelWebStore";
+import { WEB_ID } from "./panelWebModel";
 
 type ListOptions = {
   operation?: PropertyOperation;
@@ -570,6 +572,12 @@ class MockPropertyRepository implements PropertyRepository {
 
 function createPropertyRepository(): PropertyRepository {
   const source = process.env.PROPERTY_DATA_SOURCE ?? "supabase";
+  if (source === "panel") {
+    return {
+      async list(options = {}) { const items = (await listPublications()).map(item => item.property); return options.operation ? items.filter(item => propertyMatchesOperation(item, options.operation!)) : items; },
+      async getById(id) { if (!WEB_ID.test(id)) return null; return (await getPublication(id))?.property ?? null; },
+    };
+  }
   if (source === "mock") {
     return new MockPropertyRepository();
   }

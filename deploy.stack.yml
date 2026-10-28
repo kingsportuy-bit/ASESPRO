@@ -3,9 +3,14 @@ version: "3.9"
 services:
   asespro-web:
     image: asespro-web:latest
+    env_file:
+      - /opt/asespro/.env.web-catalog
     environment:
       NEXT_PUBLIC_SITE_URL: https://inmobiliaria.asespro.com.uy
-      PROPERTY_DATA_SOURCE: mock
+      PROPERTY_DATA_SOURCE: panel
+      PANEL_WEB_DATA_DIR: /app/property-data
+    volumes:
+      - asespro-properties:/app/property-data
     networks:
       - codexanet
     deploy:
@@ -98,4 +103,8 @@ services:
 
 networks:
   codexanet:
+    external: true
+
+volumes:
+  asespro-properties:
     external: true

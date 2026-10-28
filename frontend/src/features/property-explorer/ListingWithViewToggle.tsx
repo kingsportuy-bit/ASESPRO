@@ -60,6 +60,7 @@ export function ListingWithViewToggle({
 
         <>
             <section className={styles.grid}>
+              {cards.length === 0 && <p>No hay propiedades publicadas por el momento. Contactanos para consultar disponibilidad.</p>}
               {cards.map((property) => (
                 <article className={styles.card} key={property.id}>
                   <Link href={`/propiedad/${property.id}`} className={styles.cardHitArea}>
@@ -96,7 +97,7 @@ export function ListingWithViewToggle({
                     <div className={styles.cardBody}>
                       <div className={styles.titleRow}>
                         <h2 className={styles.cardTitle}>{property.title}</h2>
-                        <p className={styles.cardPrice}>{formatPrice(property.price, property.priceCurrency)}</p>
+                        {!property.hidePrice && <p className={styles.cardPrice}>{formatPrice(property.price, property.priceCurrency)}</p>}
                       </div>
                       <p className={styles.cardLocation}>{property.location}</p>
                       <PropertyFacts property={property} />

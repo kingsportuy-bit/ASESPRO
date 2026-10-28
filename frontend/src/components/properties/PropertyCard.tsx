@@ -48,7 +48,7 @@ export function PropertyCard({ property, selected = false, onSelect }: PropertyC
             <p className={styles.cardTitle}>{property.title}</p>
             <p className={styles.cardMeta}>{property.location}</p>
             <PropertyFacts property={property} compact />
-            <p className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</p>
+            {!property.hidePrice && <p className={styles.price}>{formatPrice(property.price, property.priceCurrency)}</p>}
           </div>
         </div>
       </Link>

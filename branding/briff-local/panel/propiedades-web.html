@@ -1,0 +1,17 @@
+<details class="prop-step" id="web-section"><summary>7. Publicar en la web · independiente de Instagram</summary><div class="prop-step-content">
+<p>Usá las fotos y los datos de esta propiedad para cargarla a la web. Podés hacerlo aunque ya esté publicada en Instagram. Las fotos web se muestran sin la portada duplicada; el video sigue en el carrusel de Instagram.</p>
+<details><summary>Configurar conexión web</summary><label>Dirección de la web<input id="web-url" type="url" value="https://inmobiliaria.asespro.com.uy" autocomplete="off"></label><label>Clave de publicación<input id="web-key" type="password" autocomplete="new-password" placeholder="Dejar vacío para conservar la guardada"></label><button id="web-connect" type="button">Guardar y comprobar conexión</button><p class="hint">La clave se guarda cifrada en este equipo.</p></details>
+<p id="web-connection" role="status" aria-live="polite" class="hint">Comprobando configuración web…</p>
+<label>WhatsApp del operador<input id="web-phone" type="tel" value="59899715662" inputmode="tel" autocomplete="tel"></label>
+<h3>Zona aproximada que se verá en la web</h3><p class="hint">Elegí el centro de la zona, sin señalar la vivienda. Hacé clic en el mapa o movelo con las flechas y pulsá «Usar centro del mapa».</p>
+<div class="brand-actions"><button id="web-toros" type="button">Paso de los Toros</button><button id="web-centenario" type="button">Pueblo Centenario</button><button id="web-use-center" type="button">Usar centro del mapa</button></div>
+<div id="web-map" class="prop-web-map" aria-label="Elegir zona aproximada de la propiedad"></div>
+<label>Tamaño de la zona <output id="web-radius-label">500 m de radio</output><input id="web-radius" type="range" min="300" max="3000" step="100" value="500"></label>
+<p id="web-area-status" class="hint" role="status">Todavía no elegiste una zona.</p>
+<label class="check prop-review"><input id="web-reviewed" type="checkbox">Revisé datos, fotos, WhatsApp y círculo público. No contienen precio ni dirección exacta.</label>
+<div class="brand-actions"><button id="web-publish" class="primary" type="button">Publicar solo en la web</button><a id="web-view" class="button" target="_blank" rel="noopener noreferrer" hidden>Ver propiedad en la web</a></div>
+<p id="web-status" class="hint" role="status" aria-live="polite">Esta acción no publica en Instagram.</p>
+<h3>Propiedades cargadas a la web</h3><div class="brand-actions"><button id="web-refresh" type="button">Actualizar catálogo</button><button id="web-new" type="button">Preparar nueva publicación web</button></div>
+<p class="hint">Para cambiar otra propiedad, cargala desde el catálogo. Preparar una nueva conserva los datos y fotos actuales y crea otra referencia al publicarla.</p>
+<div id="web-catalog" class="prop-web-catalog" aria-live="polite"></div>
+</div></details>

@@ -2,7 +2,7 @@ import { MOCK_PROPERTIES } from "@/data/mockProperties";
 
 import { buildWhatsAppUrl } from "./whatsapp";
 
-export type PropertyType = "casa" | "apartamento" | "terreno";
+export type PropertyType = "casa" | "apartamento" | "terreno" | "local" | "oficina" | "deposito";
 export type PropertyOperation = "alquiler" | "venta";
 export type PropertyStatus = "activo" | "desactivado" | "alquilado" | "vendido";
 export type PropertyCurrency = string;
@@ -52,6 +52,9 @@ export type PropertyListing = {
   seoTitle?: string;
   seoDescription?: string;
   videoUrl?: string;
+  approximateRadius?: number;
+  hidePrice?: boolean;
+  contactPhone?: string;
 };
 
 export function getProperties(): PropertyListing[] {
@@ -104,6 +107,10 @@ export function formatPrice(price?: number, currency: PropertyCurrency = "USD"):
 }
 
 export function buildPropertyWhatsAppUrl(property: PropertyListing, phone: string): string {
+  if (property.hidePrice) {
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://inmobiliaria.asespro.com.uy").replace(/\/$/, "");
+    return buildWhatsAppUrl(property.contactPhone || phone, `Hola, me interesa coordinar una visita a esta propiedad: ${property.id.toUpperCase()} — ${property.title}. ${siteUrl}/propiedad/${encodeURIComponent(property.id)}`);
+  }
   const message = `Hola ASESPRO, quiero consultar por la propiedad ${property.id.toUpperCase()}: "${property.title}" en ${property.location} (${formatPrice(property.price, property.priceCurrency)}). Me interesa recibir más información y coordinar una visita.`;
   return buildWhatsAppUrl(phone, message);
 }

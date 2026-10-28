@@ -83,7 +83,9 @@ export function PropertyPreviewCard({ property }: { property: Property }): React
       <div className={styles.previewBody}>
         <p className={styles.previewTitle}>{title}</p>
         {location ? <p className={styles.previewLocation}>{location}</p> : null}
-        <strong className={styles.previewPrice}>{formatPrice(property.price, property.priceCurrency)}</strong>
+        {!property.hidePrice && <strong className={styles.previewPrice}>{formatPrice(property.price, property.priceCurrency)}</strong>}
+        {property.approximateRadius && <p className={styles.previewMeta}>Zona aproximada</p>}
+        <a href={`/propiedad/${encodeURIComponent(property.id)}`}>Ver propiedad</a>
         <p className={styles.previewMeta}>{formatMeta(property)}</p>
       </div>
     </div>

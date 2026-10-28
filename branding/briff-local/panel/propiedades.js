@@ -142,5 +142,12 @@
  };
  async function loadAI(){for(let attempt=0;attempt<25&&!apiToken;attempt++)await new Promise(resolve=>setTimeout(resolve,200));try{aiConfig(await aiPost('status',{check:true}));}catch(error){$p('ai-config-status').textContent=error.message;}}
  loadAI();
+ // Adapter for the independent web publisher; the Instagram publish path stays unchanged.
+ window.AsesproPropertyEditor={
+  snapshot(){read();return {data:{...data},revision,count:photos.length};},
+  async photos(){const result=[];for(const p of photos){const cv=document.createElement('canvas'),scale=Math.min(1,1600/Math.max(p.image.width,p.image.height));cv.width=Math.round(p.image.width*scale);cv.height=Math.round(p.image.height*scale);const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);c.drawImage(p.image,0,0,cv.width,cv.height);let encoded=cv.toDataURL('image/jpeg',.85);if(encoded.length>1398000)encoded=cv.toDataURL('image/jpeg',.65);if(encoded.length>1398000)throw Error('Una foto es demasiado pesada para web. Reducí su tamaño y reintentá.');result.push(encoded.split(',')[1]);}return result;},
+  async load(fields,encoded){if(PropiedadVideo.has())throw Error('Quitá el video actual antes de cargar otra propiedad del catálogo web.');const loaded=[];try{for(const value of encoded){const blob=await(await fetch('data:image/jpeg;base64,'+value)).blob(),url=URL.createObjectURL(blob);try{loaded.push({image:await decode(url),url,zoom:100,x:0,y:0});}catch(error){URL.revokeObjectURL(url);throw error;}}}catch(error){loaded.forEach(p=>URL.revokeObjectURL(p.url));throw error;}for(const p of photos)URL.revokeObjectURL(p.url);photos=loaded;for(const k of keys)data[k]=fields[k]||'';active=0;cleanCover=false;fill();changed();thumbs();await render();},
+  async run(task){if(busy||aiRequest)throw Error('Esperá a que termine la operación actual.');busy=true;updateButtons();try{return await task();}finally{busy=false;updateButtons();}}
+ };
  window.addEventListener('asespro-video-change',changed);fill();thumbs();if(location.protocol==='http:')setTimeout(check,500);window.addEventListener('asespro-tab',e=>{if(e.detail==='tab-propiedades')render();});
 })();

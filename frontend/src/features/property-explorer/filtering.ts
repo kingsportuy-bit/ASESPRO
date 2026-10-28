@@ -4,6 +4,11 @@ import { propertyMatchesOperation } from "@/lib/properties";
 import type { PropertyListing, PropertyOperation, PropertyType } from "./types";
 
 export function isWithinBounds(property: PropertyListing, bounds: MapBounds): boolean {
+  if (property.approximateRadius) {
+    const latRadius = property.approximateRadius / 111320;
+    const lngRadius = latRadius / Math.cos(property.lat * Math.PI / 180);
+    return property.lat - latRadius <= bounds.north && property.lat + latRadius >= bounds.south && property.lng - lngRadius <= bounds.east && property.lng + lngRadius >= bounds.west;
+  }
   return (
     property.lat <= bounds.north &&
     property.lat >= bounds.south &&
