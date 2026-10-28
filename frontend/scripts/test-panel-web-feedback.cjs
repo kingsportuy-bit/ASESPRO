@@ -15,14 +15,14 @@ async function setup(){
  }
  const el=id=>{if(!nodes.has(id))nodes.set(id,new Element(id));return nodes.get(id);};
  el('web-phone').value='59899715662';el('web-radius').value='50';el('web-feedback').dataset.state='idle';
- let saved=null,mode='ok',posts=0,revision=1;
+ let sent=null,saved=null,mode='ok',posts=0,revision=1;
  const response=data=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>data});
  const fetch=async(url,options)=>{
   if(url==='/api/current')return response({token:'test'});
   if(url==='/api/web/status')return response({configured:true,url:'https://example.test'});
   if(url==='/api/web/list'){if(mode==='offline')throw Error('Sin conexión');return response({items:saved?[saved]:[]});}
   if(url==='/api/web/publish'){
-   posts++;const input=JSON.parse(options.body);
+   posts++;const input=JSON.parse(options.body);sent=input;
    if(mode==='reject')return {ok:false,headers:{get:()=> 'application/json'},json:async()=>({error:'Revisá la zona pública.'})};
    if(mode==='offline')throw Error('Sin conexión');
    saved={id:input.id,version:input.version+1,active:true,property:{title:'Casa en zona centro',photoUrls:['one.jpg']}};
@@ -38,7 +38,7 @@ async function setup(){
  window.L=context.L;
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../../branding/briff-local/panel/propiedades-web.js'),'utf8'),context);
  await new Promise(resolve=>setImmediate(resolve));
- return {el,mode:value=>mode=value,posts:()=>posts,prepare(){el('web-use-center').onclick();el('web-reviewed').checked=true;el('web-reviewed').onchange();},edit(){revision++;}};
+ return {el,sent:()=>sent,mode:value=>mode=value,posts:()=>posts,prepare(){el('web-use-center').onclick();el('web-reviewed').checked=true;el('web-reviewed').onchange();},edit(){revision++;}};
 }
 test('missing area produces a visible error and keeps the publish action available',async()=>{
  const ui=await setup();await ui.el('web-publish').onclick();
@@ -68,4 +68,12 @@ test('checking while offline never says it was not published',async()=>{
 });
 test('checking a saved property preserves notice of unpublished edits',async()=>{
  const ui=await setup();ui.prepare();await ui.el('web-publish').onclick();ui.el('web-phone').oninput();await ui.el('web-check').onclick();assert.equal(ui.el('web-feedback').dataset.state,'dirty');assert.equal(ui.posts(),1);
+});
+
+test('selected map area supplies a generic public label when IG zone is blank',async()=>{const ui=await setup();ui.prepare();await ui.el('web-publish').onclick();assert.equal(ui.sent().data.zone,'Zona aproximada');});
+test('web export accepts a blank text zone without weakening IG validation',()=>{
+ const script=fs.readFileSync(path.join(__dirname,'../../branding/briff-local/panel/propiedades.js'),'utf8');
+ const source=script.slice(script.indexOf(' function validation('),script.indexOf(' function updateButtons('));
+ const ctx={data:{zone:'',operation:'ALQUILER',type:'Casa',beds:'2',baths:'1',built:'',land:''},$p:()=>({value:'Casa reciclada con patio'})};vm.createContext(ctx);vm.runInContext(source,ctx);
+ assert.match(vm.runInContext('validation()',ctx),/zona pública/);assert.equal(vm.runInContext('validation(true)',ctx),'');
 });
