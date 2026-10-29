@@ -18,6 +18,17 @@ test('whitelists public data and uses only the selected area',()=>{
  assert.equal(result.property.bedrooms,0);assert.equal(result.property.lat,-32.82);
  assert.equal(result.property.approximateRadius,500);assert.equal(result.data.price,undefined);
 });
+test('uses singular for one bedroom and plural for several',()=>{
+ const input=valid();input.data.type='Apartamento';input.data.zone='Centro';input.data.beds='1';
+ assert.equal(validatePublication(input).property.title,'Apartamento de 1 dormitorio en Centro');
+ input.data.beds='2';assert.equal(validatePublication(input).property.title,'Apartamento de 2 dormitorios en Centro');
+});
+test('featured is an explicit boolean and defaults to off',()=>{
+ const input=valid();assert.equal(validatePublication(input).property.isFeatured,false);
+ input.featured=true;assert.equal(validatePublication(input).property.isFeatured,true);
+ input.featured=false;assert.equal(validatePublication(input).property.isFeatured,false);
+ input.featured='true';assert.throws(()=>validatePublication(input),/Destacada/);
+});
 test('rejects unsafe public text, invalid area and absent review',()=>{
  for(const edit of [x=>x.data.zone='Calle Rivera 123',x=>x.data.details='USD 2000',x=>x.data.details='Rivera 123',x=>x.area.radius=10,x=>x.area.lat=null,x=>x.reviewed=false,x=>x.data.beds='-1',x=>x.id='../secret',x=>x.phone='123']){
   const input=valid();edit(input);assert.throws(()=>validatePublication(input));
@@ -54,6 +65,16 @@ test('atomic updates, duplicate retry, conflicts and withdrawal',async()=>{
  await withdrawPublication(input.id,1);assert.equal((await listPublications()).length,0);
  assert.equal(await getPublication(input.id),null);
  await assert.rejects(()=>readPhoto(input.id,photo.at(-2),photo.at(-1)));
+});
+test('featured survives old clients and can be turned off explicitly',async()=>{
+ process.env.PANEL_WEB_DATA_DIR=path.join(dir,'catalog-featured');
+ const {savePublication}=require(path.join(dir,'panelWebStore.js'));
+ const input=valid(),jpeg=Buffer.from([255,216,255,224,0,0,255,217]);input.featured=true;
+ const first=await savePublication(input,[jpeg]);assert.equal(first.property.isFeatured,true);
+ input.version=first.version;delete input.featured;
+ const preserved=await savePublication(input,[jpeg]);assert.equal(preserved.property.isFeatured,true);
+ input.version=preserved.version;input.featured=false;
+ const disabled=await savePublication(input,[jpeg]);assert.equal(disabled.property.isFeatured,false);
 });
 test('full carousel saves every photo and video atomically; incomplete uploads keep previous listing',async()=>{
  process.env.PANEL_WEB_DATA_DIR=path.join(dir,'catalog-video');

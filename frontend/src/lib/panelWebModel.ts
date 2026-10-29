@@ -28,6 +28,7 @@ export function validatePublication(value:unknown): Publication {
  const input=record(value), raw=record(input.data), area=record(input.area);
  if(typeof input.id!=='string'||!WEB_ID.test(input.id))throw Error('Referencia inválida.');
  if(!Number.isInteger(input.version)||Number(input.version)<0)throw Error('Versión inválida.');
+ if(input.featured!==undefined&&typeof input.featured!=='boolean')throw Error('Destacada inválida.');
  if(input.reviewed!==true)throw Error('Revisá los datos públicos y la zona antes de publicar.');
  const data:Record<string,string>={};
  for(const key of PUBLIC_FIELDS){const v=raw[key]??'';if(typeof v!=='string'||v.length>(key==='details'?900:80))throw Error('Revisá el campo '+key);data[key]=v.trim();}
@@ -39,8 +40,8 @@ export function validatePublication(value:unknown): Publication {
  const {lat,lng,radius}=area;
  if(typeof lat!=='number'||typeof lng!=='number'||typeof radius!=='number'||!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(radius)||lat< -35.5||lat> -30||lng< -58.5||lng> -53||radius<50||radius>3000)throw Error('Elegí una zona de Uruguay y un radio entre 50 y 3000 metros.');
  if(typeof input.phone!=='string'||!/^598\d{8}$/.test(input.phone))throw Error('WhatsApp: ingresá 598 y los 8 dígitos del número.');
- const title=`${data.type}${data.beds!==''?(Number(data.beds)===0?' · monoambiente':` de ${data.beds} dormitorios`):''} en ${data.zone}`;
+ const title=`${data.type}${data.beds!==''?(Number(data.beds)===0?' · monoambiente':` de ${data.beds} ${Number(data.beds)===1?'dormitorio':'dormitorios'}`):''} en ${data.zone}`;
  const extras:Record<string,string>={garage:'Cochera',wash:'Lavadero',patio:'Patio',pool:'Piscina',balcony:'Balcón',bbq:'Parrillero',woodstove:'Estufa a leña',equipped:'Equipado',water:'Agua incluida',wifi:'Wi-Fi incluido',cable:'TV cable incluido'};
  const details=[data.details,...Object.entries(extras).filter(([key])=>data[key]==='yes').map(([,label])=>label),data.land?`${data.land} m² de terreno`:null,({'yes':'Con gastos comunes','none':'Sin gastos comunes','included':'Gastos comunes incluidos'} as Record<string,string>)[data.expenses]].filter(Boolean).join('. ');
- return {id:input.id,version:Number(input.version),active:true,updatedAt:new Date().toISOString(),data,area:{lat,lng,radius},phone:input.phone,property:{id:input.id,title,description:details,location:data.zone,type:TYPES[data.type],operation:data.operation==='VENTA'?'venta':'alquiler',lat,lng,approximateRadius:radius,contactPhone:input.phone,hidePrice:true,bedrooms:data.beds===''?undefined:Number(data.beds),bathrooms:data.baths===''?undefined:Number(data.baths),areaM2:data.built===''?undefined:Number(data.built),amenities:{garage:data.garage==='yes',laundry:data.wash==='yes',patio:data.patio==='yes',pool:data.pool==='yes',balcony:data.balcony==='yes'},status:'activo',photoUrls:[]}};
+ return {id:input.id,version:Number(input.version),active:true,updatedAt:new Date().toISOString(),data,area:{lat,lng,radius},phone:input.phone,property:{id:input.id,isFeatured:input.featured===true,title,description:details,location:data.zone,type:TYPES[data.type],operation:data.operation==='VENTA'?'venta':'alquiler',lat,lng,approximateRadius:radius,contactPhone:input.phone,hidePrice:true,bedrooms:data.beds===''?undefined:Number(data.beds),bathrooms:data.baths===''?undefined:Number(data.baths),areaM2:data.built===''?undefined:Number(data.built),amenities:{garage:data.garage==='yes',laundry:data.wash==='yes',patio:data.patio==='yes',pool:data.pool==='yes',balcony:data.balcony==='yes'},status:'activo',photoUrls:[]}};
 }

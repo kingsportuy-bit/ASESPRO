@@ -25,7 +25,7 @@ async function setup(){
    posts++;const input=JSON.parse(options.body);sent=input;
    if(mode==='reject')return {ok:false,headers:{get:()=> 'application/json'},json:async()=>({error:'Revisá la zona pública.'})};
    if(mode==='offline')throw Error('Sin conexión');
-   saved={id:input.id,version:input.version+1,active:true,property:{title:'Casa en zona centro',photoUrls:['one.jpg']}};
+   saved={id:input.id,version:input.version+1,active:true,data:input.data,area:input.area,phone:input.phone,property:{title:'Casa en zona centro',isFeatured:input.featured,photoUrls:['one.jpg']}};
    if(mode==='lost')throw Error('Se perdió la respuesta');
    return response({item:saved});
   }
@@ -76,4 +76,12 @@ test('web export accepts a blank text zone without weakening IG validation',()=>
  const source=script.slice(script.indexOf(' function validation('),script.indexOf(' function updateButtons('));
  const ctx={data:{zone:'',operation:'ALQUILER',type:'Casa',beds:'2',baths:'1',built:'',land:''},$p:()=>({value:'Casa reciclada con patio'})};vm.createContext(ctx);vm.runInContext(source,ctx);
  assert.match(vm.runInContext('validation()',ctx),/zona pública/);assert.equal(vm.runInContext('validation(true)',ctx),'');
+});
+
+test('featured choice is sent and changing it requires a new web review',async()=>{
+ const ui=await setup();ui.prepare();ui.el('web-featured').checked=true;ui.el('web-featured').onchange();
+ assert.equal(ui.el('web-reviewed').checked,false);
+ ui.prepare();await ui.el('web-publish').onclick();assert.equal(ui.sent().featured,true);
+ ui.el('web-featured').checked=false;ui.el('web-featured').onchange();ui.prepare();
+ await ui.el('web-publish').onclick();assert.equal(ui.sent().featured,false);
 });

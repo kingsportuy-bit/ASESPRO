@@ -35,6 +35,7 @@ export async function savePublication(input:unknown,photos:Buffer[]):Promise<Pub
  if(!photos.length||photos.length>20||photos.reduce((n,p)=>n+p.length,0)>14*1024*1024||photos.some(p=>p.length>1024*1024||p.length<4||p[0]!==255||p[1]!==216||p[2]!==255||p[p.length-2]!==255||p[p.length-1]!==217))throw Error('Cargá entre 1 y 20 fotos JPEG, hasta 1 MB cada una y 14 MB en total.');
  return locked(item.id,async()=>{
   const previous=await read(item.id);
+  if((input as {featured?:unknown}).featured===undefined&&previous)item.property.isFeatured=previous.property.isFeatured===true;
   if((previous?.version??0)!==item.version)throw Error('Hay una versión más reciente. Cargá la propiedad desde el catálogo antes de actualizar.');
   item.version++;const folder=path.join(root(),item.id,String(item.version));await mkdir(folder,{recursive:true});
   try{
