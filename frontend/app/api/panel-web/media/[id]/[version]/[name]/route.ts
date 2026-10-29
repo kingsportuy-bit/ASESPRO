@@ -1,4 +1,4 @@
-import { readPhoto, videoFile } from '@/lib/panelWebStore';
+import { readPhoto, videoFile, readVideoFrame } from '@/lib/panelWebStore';
 import { stat } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
@@ -13,5 +13,6 @@ export async function GET(request:Request,{params}:{params:{id:string;version:st
   headers['Content-Length']=String(end-start+1);
   return new Response(Readable.toWeb(createReadStream(file,{start,end})) as ReadableStream,{status:range?206:200,headers});
  }
+ if(params.name==='poster.jpg'||params.name==='preview.jpg'){const frame=await readVideoFrame(params.id,params.version,params.name);return new Response(new Uint8Array(frame),{headers:{'Content-Type':'image/jpeg','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
  const photo=await readPhoto(params.id,params.version,params.name);return new Response(new Uint8Array(photo),{headers:{'Content-Type':'image/jpeg','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
  }catch{return new Response('Archivo no disponible',{status:404,headers:{'Cache-Control':'no-store'}});}}

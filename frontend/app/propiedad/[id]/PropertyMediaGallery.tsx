@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef, type ReactNode } from "react";
 import type { PropertyMediaItem } from "@/lib/properties";
+import { videoPreview } from "@/lib/propertyPresentation";
 import styles from "./PropertyDetailPage.module.css";
 
 type PropertyMediaGalleryProps = {
@@ -11,6 +12,7 @@ type PropertyMediaGalleryProps = {
   media?: PropertyMediaItem[];
   videoUrl?: string | null;
   fallbackImage: string;
+  facts?: ReactNode;
 };
 
 function getEmbeddedVideoUrl(url: string | null | undefined): string | null {
@@ -60,129 +62,34 @@ function isSupportedPublicVideoUrl(url: string | null | undefined): boolean {
   }
 }
 
-export function PropertyMediaGallery({ title, location, photos, media, videoUrl, fallbackImage }: PropertyMediaGalleryProps): JSX.Element {
-  const safeVideoUrl = isSupportedPublicVideoUrl(videoUrl) ? videoUrl : null;
-  const embeddedVideoUrl = getEmbeddedVideoUrl(safeVideoUrl);
-  const photoMedia = useMemo<PropertyMediaItem[]>(
-    () => (media?.filter((item) => item.type === "photo" && item.url.trim().length > 0) ?? photos.map((src) => ({ type: "photo" as const, url: src }))),
-    [media, photos],
-  );
-  const galleryMedia = useMemo(
-    () => [...photoMedia.map((item) => ({ ...item, src: item.url })), ...(safeVideoUrl ? [{ type: "video" as const, src: safeVideoUrl, url: safeVideoUrl }] : [])],
-    [photoMedia, safeVideoUrl],
-  );
-  const primaryPhoto = photoMedia[0];
-  const primaryPhotoUrl = primaryPhoto?.url ?? fallbackImage;
-  const sidePhotos = useMemo(() => photoMedia.slice(1, 4), [photoMedia]);
-  const extraPhotosCount = Math.max(photoMedia.length - 4, 0);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const videoSourceType = safeVideoUrl?.toLowerCase().includes(".m3u8") ? "application/x-mpegURL" : "video/mp4";
-  const videoIndex = safeVideoUrl ? galleryMedia.length - 1 : null;
-  const activeMedia = activeIndex !== null ? galleryMedia[activeIndex] : null;
-
-  if (galleryMedia.length === 0) return <section className={styles.gallery} />;
-
-  return (
-    <>
-      <section className={styles.gallery}>
-        <div className={styles.galleryHead}>
-          <h1>{title}</h1>
-          <p>{location}</p>
-        </div>
-        <div className={styles.mediaLayout}>
-          <button type="button" className={styles.primaryPhotoCard} onClick={() => setActiveIndex(0)}>
-            <img
-            src={primaryPhotoUrl}
-            alt={`${title} foto principal`}
-            style={{ objectPosition: `${primaryPhoto?.focalX ?? 50}% ${primaryPhoto?.focalY ?? 50}%` }}
-              onError={(event) => {
-                if (event.currentTarget.src !== fallbackImage) {
-                  event.currentTarget.src = fallbackImage;
-                }
-              }}
-            />
-            {extraPhotosCount > 0 && sidePhotos.length === 0 ? <span className={styles.moreBadge}>+{extraPhotosCount} fotos</span> : null}
-          </button>
-          <div className={styles.sidePhotoStack}>
-            {sidePhotos.map((item, idx) => (
-              <button key={`${item.url}-${idx + 1}`} type="button" className={styles.sidePhotoCard} onClick={() => setActiveIndex(idx + 1)}>
-                <img
-                  src={item.url}
-                  alt={`${title} foto ${idx + 2}`}
-                  style={{ objectPosition: `${item.focalX ?? 50}% ${item.focalY ?? 50}%` }}
-                  onError={(event) => {
-                    if (event.currentTarget.src !== fallbackImage) {
-                      event.currentTarget.src = fallbackImage;
-                    }
-                  }}
-                />
-                {extraPhotosCount > 0 && idx === sidePhotos.length - 1 ? <span className={styles.moreBadge}>+{extraPhotosCount} fotos</span> : null}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className={styles.galleryActions}>
-          <button type="button" className={styles.moreMediaButton} onClick={() => setActiveIndex(0)}>
-            Ver fotos
-          </button>
-          {videoIndex !== null ? (
-            <button type="button" className={styles.videoMediaButton} onClick={() => setActiveIndex(videoIndex)}>
-              Ver video de la propiedad
-            </button>
-          ) : null}
-        </div>
-      </section>
-
-      {activeIndex !== null ? (
-        <div className={styles.lightbox} onClick={() => setActiveIndex(null)}>
-          <div
-            className={`${styles.lightboxMedia} ${activeMedia?.type === "video" ? styles.lightboxMediaVideo : ""} ${
-              activeMedia?.type === "video" && embeddedVideoUrl ? styles.lightboxMediaEmbedded : ""
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {activeMedia?.type === "video" ? (
-              embeddedVideoUrl ? (
-                <iframe
-                  src={embeddedVideoUrl}
-                  title={`Video de ${title}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              ) : (
-                <video controls autoPlay playsInline preload="metadata">
-                  <source src={activeMedia.src} type={videoSourceType} />
-                </video>
-              )
-            ) : (
-              <img
-                src={activeMedia?.src ?? fallbackImage}
-                alt={title}
-                style={{ objectPosition: `${activeMedia?.focalX ?? 50}% ${activeMedia?.focalY ?? 50}%` }}
-                onError={(event) => {
-                  if (event.currentTarget.src !== fallbackImage) {
-                    event.currentTarget.src = fallbackImage;
-                  }
-                }}
-              />
-            )}
-            <button
-              type="button"
-              className={`${styles.navBtn} ${styles.navBtnPrev}`}
-              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev - 1 + galleryMedia.length) % galleryMedia.length))}
-            >
-              {"<"}
-            </button>
-            <button
-              type="button"
-              className={`${styles.navBtn} ${styles.navBtnNext}`}
-              onClick={() => setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % galleryMedia.length))}
-            >
-              {">"}
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
+export function PropertyMediaGallery({title,location,photos,media,videoUrl,fallbackImage,facts}:PropertyMediaGalleryProps):JSX.Element{
+ const safeVideoUrl=isSupportedPublicVideoUrl(videoUrl)?videoUrl:null;
+ const embeddedVideoUrl=getEmbeddedVideoUrl(safeVideoUrl);
+ const photoMedia=useMemo(()=>{const items=media?.filter(i=>i.type==='photo'&&i.url.trim())||[];return items.length?items:photos.map(url=>({type:'photo' as const,url,focalX:50,focalY:50}));},[media,photos]);
+ const poster=videoPreview(safeVideoUrl||undefined),preview=videoPreview(safeVideoUrl||undefined,'preview');
+ const images:PropertyMediaItem[]=[...photoMedia];if(preview&&photoMedia.length<2)images.push({type:'photo',url:preview,caption:'Fotograma del recorrido'});
+ const [index,setIndex]=useState(0),[video,setVideo]=useState(false);const dialog=useRef<HTMLDialogElement>(null);
+ const count=images.length;const primary=images[0]?.url||fallbackImage;
+ function openPhoto(i:number){setIndex(i);setVideo(false);dialog.current?.showModal();}
+ function openVideo(){setVideo(true);dialog.current?.showModal();}
+ function close(){dialog.current?.close();if(locationHash()==='#video')history.replaceState(null,'',window.location.pathname+window.location.search);}
+ function locationHash(){return typeof window==='undefined'?'':window.location.hash;}
+ useEffect(()=>{const change=()=>{if(window.location.hash==='#video'&&safeVideoUrl)openVideo();};change();window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[safeVideoUrl]);
+ useEffect(()=>{const key=(e:KeyboardEvent)=>{if(!dialog.current?.open||video)return;if(e.key==='ArrowRight')setIndex(i=>(i+1)%count);if(e.key==='ArrowLeft')setIndex(i=>(i-1+count)%count);};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[count,video]);
+ return <>
+ <section className={styles.gallery}>
+  <div className={styles.galleryHead}><a className={styles.backLink} href="/alquiler">← Volver a propiedades</a><p>{location}</p><h1>{title}</h1>{facts}</div>
+  <div className={`${styles.mediaLayout} ${safeVideoUrl?styles.withVideo:''}`}>
+   <button className={styles.primaryPhotoCard} type="button" onClick={()=>openPhoto(0)} aria-label="Abrir foto principal"><img src={primary} alt={`${title}, foto principal`} style={{objectPosition:`${images[0]?.focalX??50}% ${images[0]?.focalY??50}%`}}/><span className={styles.photoLabel}>Foto principal</span></button>
+   {images.length>1&&<button type="button" className={styles.sidePhotoCard} onClick={()=>openPhoto(1)} aria-label="Abrir vista de apoyo"><img src={images[1].url} alt={`${title}, vista de apoyo`}/><span className={styles.photoLabel}>{images[1].caption||'Ver más'}</span></button>}
+   {safeVideoUrl&&<button type="button" className={styles.videoTile} onClick={openVideo} aria-label="Reproducir recorrido en video"><img src={poster||primary} alt="Vista previa del recorrido" onError={e=>{if(e.currentTarget.getAttribute('src')!==primary)e.currentTarget.src=primary;}}/><span className={styles.playCircle}>▷</span><span className={styles.videoCaption}><strong>Recorré la propiedad</strong><span>Ver video completo</span></span></button>}
+  </div>
+  <div className={styles.galleryActions}><button className={styles.moreMediaButton} type="button" onClick={()=>openPhoto(0)}>Ver fotos{count>1?` y vistas (${count})`:''}</button>{safeVideoUrl&&<button className={styles.videoMediaButton} type="button" onClick={openVideo}>▷ Ver recorrido en video</button>}</div>
+ </section>
+ <dialog ref={dialog} className={styles.mediaDialog} aria-label={video?'Recorrido en video':'Galería de fotos'} onClick={e=>{if(e.target===e.currentTarget)close();}} onClose={()=>{dialog.current?.querySelector('video')?.pause();setVideo(false);if(locationHash()==='#video')history.replaceState(null,'',window.location.pathname+window.location.search);}}>
+  <button className={styles.closeButton} onClick={close} aria-label="Cerrar galería">×</button>
+  {video&&safeVideoUrl?(embeddedVideoUrl?<iframe src={embeddedVideoUrl} title={`Video de ${title}`} allow="autoplay; fullscreen" allowFullScreen/>:<video key={safeVideoUrl} src={safeVideoUrl} controls autoPlay playsInline preload="metadata"/>):<img src={images[index]?.url||fallbackImage} alt={`${title}, ${images[index]?.caption||`foto ${index+1}`}`}/>}
+  <p className={styles.mediaCaption}>{video?'Recorrido completo':images[index]?.caption||`Foto ${index+1} de ${count}`}</p>
+  {!video&&count>1&&<div className={styles.dialogControls}><button onClick={()=>setIndex(i=>(i-1+count)%count)} aria-label="Foto anterior">←</button><span>{index+1} / {count}</span><button onClick={()=>setIndex(i=>(i+1)%count)} aria-label="Foto siguiente">→</button></div>}
+ </dialog></>;
 }

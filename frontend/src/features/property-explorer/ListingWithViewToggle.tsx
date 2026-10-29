@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { Map } from "@/components/map";
 import { PropertyFacts } from "@/components/properties/PropertyFacts";
 import { getPropertyCoverImage } from "@/lib/propertyVisuals";
+import { propertyDescription } from "@/lib/propertyPresentation";
 import { formatPrice, type PropertyListing } from "@/lib/properties";
 
 import styles from "../../../app/ListingPage.module.css";
@@ -49,7 +50,7 @@ export function ListingWithViewToggle({
                 type="button"
                 className={`${styles.viewBtn} ${styles.viewBtnActive}`}
               >
-                Cuadricula
+                Cuadrícula
               </button>
               <Link href="/mapa" className={styles.viewBtn}>
                 Mapa
@@ -63,31 +64,10 @@ export function ListingWithViewToggle({
               {cards.length === 0 && <p>No hay propiedades publicadas por el momento. Contactanos para consultar disponibilidad.</p>}
               {cards.map((property) => (
                 <article className={styles.card} key={property.id}>
-                  <Link href={`/propiedad/${property.id}`} className={styles.cardHitArea}>
+                  <div className={styles.cardHitArea}>
                     <div className={styles.cardMedia}>
-                      <div className={styles.mediaSlider} aria-hidden="true">
-                        {getDisplayPhotos(property).map((photo, photoIndex, photoList) => (
-                          <img
-                            key={`${property.id}-photo-${photoIndex}`}
-                            src={photo}
-                            alt=""
-                            className={`${styles.slideImage} ${
-                              photoIndex === 0
-                                ? styles.slideImageStatic
-                                : photoList.length > 1
-                                  ? styles.slideImageAnimated
-                                  : styles.slideImageStatic
-                            }`}
-                            onError={(event) => {
-                              const fallback = getPropertyCoverImage(property.id);
-                              if (event.currentTarget.src !== fallback) {
-                                event.currentTarget.src = fallback;
-                              }
-                            }}
-                            loading="lazy"
-                          />
-                        ))}
-                      </div>
+                      <Link href={`/propiedad/${property.id}`} aria-label={`Ver ${property.title}`} className={styles.mediaSlider}><img src={getDisplayPhotos(property)[0]} alt="" className={`${styles.slideImage} ${styles.slideImageStatic}`} loading="lazy" style={{objectPosition:`${property.media?.[0]?.focalX??50}% ${property.media?.[0]?.focalY??50}%`}} /></Link>
+                      {property.videoUrl&&<Link href={`/propiedad/${property.id}#video`} className={styles.videoBadge}>▷ Ver video</Link>}
                       <div className={styles.badgeRow}>
                         <span className={styles.badge}>{property.operation}</span>
                         <span className={styles.badge}>{property.type}</span>
@@ -96,13 +76,15 @@ export function ListingWithViewToggle({
 
                     <div className={styles.cardBody}>
                       <div className={styles.titleRow}>
-                        <h2 className={styles.cardTitle}>{property.title}</h2>
+                        <h2 className={styles.cardTitle}><Link href={`/propiedad/${property.id}`}>{property.title}</Link></h2>
                         {!property.hidePrice && <p className={styles.cardPrice}>{formatPrice(property.price, property.priceCurrency)}</p>}
                       </div>
                       <p className={styles.cardLocation}>{property.location}</p>
                       <PropertyFacts property={property} />
+                      <p className={styles.cardSummary}>{property.publicSummary||propertyDescription(property)}</p>
+                      <div className={styles.cardBottom}><span>Consultá condiciones</span><Link href={`/propiedad/${property.id}`}>Ver propiedad →</Link></div>
                     </div>
-                  </Link>
+                  </div>
                 </article>
               ))}
             </section>

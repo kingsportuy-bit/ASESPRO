@@ -1,3 +1,5 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { mkdir, readdir, readFile, writeFile, rename, rm, open, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -60,4 +62,18 @@ export async function readPhoto(id:string,version:string,name:string){
  checkId(id);if(!/^\d+$/.test(version)||!/^\d{1,2}\.jpg$/.test(name))throw Error('Foto inválida.');
  const item=await getPublication(id);if(!item||String(item.version)!==version||!item.property.photoUrls.includes(`/api/panel-web/media/${id}/${version}/${name}`))throw Error('Foto no disponible.');
  return readFile(path.join(root(),id,version,name));
+}
+
+const frameJobs=new Map<string,Promise<Buffer>>();
+export async function readVideoFrame(id:string,version:string,name:string):Promise<Buffer>{
+ if(name!=='poster.jpg'&&name!=='preview.jpg')throw Error('Vista inválida.');
+ const source=await videoFile(id,version),target=path.join(path.dirname(source),name);
+ try{return await readFile(target);}catch(error){if(!isMissing(error))throw error;}
+ let job=frameJobs.get(target);
+ if(!job){job=(async()=>{const tmp=target+'.'+randomUUID()+'.jpg';try{
+  const run=promisify(execFile);
+  try{await run('ffmpeg',['-hide_banner','-loglevel','error','-ss',name==='poster.jpg'?'2':'8','-i',source,'-frames:v','1','-vf','scale=720:-2','-q:v','3','-y',tmp],{timeout:30000});await stat(tmp);}catch{await run('ffmpeg',['-hide_banner','-loglevel','error','-i',source,'-frames:v','1','-vf','scale=720:-2','-q:v','3','-y',tmp],{timeout:30000});}
+  await rename(tmp,target);return await readFile(target);
+ }finally{await rm(tmp,{force:true});}})();frameJobs.set(target,job);}
+ try{return await job;}finally{frameJobs.delete(target);}
 }

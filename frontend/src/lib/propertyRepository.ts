@@ -15,6 +15,13 @@ import { getSupabaseAdminClient } from "./supabaseServer";
 import { getPublication, listPublications } from "./panelWebStore";
 import { WEB_ID } from "./panelWebModel";
 
+function panelProperty(item: Awaited<ReturnType<typeof listPublications>>[number]): PropertyListing {
+  // The first exported carousel image is the IG title plate; web uses the remaining photographs.
+  const property = item.property;
+  const photoUrls = item.carouselComplete && property.photoUrls.length > 1 ? property.photoUrls.slice(1) : property.photoUrls;
+  return { ...property, photoUrls };
+}
+
 type ListOptions = {
   operation?: PropertyOperation;
 };
@@ -574,8 +581,8 @@ function createPropertyRepository(): PropertyRepository {
   const source = process.env.PROPERTY_DATA_SOURCE ?? "supabase";
   if (source === "panel") {
     return {
-      async list(options = {}) { const items = (await listPublications()).map(item => item.property); return options.operation ? items.filter(item => propertyMatchesOperation(item, options.operation!)) : items; },
-      async getById(id) { if (!WEB_ID.test(id)) return null; return (await getPublication(id))?.property ?? null; },
+      async list(options = {}) { const items = (await listPublications()).map(panelProperty); return options.operation ? items.filter(item => propertyMatchesOperation(item, options.operation!)) : items; },
+      async getById(id) { if (!WEB_ID.test(id)) return null; const item = await getPublication(id); return item ? panelProperty(item) : null; },
     };
   }
   if (source === "mock") {

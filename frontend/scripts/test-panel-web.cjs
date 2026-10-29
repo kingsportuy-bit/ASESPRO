@@ -5,7 +5,7 @@ const os=require('node:os');
 const path=require('node:path');
 const ts=require('typescript');
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'asespro-tests-'));
-for(const name of ['panelWebModel','panelWebStore']){
+for(const name of ['panelWebModel','panelWebStore','propertyPresentation']){
  const file=path.join(__dirname,'../src/lib',name+'.ts');
  if(fs.existsSync(file))fs.writeFileSync(path.join(dir,name+'.js'),ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText);
 }
@@ -17,6 +17,14 @@ test('whitelists public data and uses only the selected area',()=>{
  assert.equal(result.property.price,undefined);assert.equal(result.property.address,undefined);
  assert.equal(result.property.bedrooms,0);assert.equal(result.property.lat,-32.82);
  assert.equal(result.property.approximateRadius,500);assert.equal(result.data.price,undefined);
+});
+test('presentation describes bedrooms in words and omits absent facts',()=>{
+ const {propertyDescription,videoPreview}=require(path.join(dir,'propertyPresentation.js'));
+ const property=validatePublication(valid()).property;
+ property.bedrooms=1;property.bathrooms=undefined;property.description='Cochera. Patio';
+ const description=propertyDescription(property);assert.match(description,/1 dormitorio/);assert.doesNotMatch(description,/undefined|N\/D|baño/);
+ assert.equal(videoPreview('https://example.test/video.mp4'),undefined);
+ assert.match(videoPreview('/api/panel-web/media/'+property.id+'/1/video.mp4'),/poster.jpg$/);
 });
 test('uses singular for one bedroom and plural for several',()=>{
  const input=valid();input.data.type='Apartamento';input.data.zone='Centro';input.data.beds='1';
