@@ -11,6 +11,7 @@ import { formatPrice, type PropertyListing } from "@/lib/properties";
 import styles from "../../../app/ListingPage.module.css";
 
 type ListingWithViewToggleProps = {
+  operation: "alquiler" | "venta";
   title: string;
   description: string;
   properties: PropertyListing[];
@@ -20,6 +21,7 @@ type ListingWithViewToggleProps = {
 };
 
 export function ListingWithViewToggle({
+  operation,
   title,
   description,
   properties,
@@ -45,6 +47,12 @@ export function ListingWithViewToggle({
               <h1 className={styles.title}>{title}</h1>
               <p className={styles.description}>{description}</p>
             </div>
+          </div>
+          <div className={styles.catalogToolbar}>
+            <nav className={styles.viewSwitch} aria-label="Operación de las propiedades">
+              <Link href="/alquiler" className={`${styles.viewBtn} ${operation === "alquiler" ? styles.viewBtnActive : ""}`} aria-current={operation === "alquiler" ? "page" : undefined}>Alquiler</Link>
+              <Link href="/venta" className={`${styles.viewBtn} ${operation === "venta" ? styles.viewBtnActive : ""}`} aria-current={operation === "venta" ? "page" : undefined}>Venta</Link>
+            </nav>
             <div className={styles.viewSwitch}>
               <button
                 type="button"
@@ -92,7 +100,7 @@ export function ListingWithViewToggle({
             {cards.length === 0 ? (
               <section className={styles.emptyState}>
                 <h2>No hay publicaciones activas en este momento</h2>
-                <p>El equipo puede cargar nuevas propiedades desde el panel. Mientras tanto, la consulta por WhatsApp sigue disponible.</p>
+                <p>Podés cambiar de operación o consultarnos por WhatsApp para conocer las próximas opciones.</p>
                 <Link href="/contacto" className={styles.emptyAction}>
                   Consultar disponibilidad
                 </Link>

@@ -117,8 +117,8 @@ export default async function HomePage(): Promise<JSX.Element> {
               <h2>Mira las opciones disponibles</h2>
               <p>Revisa alquileres y ventas cargadas en la web para hacer una preseleccion antes de contactar al agente.</p>
             </div>
-            <Link href="/venta" className={styles.secondaryAction}>
-              Ver catalogo
+            <Link href="/alquiler" className={styles.secondaryAction}>
+              Ver catálogo
             </Link>
           </div>
 

@@ -15,6 +15,7 @@ export default async function AlquilerPage(): Promise<JSX.Element> {
 
   return (
     <ListingWithViewToggle
+      operation="alquiler"
       title="Alquileres en Paso de los Toros y alrededores"
       description="Consultá las propiedades disponibles, sus características y zona aproximada. Contactá al operador para coordinar una visita."
       properties={properties}
