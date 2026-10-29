@@ -15,7 +15,7 @@ async function setup(){
  }
  const el=id=>{if(!nodes.has(id))nodes.set(id,new Element(id));return nodes.get(id);};
  el('web-phone').value='59899715662';el('web-radius').value='50';el('web-feedback').dataset.state='idle';
- let sent=null,saved=null,mode='ok',posts=0,revision=1;
+ let sent=null,saved=null,mode='ok',posts=0,revision=1,approve=true;const confirmations=[];
  const response=data=>({ok:true,headers:{get:()=> 'application/json'},json:async()=>data});
  const fetch=async(url,options)=>{
   if(url==='/api/current')return response({token:'test'});
@@ -34,11 +34,11 @@ async function setup(){
  const map={setView(){return this;},getCenter(){return {lat:-32.82,lng:-56.52};},on(){},invalidateSize(){}};
  const editor={snapshot:()=>({count:1,data:{operation:'ALQUILER'},revision}),media:async()=>({photos:['photo'],video:null}),run:async task=>task()};
  const window={AsesproPropertyEditor:editor,addEventListener(){}};
- const context={window,document:{getElementById:el,createElement:()=>new Element()},location:{origin:'http://127.0.0.1:8765'},crypto:webcrypto,MutationObserver:class{observe(){}},fetch,confirm:()=>true,setTimeout,clearTimeout,AbortController,L:{map:()=>map,tileLayer:()=>({addTo(){}}),circle:()=>({addTo(){return this;},remove(){}})}};
+ const context={window,document:{getElementById:el,createElement:()=>new Element()},location:{origin:'http://127.0.0.1:8765'},crypto:webcrypto,MutationObserver:class{observe(){}},fetch,confirm:message=>{confirmations.push(message);return approve;},setTimeout,clearTimeout,AbortController,L:{map:()=>map,tileLayer:()=>({addTo(){}}),circle:()=>({addTo(){return this;},remove(){}})}};
  window.L=context.L;
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../../branding/briff-local/panel/propiedades-web.js'),'utf8'),context);
  await new Promise(resolve=>setImmediate(resolve));
- return {el,sent:()=>sent,mode:value=>mode=value,posts:()=>posts,prepare(){el('web-use-center').onclick();el('web-reviewed').checked=true;el('web-reviewed').onchange();},edit(){revision++;}};
+ return {el,confirm:value=>approve=value,confirmations,sent:()=>sent,mode:value=>mode=value,posts:()=>posts,prepare(){el('web-use-center').onclick();el('web-reviewed').checked=true;el('web-reviewed').onchange();},edit(){revision++;}};
 }
 test('missing area produces a visible error and keeps the publish action available',async()=>{
  const ui=await setup();await ui.el('web-publish').onclick();
@@ -84,4 +84,15 @@ test('featured choice is sent and changing it requires a new web review',async()
  ui.prepare();await ui.el('web-publish').onclick();assert.equal(ui.sent().featured,true);
  ui.el('web-featured').checked=false;ui.el('web-featured').onchange();ui.prepare();
  await ui.el('web-publish').onclick();assert.equal(ui.sent().featured,false);
+});
+
+test('cancelled overwrite preserves the existing publication without sending files',async()=>{
+ const ui=await setup();ui.prepare();await ui.el('web-publish').onclick();const previous=ui.sent().id;
+ ui.prepare();ui.confirm(false);await ui.el('web-publish').onclick();
+ assert.equal(ui.posts(),1);assert.equal(ui.sent().id,previous);assert.match(ui.confirmations.at(-1),/NO crea otra propiedad/);
+});
+test('new property action uses a separate reference instead of updating the previous one',async()=>{
+ const ui=await setup();ui.prepare();await ui.el('web-publish').onclick();const previous=ui.sent().id;
+ ui.el('web-new').onclick();ui.prepare();await ui.el('web-publish').onclick();
+ assert.equal(ui.posts(),2);assert.notEqual(ui.sent().id,previous);assert.equal(ui.sent().version,0);
 });
